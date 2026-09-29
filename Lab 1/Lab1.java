@@ -1,13 +1,16 @@
 import java.util.*;
 public class Main {
 	public static void main(String args[]){
-		Counter1 cnt1, cnt2;
-		int[] tablou = new int[101];
+		Counter1 cnt1, cnt2, cnt3; //cnt 1 Stas, cnt 2 Stefanita, cnt 3, Adrian
+		int[] tablou = new int[101]; //Tablou de 101 numbere
 
+		//Fill tablou cu numere random
 		for(int i=0; i<100; i++){
 			tablou[i] = (int)(Math.random()*99);
 			System.out.print(tablou[i]+" ");
-			}
+		}
+
+		//Main
 		System.out.println(" ");
 		cnt1 = new Counter1(0, 99, 1, tablou);
 		cnt2 = new Counter1(99, 0, -1, tablou);
@@ -16,8 +19,8 @@ public class Main {
 		cnt2.start();
 		cnt2.setName("Doi");
 
-		}
-		}
+	}
+}
 
 class Counter1 extends Thread {
 	private int from, to, step;
