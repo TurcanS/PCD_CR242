@@ -1,4 +1,24 @@
 import java.util.*;
+public class Main {
+	public static void main(String args[]){
+		Counter1 cnt1, cnt2;
+		int[] tablou = new int[101];
+
+		for(int i=0; i<100; i++){
+			tablou[i] = (int)(Math.random()*99);
+			System.out.print(tablou[i]+" ");
+			}
+		System.out.println(" ");
+		cnt1 = new Counter1(0, 99, 1, tablou);
+		cnt2 = new Counter1(99, 0, -1, tablou);
+		cnt1.start();
+		cnt1.setName("Unu");
+		cnt2.start();
+		cnt2.setName("Doi");
+
+		}
+		}
+
 class Counter1 extends Thread {
 	private int from, to, step;
 	private int[] tablou;
@@ -29,24 +49,5 @@ class Counter1 extends Thread {
 			}
 			i+=step;
 		}
-	}
-}
-public class Main {
-	public static void main(String args[]){
-		Counter1 cnt1, cnt2;
-		int[] tablou = new int[101];
-
-		for(int i=0; i<100; i++){
-		   tablou[i] = (int)(Math.random()*99);
-		   System.out.print(tablou[i]+" ");
-		}
-		System.out.println(" ");
-		cnt1 = new Counter1(0, 99, 1, tablou);
-		cnt2 = new Counter1(99, 0, -1, tablou);
-		cnt1.start();
-		cnt1.setName("Unu");
-		cnt2.start();
-		cnt2.setName("Doi");
-
 	}
 }
