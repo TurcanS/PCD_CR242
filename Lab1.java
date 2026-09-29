@@ -25,7 +25,7 @@ class Counter1 extends Thread {
 				}
 			i+=step;
 			} while(true);
-			// i+=step;
+			// i+=step; what
 			}
 			i+=step;
 		}
@@ -47,5 +47,6 @@ public class Main {
 		cnt1.setName("Unu");
 		cnt2.start();
 		cnt2.setName("Doi");
+
 	}
 }
