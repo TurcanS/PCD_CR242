@@ -1,23 +1,28 @@
 import java.util.*;
 public class Main {
 	public static void main(String args[]){
-		Counter1 cnt1, cnt2, cnt3; //cnt 1 Stas, cnt 2 Stefanita, cnt 3, Adrian
-		int[] tablou = new int[101]; //Tablou de 101 numbere
+		Counter1 cnt1, cnt2, cnt3; //cnt 1 Stas, cnt 2 Stefanita, cnt 3 Adrian
+		int[] tablou = new int[101]; //Tablou de 100 numbere
 
-		//Fill tablou cu numere random
-		for(int i=0; i<100; i++){
+		//Fill tablou cu numere random si printeazal
+		System.out.print("Numerele din tablou: ");
+		for(int i=0; i<101; i++){
 			tablou[i] = (int)(Math.random()*99);
 			System.out.print(tablou[i]+" ");
 		}
 
 		//Main
 		System.out.println(" ");
-		cnt1 = new Counter1(0, 99, 1, tablou);
-		cnt2 = new Counter1(99, 0, -1, tablou);
-		cnt1.start();
-		cnt1.setName("Unu");
+		//cnt1 = new Counter1(0, 99, 1, tablou); //Stas
+		cnt2 = new Counter1(100, 1, -1, tablou); //Stefanita
+		//cnt3 = new Counter1(0, 99, 1, tablou); //Adrian
+
+		//cnt1.start();
+		//cnt1.setName("Unu");
 		cnt2.start();
 		cnt2.setName("Doi");
+		//cnt3.start();
+		//cnt3.setName("Trei");
 
 	}
 }
@@ -33,24 +38,54 @@ class Counter1 extends Thread {
 	}
 
 	public void run() {
-		int s1=0, s2=0, s=0;
+
+
+		//[s]umele [n]umerelor [p]are două câte două începând căutarea si sumarea de la [u]ltimul element
+		int snpu1 = 0, snpu2 = 0, snpu = 0;
+		int j = from;
+		while (j >= to){
+			if (tablou[j] % 2 == 0){
+				snpu1 = j;
+				j += step;
+				do {
+					if (tablou[j] % 2 == 0){
+						snpu2 = j;
+						snpu = tablou[snpu1] + tablou[snpu2];
+						System.out.println(getName()+" poz val 1: " + snpu1 + " " + tablou[snpu1] +", poz val 2: " + snpu2 + " " + tablou[snpu2] + ", suma: " + snpu);
+						break;
+					}
+					j += step;
+				} while (true);
+			}
+			j += step;
+		}
+
+
+
+		//Ce face exemplu:
+		//1. Cat timp pozitia nu a ajus la sfarsit executa pasul 2.
+		//2. Daca valoarea din tablou <=50 asigneaza pozitia valoarii in s1, incrementeaza pozitia cu un step si executa pasul 3.
+		//Daca >50 incrementeaza pozitia cu un step, inapoi la pasul 1.
+		//3. Daca valoarea din tablou <=50 asigneaza pozitia valoarii in s2 si sumeaza s1+s2 in s. Printeaza valorile, incrementeaza pozitia cu un step, executa pasul 2.
+		//Daca >50 incrementeaza pozitia cu un step, inapoi la pasul 3.
+
+		/*int s1=0, s2=0, s=0;
 		int i=from;
-		while(i!=to){
+		while(i <= to){
 			if(tablou[i]<=50) {
 				s1=i;
 				i+=step;
 				do {
-				if(tablou[i]<=50) {
-					s2=i;
-					s=s1+s2;
-					System.out.println(getName()+" " + s1+ " " + s2 +" "+s+ " "+ tablou[s1]+""+tablou[s2] );
-					break;
-				}
-			i+=step;
-			} while(true);
-			// i+=step; what
+					if(tablou[i]<=50) {
+						s2=i;
+						s=s1+s2;
+						System.out.println(getName()+" S1:" + s1+ " S2:" + s2 +" Suma:"+s+ " Ts1:"+ tablou[s1]+" Ts2:"+tablou[s2] );
+						break;
+					}
+					i+=step;
+				} while(true);
 			}
 			i+=step;
-		}
+		}*/
 	}
 }
