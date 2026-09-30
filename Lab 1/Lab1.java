@@ -2,11 +2,11 @@ import java.util.*;
 public class Main {
 	public static void main(String args[]){
 		Counter1 cnt1, cnt2, cnt3; //cnt 1 Stas, cnt 2 Stefanita, cnt 3 Adrian
-		int[] tablou = new int[101]; //Tablou de 100 numbere
+		int[] tablou = new int[100]; //Tablou de 100 numbere
 
 		//Fill tablou cu numere random si printeazal
 		System.out.print("Numerele din tablou: ");
-		for(int i=0; i<101; i++){
+		for(int i=0; i<100; i++){
 			tablou[i] = (int)(Math.random()*99);
 			System.out.print(tablou[i]+" ");
 		}
@@ -14,7 +14,7 @@ public class Main {
 		//Main
 		System.out.println(" ");
 		//cnt1 = new Counter1(0, 99, 1, tablou); //Stas
-		cnt2 = new Counter1(100, 1, -1, tablou); //Stefanita
+		cnt2 = new Counter1(99, 0, -1, tablou); //Stefanita
 		//cnt3 = new Counter1(0, 99, 1, tablou); //Adrian
 
 		//cnt1.start();
@@ -47,6 +47,7 @@ class Counter1 extends Thread {
 			if (tablou[j] % 2 == 0){
 				snpu1 = j;
 				j += step;
+				if (j <= 0) { break; }
 				do {
 					if (tablou[j] % 2 == 0){
 						snpu2 = j;
@@ -55,9 +56,11 @@ class Counter1 extends Thread {
 						break;
 					}
 					j += step;
+					if (j <= 0) { break; }
 				} while (true);
 			}
 			j += step;
+			if (j <= 0) { break; }
 		}
 
 
