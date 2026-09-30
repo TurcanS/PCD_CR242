@@ -17,11 +17,11 @@ public class Main {
 		cnt2 = new Counter1(99, 0, -1, tablou); //Stefanita
 		//cnt3 = new Counter1(0, 99, 1, tablou); //Adrian
 
-    cnt1.setName("Unu");
-    cnt1.start();
-    cnt2.setName("Doi");
+		cnt1.setName("Unu");
+		cnt1.start();
+		cnt2.setName("Doi");
 		cnt2.start();
-    //cnt3.start();
+		//cnt3.start();
 		//cnt3.setName("Trei");
 
 	}
@@ -40,19 +40,19 @@ class Counter1 extends Thread {
 	public void run() {
 
 
-		//[s]umele [n]umerelor [p]are două câte două începând căutarea si sumarea de la [u]ltimul element
-		int snpu1 = 0, snpu2 = 0, snpu = 0;
+		//[s]umele [n]umerelor [p]are două câte două începând căutarea si sumarea de la ultimul element
+		int snp1 = 0, snp2 = 0, snp = 0;
 		int j = from;
-    while ((step > 0 && j <= to) || (step < 0 && j >= to)){
+		while ((step > 0 && j <= to) || (step < 0 && j >= to)){
 			if (tablou[j] % 2 == 0){
-				snpu1 = j;
+				snp1 = j;
 				j += step;
 				if ((step > 0 && j > to) || (step < 0 && j < to)){ break; }
 				do {
 					if (tablou[j] % 2 == 0){
-						snpu2 = j;
-						snpu = tablou[snpu1] + tablou[snpu2];
-						System.out.println(getName()+" poz val 1: " + snpu1 + " " + tablou[snpu1] +", poz val 2: " + snpu2 + " " + tablou[snpu2] + ", suma: " + snpu);
+						snp2 = j;
+						snp = tablou[snp1] + tablou[snp2];
+						System.out.println(getName()+" poz val 1: " + snp1 + " " + tablou[snp1] +", poz val 2: " + snp2 + " " + tablou[snp2] + ", suma: " + snp);
 						break;
 					}
 					j += step;
