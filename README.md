@@ -15,11 +15,13 @@ Universitatea Tehnică a Moldovei, FCIM
 | Nr. | Tema | Varianta | Cod sursă | Raport |
 |---|---|---|---|---|
 | 1 | Crearea thread-urilor | 4 | [Lab1/src/lab1](Lab1/src/lab1) | [Raport_Lab1_PCD_Cornos_Spranceana.docx](Lab1/Raport_Lab1_PCD_Cornos_Spranceana.docx) |
+| 2 | Gruparea firelor de execuție. Modificarea priorității | 4 | [Lab2/src/lab2](Lab2/src/lab2) | [Raport_Lab2_PCD_Cornos_Spranceana.docx](Lab2/Raport_Lab2_PCD_Cornos_Spranceana.docx) |
 
 ## Rulare
 
 Este necesar Java 17 sau o versiune mai nouă.
 
 ```sh
-./Lab1/run.sh
+./Lab1/run.sh   # lucrarea nr. 1
+./Lab2/run.sh   # lucrarea nr. 2
 ```
