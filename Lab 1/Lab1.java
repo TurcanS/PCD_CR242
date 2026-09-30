@@ -13,15 +13,15 @@ public class Main {
 
 		//Main
 		System.out.println(" ");
-		//cnt1 = new Counter1(0, 99, 1, tablou); //Stas
+		cnt1 = new Counter1(0, 99, 1, tablou); //Stas
 		cnt2 = new Counter1(99, 0, -1, tablou); //Stefanita
 		//cnt3 = new Counter1(0, 99, 1, tablou); //Adrian
 
-		//cnt1.start();
-		//cnt1.setName("Unu");
+    cnt1.setName("Unu");
+    cnt1.start();
+    cnt2.setName("Doi");
 		cnt2.start();
-		cnt2.setName("Doi");
-		//cnt3.start();
+    //cnt3.start();
 		//cnt3.setName("Trei");
 
 	}
@@ -43,11 +43,11 @@ class Counter1 extends Thread {
 		//[s]umele [n]umerelor [p]are două câte două începând căutarea si sumarea de la [u]ltimul element
 		int snpu1 = 0, snpu2 = 0, snpu = 0;
 		int j = from;
-		while (j >= to){
+    while ((step > 0 && j <= to) || (step < 0 && j >= to)){
 			if (tablou[j] % 2 == 0){
 				snpu1 = j;
 				j += step;
-				if (j <= 0) { break; }
+				if ((step > 0 && j > to) || (step < 0 && j < to)){ break; }
 				do {
 					if (tablou[j] % 2 == 0){
 						snpu2 = j;
@@ -56,11 +56,11 @@ class Counter1 extends Thread {
 						break;
 					}
 					j += step;
-					if (j <= 0) { break; }
+					if ((step > 0 && j > to) || (step < 0 && j < to)) { break; }
 				} while (true);
 			}
 			j += step;
-			if (j <= 0) { break; }
+			if ((step > 0 && j > to) || (step < 0 && j < to)) { break; }
 		}
 
 
