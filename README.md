@@ -18,6 +18,7 @@ Universitatea Tehnică a Moldovei, FCIM
 | 2 | Gruparea firelor de execuție. Modificarea priorității | 4 | [Lab2/src/lab2](Lab2/src/lab2) | [Raport_Lab2_PCD_Cornos_Spranceana.docx](Lab2/Raport_Lab2_PCD_Cornos_Spranceana.docx) |
 | 3 | Sincronizarea firelor de execuție prin metodele clasei Thread | 4 | [Lab3/src/lab3](Lab3/src/lab3) | [Raport_Lab3_PCD_Cornos_Spranceana.docx](Lab3/Raport_Lab3_PCD_Cornos_Spranceana.docx) |
 | 4 | Sincronizarea thread-urilor în Java (producător–consumator) | 4 | [Lab4/src/lab4](Lab4/src/lab4) | [Raport_Lab4_PCD_Cornos_Spranceana.docx](Lab4/Raport_Lab4_PCD_Cornos_Spranceana.docx) |
+| 5 | Pool-uri de fire de execuție în Java (producător–consumator) | 4 | [Lab5/src/lab5](Lab5/src/lab5) | [Raport_Lab5_PCD_Cornos_Spranceana.docx](Lab5/Raport_Lab5_PCD_Cornos_Spranceana.docx) |
 
 ## Rulare
 
@@ -28,4 +29,5 @@ Este necesar Java 17 sau o versiune mai nouă.
 ./Lab2/run.sh   # lucrarea nr. 2
 ./Lab3/run.sh   # lucrarea nr. 3
 ./Lab4/run.sh   # lucrarea nr. 4
+./Lab5/run.sh   # lucrarea nr. 5
 ```

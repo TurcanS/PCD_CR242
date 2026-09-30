@@ -1,10 +1,14 @@
-package lab4;
+package lab5;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
 import java.awt.GridLayout;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -18,7 +22,7 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
 /**
- * Lucrarea de laborator nr. 4 (PCD) - Sincronizarea thread-urilor în Java. Problema producător-consumator.
+ * Lucrarea de laborator nr. 5 (PCD) - Pool-uri de fire de execuție în Java. Problema producător-consumator.
  * Varianta 4: X = 3 producători, Y = 2 consumatori, Z = 12 obiecte, D = 11, obiecte: consoane, F = 2.
  */
 public class Main {
@@ -27,6 +31,7 @@ public class Main {
     private static final int Y = 2;  // consumatori
     private static final int Z = 12; // obiecte pentru fiecare consumator
     private static final int D = 11; // dimensiunea depozitului
+    private static final int F = 2;  // obiecte produse de fiecare dată
 
     private static final boolean GUI = !GraphicsEnvironment.isHeadless();
     private static JTextArea zonaJurnal;
@@ -40,37 +45,31 @@ public class Main {
         Consumer<String> jurnal = Main::scrie;
         Depozit depozit = new Depozit(D, jurnal, Main::arataDepozit);
 
-        Consumator[] consumatori = new Consumator[Y];
+        // producătorii produc împreună exact atâtea obiecte câte le trebuie consumatorilor
+        AtomicInteger loturiRamase = new AtomicInteger(Y * Z / F);
+
+        // pool fix: câte un fir pentru fiecare sarcină (X producători + Y consumatori)
+        ExecutorService pool = Executors.newFixedThreadPool(X + Y);
+        long start = System.currentTimeMillis();
         for (int i = 0; i < Y; i++) {
             int nr = i;
-            consumatori[i] = new Consumator("Consumator " + (i + 1), depozit, Z, jurnal, luate -> arataProgres(nr, luate));
+            pool.execute(new Consumator("Consumator " + (i + 1), depozit, Z, jurnal, luate -> arataProgres(nr, luate)));
         }
-        Producator[] producatori = new Producator[X];
-        for (int i = 0; i < X; i++) {
-            producatori[i] = new Producator("Producător " + (i + 1), depozit);
-        }
-
-        for (Consumator c : consumatori) {
-            c.start();
-        }
-        for (Producator p : producatori) {
-            p.start();
+        for (int i = 1; i <= X; i++) {
+            pool.execute(new Producator("Producător " + i, depozit, loturiRamase, jurnal));
         }
 
-        // operațiile continuă până când fiecare consumator este îndestulat
-        for (Consumator c : consumatori) {
-            c.join();
+        pool.shutdown(); // nu se mai primesc sarcini noi; cele trimise se execută până la capăt
+        if (!pool.awaitTermination(60, TimeUnit.SECONDS)) {
+            pool.shutdownNow();
         }
-        for (Producator p : producatori) {
-            p.interrupt();
-        }
-        for (Producator p : producatori) {
-            p.join();
-        }
-        scrie("Toți consumatorii sunt îndestulați, producătorii au fost opriți (" + depozit.rezumat() + ")");
+        scrie("RAPORT FINAL: total produse: " + depozit.produse() + ", total consumate: " + depozit.consumate()
+                + ", timp: " + (System.currentTimeMillis() - start) + " ms");
     }
 
-    private static void scrie(String mesaj) {
+    /** Adaugă în jurnal mesajul, precedat de numele firului din pool care l-a produs. */
+    private static void scrie(String text) {
+        String mesaj = String.format("[%-15s] %s", Thread.currentThread().getName(), text);
         System.out.println(mesaj);
         if (GUI) {
             // componentele Swing se modifică doar din firul de evenimente
@@ -106,7 +105,7 @@ public class Main {
 
     private static void creeazaFereastra() {
         JLabel varianta = new JLabel("Varianta 4:  X = " + X + " producători,  Y = " + Y + " consumatori,  Z = " + Z
-                + " obiecte,  D = " + D + ",  obiecte: consoane,  F = 2");
+                + " obiecte,  D = " + D + ",  obiecte: consoane,  F = " + F + ",  pool fix de " + (X + Y) + " fire");
         varianta.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 13));
         varianta.setBorder(BorderFactory.createEmptyBorder(8, 8, 4, 8));
         varianta.setAlignmentX(0);
@@ -148,7 +147,7 @@ public class Main {
         JLabel studenti = new JLabel("Grupa CR-242, echipa 4: Cornos Ilie (producătorii) și Spranceana Marius (consumatorii)");
         studenti.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
 
-        JFrame fereastra = new JFrame("PCD - Lucrarea de laborator nr. 4 - Varianta 4");
+        JFrame fereastra = new JFrame("PCD - Lucrarea de laborator nr. 5 - Varianta 4");
         fereastra.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         fereastra.setLayout(new BorderLayout(6, 6));
         fereastra.add(sus, BorderLayout.NORTH);
