@@ -95,7 +95,7 @@ public class Main {
         zonaTablou.setLineWrap(true);
         zonaTablou.setWrapStyleWord(true);
         zonaTablou.setFont(MONO);
-        zonaTablou.setBorder(BorderFactory.createTitledBorder("Tabloul mas[] (100 de valori între 1 și 100)"));
+        zonaTablou.setBorder(BorderFactory.createTitledBorder("Tabloul mas (100 de valori între 1 și 100)"));
 
         panouFire = new JPanel(new GridLayout(2, 2, 6, 6));
 
