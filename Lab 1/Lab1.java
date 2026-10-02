@@ -85,37 +85,5 @@ class Counter1 extends Thread {
         break;
       }
     }
-
-    // Ce face exemplu:
-    // 1. Cat timp pozitia nu a ajus la sfarsit executa pasul 2.
-    // 2. Daca valoarea din tablou <=50 asigneaza pozitia valoarii in s1,
-    // incrementeaza pozitia cu un step si executa pasul 3.
-    // Daca >50 incrementeaza pozitia cu un step, inapoi la pasul 1.
-    // 3. Daca valoarea din tablou <=50 asigneaza pozitia valoarii in s2 si sumeaza
-    // s1+s2 in s. Printeaza valorile, incrementeaza pozitia cu un step, executa
-    // pasul 2.
-    // Daca >50 incrementeaza pozitia cu un step, inapoi la pasul 3.
-
-    /*
-     * int s1=0, s2=0, s=0;
-     * int i=from;
-     * while(i <= to){
-     * if(tablou[i]<=50) {
-     * s1=i;
-     * i+=step;
-     * do {
-     * if(tablou[i]<=50) {
-     * s2=i;
-     * s=s1+s2;
-     * System.out.println(getName()+" S1:" + s1+ " S2:" + s2 +" Suma:"+s+ " Ts1:"+
-     * tablou[s1]+" Ts2:"+tablou[s2] );
-     * break;
-     * }
-     * i+=step;
-     * } while(true);
-     * }
-     * i+=step;
-     * }
-     */
   }
 }
