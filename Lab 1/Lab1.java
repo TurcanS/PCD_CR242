@@ -4,7 +4,7 @@ public class Main {
   public static void main(String args[]) {
     Counter1 cnt1, cnt2, cnt3; // cnt 1 Stas, cnt 2 Stefanita, cnt 3 Adrian
     int[] tablou = new int[100]; // Tablou de 100 numbere
-    String studenti = "Turcan Stanislav, Stefanita David, Spinu Adrian";
+    String studenti = "CR-242 Grup 1: Turcan Stanislav, Stefanita David, Spinu Adrian";
     // Fill tablou cu numere random si printeazal
     System.out.print("Numerele din tablou: ");
     for (int i = 0; i < 100; i++) {
