@@ -2,7 +2,7 @@ import java.util.*;
 
 public class Main {
   public static void main(String args[]) {
-    Counter1 cnt1, cnt2, cnt3; // cnt 1 Stas, cnt 2 Stefanita, cnt 3 Adrian
+    Counter1 cnt1_1, cnt1_2, cnt2_1, cnt2_2, cnt3; // cnt 1 Stas, cnt 2 Stefanita, cnt 3 Adrian
     int[] tablou = new int[100]; // Tablou de 100 numbere
     String studenti = "CR-242 Grup 1: Turcan Stanislav, Stefanita David, Spinu Adrian";
     // Fill tablou cu numere random si printeazal
@@ -14,20 +14,28 @@ public class Main {
 
     // Main
     System.out.println(" ");
-    cnt1 = new Counter1(0, 99, 1, tablou); // Stas
-    cnt2 = new Counter1(99, 0, -1, tablou); // Stefanita
+    cnt1_1 = new Counter1(0, 49, 1, tablou); // Stas
+    cnt1_2 = new Counter1(50, 99, 1, tablou);
+    cnt2_1 = new Counter1(99, 50, -1, tablou); // Stefanita
+    cnt2_2 = new Counter1(49, 0, -1, tablou);
     // cnt3 = new Counter1(0, 99, 1, tablou); //Adrian
 
-    cnt1.setName("Unu");
-    cnt1.start();
-    cnt2.setName("Doi");
-    cnt2.start();
+    cnt1_1.setName("1.1:");
+    cnt1_1.start();
+    cnt1_2.setName("1.2:");
+    cnt1_2.start();
+    cnt2_1.setName("2.1:");
+    cnt2_1.start();
+    cnt2_2.setName("2.2:");
+    cnt2_2.start();
     // cnt3.start();
     // cnt3.setName("Trei");
 
     try {
-      cnt1.join();
-      cnt2.join();
+      cnt1_1.join();
+      cnt1_2.join();
+      cnt2_1.join();
+      cnt2_2.join();
 
       for (int i = 0; i < studenti.length(); i++) {
         System.out.print(studenti.charAt(i));
