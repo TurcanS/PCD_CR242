@@ -23,6 +23,23 @@ public class Main {
     fir2.start();
     fir3.start();
     fir4.start();
+
+    try {
+      fir1.join();
+      fir2.join();
+      fir3.join();
+      fir4.join();
+
+      for (int i = 0; i < studenti.length(); i++) {
+        System.out.print(studenti.charAt(i));
+        Thread.sleep(100);
+      }
+
+      System.out.println();
+
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
   }
 }
 
