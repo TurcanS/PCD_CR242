@@ -9,6 +9,7 @@ public class Main {
       tablou[i] = (int) (Math.random() * 99);
       System.out.print(tablou[i] + " ");
     }
+    System.out.println("");
     Stefanita fir1, fir2;
     TurcanS fir3, fir4;
     fir1 = new Stefanita(tablou, 0, true, true);
