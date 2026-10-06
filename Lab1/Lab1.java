@@ -102,19 +102,19 @@ class Sum2 extends Thread
     this.step = step;
   }
   public void run() {
-    int s1=0, s2=0, s=0;
+    int sum1=0, sum2=0, sum=0;
     int f=from;
     while(f!=to){
       if(tablou[f] % 2 == 1){
-        s1=f;
+        sum1=f;
         f += step;
         if((f > to && step > 0) || (f < to && step < 0)) break;
       
         do{
           if(tablou[f] % 2 == 1){
-            s2=f;
-            s = tablou[s1] + tablou[s2];
-            System.out.println(getName()+": S1=" + tablou[s1] + "  ,  S2=" + tablou[s2] + "  ,  S=" + s);
+            sum2=f;
+            sum = tablou[sum1] + tablou[sum2];
+            System.out.println(getName()+": S1=" + tablou[sum1] + "  ,  S2=" + tablou[sum2] + "  ,  S=" + sum);
             break;
           }
           f += step;
