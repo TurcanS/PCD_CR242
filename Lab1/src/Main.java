@@ -37,7 +37,7 @@ public final class Main {
         // si metoda getThreads(), apoi activeaza urmatoarele trei linii:
         // Student2Threads student2 = new Student2Threads(mas, output);
         // Collections.addAll(threads, student2.getThreads());
-        // students += ", Numele Prenumele colegului";
+        // students += ", Ganenco Bogdan";
 
         output.accept("Fire de calcul: " + threads.size()
                 + (threads.size() == 2 ? " (partea studentului 1; echipa necesita 4).\n" : ".\n"));
