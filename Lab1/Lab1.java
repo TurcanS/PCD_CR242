@@ -2,7 +2,8 @@
 public class Lab1 {
   public static void main(String args[])
   {
-    Sum  Th1,Th2, Th3,Th4;
+    Sum1  Th1_1,Th1_2;
+    Sum2  Th2_1,Th2_2;
 
     int[] tablou = new int[101];
     for(int i=0; i<100; i++){
@@ -11,30 +12,31 @@ public class Lab1 {
     }
     System.out.println(" ");
 
-    Th1 = new Sum(tablou, 0, 49, 1);
-    Th1.setName("Th1");
-    Th1.start();
+    Th1_1 = new Sum1(tablou, 0, 99, 1);
+    Th1_1.setName("Th1.1");
+    Th1_1.start();
 
-    Th2 = new Sum(tablou, 50, 99, 1);
-    Th2.setName("Th2");
-    Th2.start();
 
-    Th3 = new Sum(tablou, 99, 50, -1);
-    Th3.setName("Th3");
-    Th3.start();
+    Th1_2 = new Sum1(tablou, 99, 0, -1);
+    Th1_2.setName("Th1.2");
+    Th1_2.start();
 
-    Th4 = new Sum(tablou, 49, 0, -1);
-    Th4.setName("Th4");
-    Th4.start();
+    Th2_1 = new Sum2(tablou, 0, 99, 1);
+    Th2_1.setName("Th2.1");
+    Th2_1.start();
+
+    Th2_2 = new Sum2(tablou, 99, 0, -1);
+    Th2_2.setName("Th2.2");
+    Th2_2.start();
 
 
   String Nume = "Grup-3 Vleju Dumitru Cemirtan Edgar";
 
 try {
-    Th1.join();
-    Th2.join();
-    Th3.join();
-    Th4.join();
+    Th1_1.join();
+    Th1_2.join();
+    Th2_1.join();
+    Th2_2.join();
 
     for (int i = 0; i < Nume.length(); i++) {
         System.out.print(Nume.charAt(i));
@@ -50,12 +52,12 @@ try {
 
 
 
-class Sum extends Thread
+class Sum1 extends Thread
 {
   private int from, to, step;
   private int[] tablou;
 
-  public Sum( int[] tablou, int from, int to, int step) {
+  public Sum1( int[] tablou, int from, int to, int step) {
     this.from = from;
     this.to = to;
     this.tablou = tablou;
@@ -88,4 +90,40 @@ class Sum extends Thread
   }
 }
 
+class Sum2 extends Thread
+{
+  private int from, to, step;
+  private int[] tablou;
 
+  public Sum2( int[] tablou, int from, int to, int step) {
+    this.from = from;
+    this.to = to;
+    this.tablou = tablou;
+    this.step = step;
+  }
+  public void run() {
+    int s1=0, s2=0, s=0;
+    int f=from;
+    while(f!=to){
+      if(tablou[f] % 2 == 1){
+        s1=f;
+        f += step;
+        if((f > to && step > 0) || (f < to && step < 0)) break;
+      
+        do{
+          if(tablou[f] % 2 == 1){
+            s2=f;
+            s = tablou[s1] + tablou[s2];
+            System.out.println(getName()+": S1=" + tablou[s1] + "  ,  S2=" + tablou[s2] + "  ,  S=" + s);
+            break;
+          }
+          f += step;
+      if((f > to && step > 0) || (f < to && step < 0)) break;
+        }while(true);
+      }
+      f += step;
+      if((f > to && step > 0) || (f < to && step < 0)) break;
+
+    }
+  }
+}
