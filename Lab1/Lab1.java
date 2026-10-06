@@ -64,9 +64,7 @@ class Sum1 extends Thread
     this.step = step;
   }
   public void run() {
-    int suma1=0;
-    int suma2=0;
-    int suma=0;
+    int suma1=0,suma2=0,suma=0;
     int i=from;
     while(i!=to){
       if(tablou[i] % 2 == 1){
