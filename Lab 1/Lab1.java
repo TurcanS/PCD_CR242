@@ -14,24 +14,24 @@ public class Main {
 
     // Main
     System.out.println(" ");
-    cnt1_1 = new Counter1(0, 49, 1, tablou); // Stas
-    cnt1_2 = new Counter1(50, 99, 1, tablou);
-    cnt2_1 = new Counter1(99, 50, -1, tablou); // Stefanita
-    cnt2_2 = new Counter1(49, 0, -1, tablou);
-    cnt3_1 = new Counter1(99, 50, -1, tablou, 1); // Adrian
-    cnt3_2 = new Counter1(49, 0, -1, tablou, 1);
+    cnt1_1 = new Counter1(0, 99, 1, tablou); // Stas
+    cnt1_2 = new Counter1(99, 0, -1, tablou);
+    cnt2_1 = new Counter1(0, 99, 1, tablou); // Stefanita
+    cnt2_2 = new Counter1(99, 0, -1, tablou);
+    cnt3_1 = new Counter1(0, 99, 1, tablou, 1); // Adrian
+    cnt3_2 = new Counter1(99, 0, -1, tablou, 1);
 
-    cnt1_1.setName("1.1:");
+    cnt1_1.setName("Stas cond1:");
     cnt1_1.start();
-    cnt1_2.setName("1.2:");
+    cnt1_2.setName("Stas cond2:");
     cnt1_2.start();
-    cnt2_1.setName("2.1:");
+    cnt2_1.setName("Stefanita cond1:");
     cnt2_1.start();
-    cnt2_2.setName("2.2:");
+    cnt2_2.setName("Stefanita cond2:");
     cnt2_2.start();
-    cnt3_1.setName("3.1:");
+    cnt3_1.setName("Adrian cond1:");
     cnt3_1.start();
-    cnt3_2.setName("3.2:");
+    cnt3_2.setName("Adrian cond2:");
     cnt3_2.start();
 
     try {
