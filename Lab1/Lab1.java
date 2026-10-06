@@ -70,14 +70,14 @@ class Sum1 extends Thread
     int i=from;
     while(i!=to){
       if(tablou[i] % 2 == 1){
-        s1=i;
+        suma1=i;
         i += step;
         if((i < to && step < 0) || (i > to && step > 0)) break;
       
         do{
           if(tablou[i] % 2 == 1){
-            s2=i;
-            s = tablou[s1] + tablou[s2];
+            suma2=i;
+            suma = tablou[suma1] + tablou[suma2];
             System.out.println(getName()+": Suma1=" + tablou[suma1] + " ;  Suma2=" + tablou[suma2] + ";  Suma=" + suma + ".");
             break;
           }
