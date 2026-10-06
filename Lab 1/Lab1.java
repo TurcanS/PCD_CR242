@@ -76,7 +76,7 @@ class Counter1 extends Thread {
 
   public void run() {
     // sumele numerelor pare/impare două câte două
-    int sumaNR1 = 0, sumaNR2 = 0, sumaNR = 0;
+    int sumaNR1 = 0, sumaNR2 = 0, sumaNR = 0, sumaFinal =0 ;
     int j = from;
     while ((step > 0 && j <= to) || (step < 0 && j >= to)) {
       if (tablou[j] % 2 == rest) {
@@ -89,7 +89,8 @@ class Counter1 extends Thread {
           if (tablou[j] % 2 == rest) {
             sumaNR2 = j;
             sumaNR = tablou[sumaNR1] + tablou[sumaNR2];
-            System.out.println(getName() + " poz val 1: " + sumaNR1 + " " + tablou[sumaNR1] + ", poz val 2: " + sumaNR2 + " " + tablou[sumaNR2] + ", suma: " + sumaNR);
+            sumaFinal+= sumaNR;
+            System.out.println(getName() + " poz val 1: " + sumaNR1 + " " + tablou[sumaNR1] + ", poz val 2: " + sumaNR2 + " " + tablou[sumaNR2] + ", suma: " + sumaNR + ", totala: "+ sumaFinal);
             break;
           }
           j += step;
