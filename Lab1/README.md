@@ -1,10 +1,21 @@
-# Lab 1 - Varianta 6
+# Laboratorul 1 — Varianta 6
 
-Andrei Toma si Ganenco Bogdan, grupa CR-242. Laboratoarele grupei sunt pe ramura `Grup-6`.
+Andrei Toma și Ganenco Bogdan, grupa CR-242.
 
-## Compilare si pornire
+În partea mea, `Student1Threads`, folosesc două fire cu `Runnable`: primul
+parcurge pozițiile impare de la început, iar al doilea de la sfârșit.
+Înmulțesc numerele două câte două și adun produsele. Pozițiile sunt indicii
+Java `1, 3, ..., 99`, numerotați de la 0.
 
-Este necesar JDK 17 sau mai nou. Din folderul repository-ului:
+Eu deplasez indicele cu `+4` sau `-4`. Bogdan, în `Student2Threads`, calculează
+indicii folosind numărul perechii. Implementările diferă, dar suma finală
+este aceeași pentru același tablou.
+
+Avem un singur `Main`, un tablou comun de 100 de valori aleatorii între 1 și
+100 și patru fire de calcul. După `join()`, programul afișează ambele nume,
+caracter cu caracter, la 100 ms. `LabWindow` afișează rezultatele grafic.
+
+Pentru pornire, cu JDK 17 sau mai nou, din folderul repository-ului:
 
 ```powershell
 cd Lab1
@@ -12,24 +23,5 @@ javac -encoding UTF-8 -d out src/*.java
 java -cp out Main
 ```
 
-Pentru rulare doar in consola:
-
-```powershell
-java -cp out Main --console
-```
-
-## Program
-
-- `Student1Threads.java`: cele doua fire ale lui Andrei Toma, prin `Runnable`.
-- `Student2Threads.java`: cele doua fire ale lui Ganenco Bogdan, prin `Runnable`.
-- `Main.java`: genereaza tabloul comun de 100 de numere intre 1 si 100,
-  porneste firele si le asteapta prin `join()`.
-- `LabWindow.java`: interfata grafica Swing.
-
-Pozitiile sunt numerotate de la 0: indicii impari sunt `1, 3, ..., 99`.
-Th1 calculeaza `mas[1]*mas[3] + mas[5]*mas[7] + ... + mas[97]*mas[99]`.
-Th2 parcurge aceleasi perechi invers, de la `(99,97)` pana la `(3,1)`.
-Fiecare fir afiseaza produsele, sumele partiale si suma finala.
-Firul principal afiseaza numele studentilor caracter cu caracter, la 100 ms.
-
-Toate cele patru fire citesc acelasi tablou mas, fara regenerare sau copiere.
+Partea mea a fost încărcată pe `Grup-6`; partea lui Bogdan a fost integrată
+prin Pull Request din `Grup-6-lab1-bogdan` către `Grup-6`.
