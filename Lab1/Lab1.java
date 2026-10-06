@@ -64,27 +64,29 @@ class Sum1 extends Thread
     this.step = step;
   }
   public void run() {
-    int s1=0, s2=0, s=0;
+    int suma1=0;
+    int suma2=0;
+    int suma=0;
     int i=from;
     while(i!=to){
       if(tablou[i] % 2 == 1){
         s1=i;
         i += step;
-        if((i > to && step > 0) || (i < to && step < 0)) break;
+        if((i < to && step < 0) || (i > to && step > 0)) break;
       
         do{
           if(tablou[i] % 2 == 1){
             s2=i;
             s = tablou[s1] + tablou[s2];
-            System.out.println(getName()+": Sum1=" + tablou[s1] + "  ,  Sum2=" + tablou[s2] + "  ,  Sum=" + s);
+            System.out.println(getName()+": Suma1=" + tablou[suma1] + " ;  Suma2=" + tablou[suma2] + ";  Suma=" + suma + ".");
             break;
           }
           i += step;
-      if((i > to && step > 0) || (i < to && step < 0)) break;
+      if((i < to && step < 0) || (i > to && step > 0)) break;
         }while(true);
       }
       i += step;
-      if((i > to && step > 0) || (i < to && step < 0)) break;
+      if((i < to && step < 0) || (i > to && step > 0)) break;
 
     }
   }
