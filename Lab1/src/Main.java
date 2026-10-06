@@ -33,11 +33,9 @@ public final class Main {
         Collections.addAll(threads, student1.getThreads());
         String students = student1Name;
 
-        // COLEGUL: adauga propria clasa Student2Threads cu acelasi constructor
-        // si metoda getThreads(), apoi activeaza urmatoarele trei linii:
-        // Student2Threads student2 = new Student2Threads(mas, output);
-        // Collections.addAll(threads, student2.getThreads());
-        // students += ", Ganenco Bogdan";
+        Student2Threads student2 = new Student2Threads(mas, output);
+        Collections.addAll(threads, student2.getThreads());
+        students += ", Ganenco Bogdan";
 
         output.accept("Fire de calcul: " + threads.size()
                 + (threads.size() == 2 ? " (partea studentului 1; echipa necesita 4).\n" : ".\n"));
