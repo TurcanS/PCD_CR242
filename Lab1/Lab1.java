@@ -2,8 +2,8 @@
 public class Lab1 {
   public static void main(String args[])
   {
-    Sum2 Th1,Th2;
-    Sum1 Th11,Th22;
+    Sum2 Th3,Th4;
+    Sum1 Th1,Th2;
 
     int[] tablou = new int[101];
     for(int i=0; i<100; i++){
@@ -12,39 +12,36 @@ public class Lab1 {
     }
     System.out.println(" ");
 
-    Th2 = new Sum2(tablou, 99, 0, -1);
+    Th1 = new Sum1(tablou, 0, 49, 1);
+    Th1.setName("Th1");
+    Th1.start();
+
+    Th2 = new Sum1(tablou, 50, 99, 1);
     Th2.setName("Th2");
     Th2.start();
 
-    Th11 = new Sum1(tablou, 0, 99, 1);
-    Th11.setName("Th1");
-    Th11.start();
+    Th3 = new Sum2(tablou, 99, 50, -1);
+    Th3.setName("Th3");
+    Th3.start();
 
-    Th22 = new Sum1(tablou, 99, 0, -1);
-    Th22.setName("Th2");
-    Th22.start();
+    Th4 = new Sum2(tablou, 49, 0, -1);
+    Th4.setName("Th4");
+    Th4.start();
 
-  String Student1 = "Vleju Dumitru";
-  String Student2 = "Cemirtan Edgar";
+
+  String Nume = "Grup-3 Vleju Dumitru Cemirtan Edgar";
 
 try {
+    Th1.join();
     Th2.join();
-    Th11.join();
-    Th22.join();
+    Th3.join();
+    Th4.join();
 
-    for (int i = 0; i < Student1.length(); i++) {
-        System.out.print(Student1.charAt(i));
+    for (int i = 0; i < Nume.length(); i++) {
+        System.out.print(Nume.charAt(i));
         Thread.sleep(100);
     }
 
-    System.out.println();
-
-    for (int i = 0; i < Student2.length(); i++) {
-        System.out.print(Student2.charAt(i));
-        Thread.sleep(100);
-    }
-
-    System.out.println();
 
     } catch (InterruptedException e) {
       e.printStackTrace();
@@ -72,6 +69,7 @@ class Sum1 extends Thread
       if(tablou[i] % 2 == 1){
         s1=i;
         i += step;
+      if(i > to) break;
         do{
           if(tablou[i] % 2 == 1){
             s2=i;
@@ -80,9 +78,11 @@ class Sum1 extends Thread
             break;
           }
           i += step;
+          if(i > to) break;
         }while(true);
       }
       i += step;
+      if(i > to) break;
 
     }
   }
@@ -106,6 +106,7 @@ class Sum2 extends Thread
       if(tablou[i] % 2 == 1){
         s1=i;
         i += step;
+        if(i < to) break;
         do{
           if(tablou[i] % 2 == 1){
             s2=i;
@@ -114,10 +115,12 @@ class Sum2 extends Thread
             break;
           }
           i += step;
+          if(i < to) break;
         }while(true);
       }
       i += step;
 
+      if(i < to) break;
     }
   }
 }
