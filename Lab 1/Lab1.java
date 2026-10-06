@@ -2,11 +2,10 @@ import java.util.*;
 
 public class Main {
   public static void main(String args[]) {
-    Counter1 cnt1_1, cnt1_2, cnt2_1, cnt2_2, cnt3_1, cnt3_2; // cnt 1 Stas, cnt 2 Stefanita, cnt 3 Adrian
-    int[] tablou = new int[100]; // Tablou de 100 numbere
+    Counter1 cnt1_1, cnt1_2, cnt2_1, cnt2_2, cnt3_1, cnt3_2;
+    int[] tablou = new int[100];
     String studenti = "CR-242 Grup 1: Turcan Stanislav, Stefanita David, Spinu Adrian";
 
-    // Fill tablou cu numere random si printeazal
     System.out.print("Numerele din tablou: ");
     for (int i = 0; i < 100; i++) {
       tablou[i] = (int) (Math.random() * 99);
@@ -76,24 +75,21 @@ class Counter1 extends Thread {
   }
 
   public void run() {
-
-    // [s]umele [n]umerelor [p]are/impare două câte două începând căutarea si sumarea de la
-    // ultimul element
-    int snp1 = 0, snp2 = 0, snp = 0;
+    // sumele numerelor pare/impare două câte două
+    int sumaNR1 = 0, sumaNR2 = 0, sumaNR = 0;
     int j = from;
     while ((step > 0 && j <= to) || (step < 0 && j >= to)) {
       if (tablou[j] % 2 == rest) {
-        snp1 = j;
+        sumaNR1 = j;
         j += step;
         if ((step > 0 && j > to) || (step < 0 && j < to)) {
           break;
         }
         do {
           if (tablou[j] % 2 == rest) {
-            snp2 = j;
-            snp = tablou[snp1] + tablou[snp2];
-            System.out.println(getName() + " poz val 1: " + snp1 + " " + tablou[snp1] + ", poz val 2: " + snp2 + " "
-                    + tablou[snp2] + ", suma: " + snp);
+            sumaNR2 = j;
+            sumaNR = tablou[sumaNR1] + tablou[sumaNR2];
+            System.out.println(getName() + " poz val 1: " + sumaNR1 + " " + tablou[sumaNR1] + ", poz val 2: " + sumaNR2 + " " + tablou[sumaNR2] + ", suma: " + sumaNR);
             break;
           }
           j += step;
