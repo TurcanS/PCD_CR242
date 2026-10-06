@@ -1,0 +1,123 @@
+public class SumaProdusePare implements Runnable {
+
+    private int[] mas;
+
+    // Cele două fire de execuție
+    private Thread th1;
+    private Thread th2;
+
+    // Variabile pentru sincronizare
+    private int pozitie = 98;
+    private boolean terminat = false;
+
+    // Rezultatul final
+    private long sumaProduse = 0;
+
+    public SumaProdusePare(int[] mas) {
+        this.mas = mas;
+
+        // Primul fir
+        th1 = new Thread(this, "Th1");
+
+        // Al doilea fir
+        th2 = new Thread(this, "Th2");
+
+        // Pornim cele două fire
+        th1.start();
+        th2.start();
+    }
+    
+    public void run() {
+
+        String nume = Thread.currentThread().getName();
+
+        while (true) {
+
+            synchronized (this) {
+
+                // Dacă toate perechile au fost prelucrate,
+                // firul se oprește
+                if (pozitie < 0 || terminat) {
+                    terminat = true;
+                    notifyAll();
+                    break;
+                }
+
+                /*
+                 * Luăm câte două poziții pare, începând
+                 * de la ultimul element.
+                 *
+                 * Pentru un tablou de 100 elemente:
+                 * ultima poziție este 99.
+                 *
+                 * Pozițiile pare sunt:
+                 * 98, 96, 94, ..., 0
+                 */
+
+                int p1 = pozitie;
+                int p2 = pozitie - 2;
+
+                // Dacă nu mai există două poziții pare
+                if (p2 < 0) {
+                    terminat = true;
+                    notifyAll();
+                    break;
+                }
+
+                // Calculăm produsul valorilor
+                // aflate pe pozițiile pare
+                long produs = (long) mas[p1] * mas[p2];
+
+                // Adăugăm produsul la suma totală
+                sumaProduse += produs;
+
+                System.out.println(
+                        nume +
+                                " -> pozițiile " + p1 + " și " + p2 +
+                                " -> valori " + mas[p1] + " * " + mas[p2] +
+                                " = " + produs +
+                                " -> suma = " + sumaProduse
+                );
+
+                // Trecem la următoarea pereche
+                pozitie -= 4;
+
+                /*
+                 * Condiție de sincronizare:
+                 * după ce un thread a prelucrat o pereche,
+                 * permitem celuilalt thread să continue.
+                 */
+                notifyAll();
+
+                try {
+                    if (pozitie >= 0) {
+                        wait();
+                    }
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    break;
+                }
+            }
+        }
+    }
+
+    /*
+     * Metodă care poate fi apelată de clasa principală
+     * a proiectului echipei pentru a aștepta terminarea
+     * celor două thread-uri.
+     */
+    public void asteaptaTerminarea() {
+
+        try {
+            th1.join();
+            th2.join();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+
+        System.out.println(
+                "Suma finală a produselor = " + sumaProduse
+        );
+    }
+}
+
