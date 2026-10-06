@@ -102,28 +102,21 @@ class Sum2 extends Thread
     this.step = step;
   }
   public void run() {
-    int sum1=0, sum2=0, sum=0;
-    int f=from;
-    while(f!=to){
-      if(tablou[f] % 2 == 1){
-        sum1=f;
-        f += step;
-        if((f > to && step > 0) || (f < to && step < 0)) break;
-      
-        do{
-          if(tablou[f] % 2 == 1){
-            sum2=f;
-            sum = tablou[sum1] + tablou[sum2];
-            System.out.println(getName()+": S1=" + tablou[sum1] + "  ,  S2=" + tablou[sum2] + "  ,  S=" + sum);
-            break;
-          }
-          f += step;
-      if((f > to && step > 0) || (f < to && step < 0)) break;
-        }while(true);
+    int[] arr = new int[101];
+    int k = 0;
+    int sum;
+    for(int i =from;(i < to && step > 0) || (i > to && step < 0);i+=step){
+      if(tablou[i] %2 == 1) {
+        arr[k] = tablou[i];
+        k++;
       }
-      f += step;
-      if((f > to && step > 0) || (f < to && step < 0)) break;
+    }
+    if(k %2 == 0) k--;
 
+    for(int i =0;i<k;i+=2){
+      sum = arr[i] + arr[i+1];
+      System.out.println(getName()+": Sum1=" + arr[i]+ " ;  Sum2=" + arr[i+1] + ";  Sum=" + sum + ".");
     }
   }
+  
 }
