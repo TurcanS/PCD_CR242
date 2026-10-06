@@ -1,179 +1,466 @@
-import java.util.*;
+
+import java.util.Random;
 
 public class Main {
-    public static void main(String args[]) {
+
+    public static void main(String[] args) {
+
+        // ==========================================
+        // INFORMATII DESPRE STUDENTI
+        // ==========================================
 
         String grupa = "CR-242";
 
         String[] studenti = {
                 "Spînu Veniamin",
-                "Demenco Octavian",
+                "Demenco Octavian"
         };
 
-        System.out.println("Grupa: " + grupa);
-        System.out.println("Studenti:");
 
-        for (String student : studenti) {
-            System.out.println(student);
+        // ==========================================
+        // CREAREA TABLOULUI COMUN
+        // 100 DE NUMERE INTRE 1 SI 100
+        // ==========================================
+
+        int[] mas = new int[100];
+
+        Random random = new Random();
+
+        System.out.println("TABLOUL mas[]:");
+        System.out.println();
+
+        for (int i = 0; i < mas.length; i++) {
+
+            // Numere intre 1 si 100
+            mas[i] = random.nextInt(100) + 1;
+
+            System.out.print(mas[i] + " ");
         }
 
         System.out.println();
+        System.out.println();
 
-        // CREAREA TABLOULUI DE 100 DE NUMERE
-        int[] tablou = new int[100];
 
-        System.out.println("Numerele din tablou:");
+        // ==========================================
+        // MEMBRUL 1 AL ECHIPEI
+        // ==========================================
 
-        for (int i = 0; i < 100; i++) {
-            tablou[i] = (int) (Math.random() * 99);
-            System.out.print(tablou[i] + " ");
-        }
+        Membru1 membru1 = new Membru1(mas);
 
-        System.out.println("\n");
 
-        // SARCINA 1 Suma produselor numerelor aflate pe
-        // pozitii pare, doua cate doua,
-        // incepand cu primul element
+        // ==========================================
+        // MEMBRUL 2 AL ECHIPEI
+        // ==========================================
 
-        Counter1 fir1 = new Counter1(
-                0,       // incepe de la primul element
-                99,      // pana la ultimul element
-                1,       // merge inainte
-                tablou,
-                1        // numarul sarcinii
-        );
+        Membru2 membru2 = new Membru2(mas);
 
-        fir1.setName("Sarcina 1: ");
-        fir1.start();
 
-        // SARCINA 2 Suma produselor numerelor aflate pe
-        // pozitii pare, doua cate doua,
-        // incepand cu ultimul element
+        // ==========================================
+        // CREAREA CELOR 4 FIRE
+        // ==========================================
 
-        Counter1 fir2 = new Counter1(
-                99,      // incepe de la ultimul element
-                0,       // pana la primul element
-                -1,      // merge inapoi
-                tablou,
-                2        // numarul sarcinii
-        );
+        Thread th1Membru1 =
+                new Thread(
+                        membru1::conditia1,
+                        "Th1 - Membru 1"
+                );
 
-        fir2.setName("Sarcina 2: ");
-        fir2.start();
+        Thread th2Membru1 =
+                new Thread(
+                        membru1::conditia2,
+                        "Th2 - Membru 1"
+                );
+
+
+        Thread th1Membru2 =
+                new Thread(
+                        membru2::conditia1,
+                        "Th1 - Membru 2"
+                );
+
+        Thread th2Membru2 =
+                new Thread(
+                        membru2::conditia2,
+                        "Th2 - Membru 2"
+                );
+
+
+        // ==========================================
+        // PORNIREA CELOR 4 FIRE
+        // ==========================================
+
+        System.out.println("=================================");
+        System.out.println("PORNIREA FIRELOR");
+        System.out.println("=================================");
+
+        th1Membru1.start();
+        th2Membru1.start();
+
+        th1Membru2.start();
+        th2Membru2.start();
+
+
+        // ==========================================
+        // FIRUL PRINCIPAL ASTEAPTA
+        // TERMINAREA CELOR 4 FIRE
+        // ==========================================
 
         try {
-            fir1.join();
-            fir2.join();
+
+            th1Membru1.join();
+            th2Membru1.join();
+
+            th1Membru2.join();
+            th2Membru2.join();
 
         } catch (InterruptedException e) {
+
             e.printStackTrace();
         }
 
+
+        // ==========================================
+        // DUPA TERMINAREA CELOR 4 FIRE
+        // AFISAM STUDENTII
+        // LITERA CU LITERA LA 100 ms
+        // ==========================================
+
         System.out.println();
+        System.out.println("=================================");
+        System.out.println("INFORMATII DESPRE STUDENTI");
+        System.out.println("=================================");
 
-        System.out.println("REZULTATE FINALE");
-        System.out.println(
-                "Suma sarcina 1 = " + fir1.getSuma()
-        );
+        afisareLenta("Grupa: " + grupa);
 
-        System.out.println(
-                "Suma sarcina 2 = " + fir2.getSuma()
-        );
+        afisareLenta("Studenti:");
 
+        for (String student : studenti) {
+
+            afisareLenta(student);
+        }
+
+        System.out.println("=================================");
+        System.out.println("PROGRAM TERMINAT");
+        System.out.println("=================================");
+    }
+
+
+    // ==========================================
+    // AFISARE LITERA CU LITERA
+    // CU PAUZA DE 100 ms
+    // ==========================================
+
+    public static void afisareLenta(String text) {
+
+        for (int i = 0; i < text.length(); i++) {
+
+            System.out.print(text.charAt(i));
+
+            try {
+
+                Thread.sleep(100);
+
+            } catch (InterruptedException e) {
+
+                e.printStackTrace();
+            }
+        }
+
+        System.out.println();
     }
 }
 
-class Counter1 extends Thread {
-    private int from;
-    private int to;
-    private int step;
-    private int[] tablou;
-    private int sarcina;
 
-    private int suma;
+// ==================================================
+// CLASA MEMBRUL 1
+// ==================================================
 
-    public Counter1(
-            int from,
-            int to,
-            int step,
-            int[] tablou,
-            int sarcina) {
+class Membru1 {
 
-        this.from = from;
-        this.to = to;
-        this.step = step;
-        this.tablou = tablou;
-        this.sarcina = sarcina;
+    private int[] mas;
 
-        suma = 0;
+
+    // ==========================================
+    // CONSTRUCTOR
+    // ==========================================
+
+    public Membru1(int[] mas) {
+
+        this.mas = mas;
     }
 
-    public void run() {
 
-        int j = from;
+    // ==========================================
+    // Th1
+    //
+    // CONDITIA 1:
+    //
+    // Sumele produselor numerelor de pe pozitii
+    // pare doua cate doua, incepand cautarea
+    // si sumarea cu primul element
+    // ==========================================
 
-        // Parcurgem tabloul
-        while ((step > 0 && j <= to) ||
-                (step < 0 && j >= to)) {
+    public void conditia1() {
 
-            if (j % 2 == 0) {
+        int suma = 0;
 
-                // Retinem pozitia primului element
-                int primul = j;
+        System.out.println();
+        System.out.println(
+                Thread.currentThread().getName()
+                        + " -> Conditia 1"
+        );
 
-                // Trecem la urmatoarea pozitie
-                j += step;
 
-                // Cautam a doua pozitie para
-                while ((step > 0 && j <= to) ||
-                        (step < 0 && j >= to)) {
+        // Pozitiile pare:
+        //
+        // 0 si 2
+        // 4 si 6
+        // 8 si 10
+        // 12 si 14
+        // etc.
 
-                    if (j % 2 == 0) {
+        for (int i = 0; i <= 96; i += 4) {
 
-                        // Retinem pozitia celui de-al doilea element
-                        int alDoilea = j;
+            int poz1 = i;
+            int poz2 = i + 2;
 
-                        // Calculam produsul valorilor
-                        int produs =
-                                tablou[primul] *
-                                        tablou[alDoilea];
 
-                        // Adaugam produsul la suma
-                        suma = suma + produs;
+            // Calculam produsul
+            int produs =
+                    mas[poz1] * mas[poz2];
 
-                        // Afisam perechea
-                        System.out.println(
-                                getName()
-                                        + "pozitii: "
-                                        + primul
-                                        + " si "
-                                        + alDoilea
-                                        + " | valori: "
-                                        + tablou[primul]
-                                        + " * "
-                                        + tablou[alDoilea]
-                                        + " = "
-                                        + produs
-                        );
-                        // Am gasit a doua pozitie para
-                        break;
-                    }
-                    j += step;
-                }
-            }
 
-            j += step;
+            // Adaugam produsul la suma
+            suma = suma + produs;
+
+
+            // Afisam rezultatul
+            System.out.println(
+                    Thread.currentThread().getName()
+                            + " | pozitii: "
+                            + poz1
+                            + " si "
+                            + poz2
+                            + " | valori: "
+                            + mas[poz1]
+                            + " * "
+                            + mas[poz2]
+                            + " = "
+                            + produs
+            );
         }
 
-        // Afisam suma calculata de acest fir
+
+        // Afisam suma
         System.out.println(
-                getName()
-                        + "Suma = "
+                Thread.currentThread().getName()
+                        + " | SUMA = "
                         + suma
         );
     }
 
-    public int getSuma() {
-        return suma;
+
+    // ==========================================
+    // Th2
+    //
+    // CONDITIA 2:
+    //
+    // Sumele produselor numerelor de pe pozitii
+    // pare doua cate doua, incepand cautarea
+    // si sumarea cu ultimul element
+    // ==========================================
+
+    public void conditia2() {
+
+        int suma = 0;
+
+        System.out.println();
+        System.out.println(
+                Thread.currentThread().getName()
+                        + " -> Conditia 2"
+        );
+
+
+        // Pozitiile pare de la sfarsit:
+        //
+        // 98 si 96
+        // 94 si 92
+        // 90 si 88
+        // 86 si 84
+        // etc.
+
+        for (int i = 98; i >= 2; i -= 4) {
+
+            int poz1 = i;
+            int poz2 = i - 2;
+
+
+            // Calculam produsul
+            int produs =
+                    mas[poz1] * mas[poz2];
+
+
+            // Adaugam produsul la suma
+            suma = suma + produs;
+
+
+            // Afisam rezultatul
+            System.out.println(
+                    Thread.currentThread().getName()
+                            + " | pozitii: "
+                            + poz1
+                            + " si "
+                            + poz2
+                            + " | valori: "
+                            + mas[poz1]
+                            + " * "
+                            + mas[poz2]
+                            + " = "
+                            + produs
+            );
+        }
+
+
+        // Afisam suma
+        System.out.println(
+                Thread.currentThread().getName()
+                        + " | SUMA = "
+                        + suma
+        );
     }
 }
+
+
+// ==================================================
+// CLASA MEMBRUL 2
+// ==================================================
+
+class Membru2 {
+
+    private int[] mas;
+
+
+    // ==========================================
+    // CONSTRUCTOR
+    // ==========================================
+
+    public Membru2(int[] mas) {
+
+        this.mas = mas;
+    }
+
+
+    // ==========================================
+    // Th1
+    //
+    // CONDITIA 1:
+    //
+    // Pozitii pare doua cate doua,
+    // incepand de la primul element
+    // ==========================================
+
+    public void conditia1() {
+
+        int suma = 0;
+
+        System.out.println();
+        System.out.println(
+                Thread.currentThread().getName()
+                        + " -> Conditia 1"
+        );
+
+
+        for (int i = 0; i <= 96; i += 4) {
+
+            int poz1 = i;
+            int poz2 = i + 2;
+
+
+            int produs =
+                    mas[poz1] * mas[poz2];
+
+
+            suma = suma + produs;
+
+
+            System.out.println(
+                    Thread.currentThread().getName()
+                            + " | pozitii: "
+                            + poz1
+                            + " si "
+                            + poz2
+                            + " | valori: "
+                            + mas[poz1]
+                            + " * "
+                            + mas[poz2]
+                            + " = "
+                            + produs
+            );
+        }
+
+
+        System.out.println(
+                Thread.currentThread().getName()
+                        + " | SUMA = "
+                        + suma
+        );
+    }
+
+
+    // ==========================================
+    // Th2
+    //
+    // CONDITIA 2:
+    //
+    // Pozitii pare doua cate doua,
+    // incepand de la ultimul element
+    // ==========================================
+
+    public void conditia2() {
+
+        int suma = 0;
+
+        System.out.println();
+        System.out.println(
+                Thread.currentThread().getName()
+                        + " -> Conditia 2"
+        );
+
+
+        for (int i = 98; i >= 2; i -= 4) {
+
+            int poz1 = i;
+            int poz2 = i - 2;
+
+
+            int produs =
+                    mas[poz1] * mas[poz2];
+
+
+            suma = suma + produs;
+
+
+            System.out.println(
+                    Thread.currentThread().getName()
+                            + " | pozitii: "
+                            + poz1
+                            + " si "
+                            + poz2
+                            + " | valori: "
+                            + mas[poz1]
+                            + " * "
+                            + mas[poz2]
+                            + " = "
+                            + produs
+            );
+        }
+
+
+        System.out.println(
+                Thread.currentThread().getName()
+                        + " | SUMA = "
+                        + suma
+        );
+    }
+}
+
