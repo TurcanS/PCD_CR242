@@ -54,5 +54,6 @@ public class Stefanita extends Thread {
 				nr1 = positieNoua(asc, tablou, nr1);
 			}
 		}
+		System.out.println(getName() + " suma totala " + sumTotal);
 	}
 }
