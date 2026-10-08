@@ -28,6 +28,6 @@ class TurcanS extends Thread {
         primPar = -1;
       }
     }
-    System.out.println("Sum Total: " + sumFin);
+    System.out.println("Sum Total " + getName() + ": " + sumFin);
   }
 }
