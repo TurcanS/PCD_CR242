@@ -127,7 +127,10 @@ public class Main {
             System.out.println(
                 "\nToate thread-urile au terminat!");
 
-            System.out.println("\n" + studenti);
+            for (int i = 0; i < studenti.length(); i++) {
+              System.out.print(studenti.charAt(i));
+              Thread.sleep(100);
+            }
 
           } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
