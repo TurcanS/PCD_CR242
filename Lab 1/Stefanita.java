@@ -1,9 +1,9 @@
 public class Stefanita extends Thread {
-	int tablou[];
+	int[] tablou;
 	int poz;
 	boolean asc, pare;
 
-	public Stefanita(int tablou[], int poz, boolean asc, boolean pare) {
+	public Stefanita(int[] tablou, int poz, boolean asc, boolean pare) {
 		this.tablou = tablou;
 		this.poz = poz;
 		this.asc = asc;
