@@ -27,13 +27,13 @@ public class Stefanita extends Thread {
 	}
 
 	private void afiseazaGrup(int[] valori1, int[] valori2) {
-		int suma = (valori1[0] + valori2[0]) + (valori1[1] + valori2[1]);
-
+		int suma1 = (valori1[0] + valori2[0]);
+		int suma2 = (valori1[1] + valori2[1]);
+		int suma = suma1 + suma2;
 		System.out.println(
-				getName() + " "
-				+ "(" + valori1[0] + " + " + valori2[0] + ") + "
-				+ "(" + valori1[1] + " + " + valori2[1] + ") = "
-				+ suma
+			getName() + " " + valori1[0] + " + " + valori2[0] + " = "+ suma1 +
+			"  " + valori1[1] + " + " + valori2[1] + " = " + suma2 + "  "+
+			suma1 + " + " + suma2 + " = "+ suma
 		);
 	}
 
