@@ -28,7 +28,7 @@ class TurcanS implements Runnable {
         sumFin += suma;
 
         System.out.println(Thread.currentThread().getName() + " poz val 1: " + primPar + " " + tablou[primPar]
-            + ", poz val 2: " + pozitie + " " + tablou[pozitie] + ", suma: " + suma);
+            + ", poz val 2 complet: " + pozitie + " " + tablou[pozitie] + ", suma: " + suma);
 
         nrSume++;
 
