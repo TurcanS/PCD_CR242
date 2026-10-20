@@ -30,10 +30,21 @@ public final class Main {
 
         // Toate firele sunt create aici, cu acelasi tablou mas.
         // Clasele studentilor contin doar sarcinile de calcul.
+        // Varianta 6:
+        // Conditia 1: Sumele produselor numerelor de pe pozitii impare doua cate doua,
+        // incepand cautarea si sumarea cu primul element.
+        // Conditia 2: Sumele produselor numerelor de pe pozitii impare doua cate doua,
+        // incepand cautarea si sumarea cu ultimul element.
+        // In program, pozitiile impare sunt indicii Java 1, 3, ..., 99.
+        // Fiecare student realizeaza ambele conditii, prin cate doua fire.
         Thread[] threads = {
+            // Andrei Toma - conditia 1: din fata (invers = false).
             new Thread(new Student1Threads(mas, false, output), "Student1-Th1"),
+            // Andrei Toma - conditia 2: din spate (invers = true).
             new Thread(new Student1Threads(mas, true, output), "Student1-Th2"),
+            // Ganenco Bogdan - conditia 1: din fata (invers = false).
             new Thread(new Student2Threads(mas, false, output), "Student2-Th1"),
+            // Ganenco Bogdan - conditia 2: din spate (invers = true).
             new Thread(new Student2Threads(mas, true, output), "Student2-Th2")
         };
         String students = student1Name + ", Ganenco Bogdan";
