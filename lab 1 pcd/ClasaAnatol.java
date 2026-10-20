@@ -11,7 +11,7 @@ class ClasaAnatol extends Thread {
 
     @Override
     public void run() {
-        String eticheta = "Th" + idFir + " (Anatol)   : ";
+        String eticheta = "TH" + idFir + " (ANATOL)   : ";
         String linie1 = null;
         int suma1 = 0;
 

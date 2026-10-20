@@ -1,5 +1,5 @@
 import java.util.Random;
-//Suma poziţiilor numerelor pare două câte două începând căutarea şi sumarea de laprimul element
+//Suma poziţiilor numerelor pare două câte două începând căutarea şi sumarea de la primul element
 //Suma poziţiilor numerelor pare două câte două începând căutarea şi sumarea de la ultimul element
 // Lab1
 // 1. Clasa lui Cătălin - Folosește bucle FOR și salvează prima poziție
