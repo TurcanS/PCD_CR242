@@ -18,8 +18,6 @@ public class Main {
 			- Th2(5)
 			- Th3(5)
 	*/
-	ThreadGroup sys = Thread.currentThread().getThreadGroup();
-	Thread curr = Thread.currentThread();
-	curr.setPriority(3);
+	new Stefanita().start();
 	}
 }
