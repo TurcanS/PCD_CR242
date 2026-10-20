@@ -18,13 +18,8 @@ public class Main {
 
       JPanel panou = new JPanel(new BorderLayout(10, 10));
 
-      JLabel titlu = new JLabel(
-          "CR-242 - Grup 1",
-          SwingConstants.CENTER);
-      titlu.setFont(new Font("Arial", Font.BOLD, 20));
-
+      JLabel titlu = new JLabel("CR-242 - Grup 1", SwingConstants.CENTER);
       JButton start = new JButton("START");
-      start.setFont(new Font("Arial", Font.BOLD, 16));
 
       JTextArea rezultat = new JTextArea();
       rezultat.setEditable(false);
@@ -34,8 +29,7 @@ public class Main {
 
       JScrollPane scroll = new JScrollPane(rezultat);
 
-      panou.setBorder(BorderFactory.createEmptyBorder(
-          10, 10, 10, 10));
+      panou.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
       panou.add(titlu, BorderLayout.NORTH);
       panou.add(scroll, BorderLayout.CENTER);
@@ -97,8 +91,10 @@ public class Main {
             Stefanita fir1 = new Stefanita(tablou, 0, true, true);
             Stefanita fir2 = new Stefanita(tablou, 99, false, true);
 
-            TurcanS fir3 = new TurcanS(0, 99, 1, tablou);
-            TurcanS fir4 = new TurcanS(99, 0, -1, tablou);
+            TurcanS run1 = new TurcanS(0, 99, 1, tablou);
+            Thread fir3 = new Thread(run1);
+            TurcanS run2 = new TurcanS(99, 0, -1, tablou);
+            Thread fir4 = new Thread(run2);
 
             Adrian fir5 = new Adrian(0, 99, 1, tablou);
             Adrian fir6 = new Adrian(99, 0, -1, tablou);
@@ -124,8 +120,7 @@ public class Main {
             fir5.join();
             fir6.join();
 
-            System.out.println(
-                "\nToate thread-urile au terminat!");
+            System.out.println("\nToate thread-urile au terminat!");
 
             for (int i = 0; i < studenti.length(); i++) {
               System.out.print(studenti.charAt(i));
@@ -134,13 +129,11 @@ public class Main {
 
           } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
-            System.out.println(
-                "Executia a fost intrerupta.");
+            System.out.println("Executia a fost intrerupta.");
           } finally {
             SwingUtilities.invokeLater(() -> start.setEnabled(true));
           }
         });
-
         executie.start();
       });
     });

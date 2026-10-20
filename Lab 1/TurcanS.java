@@ -1,4 +1,4 @@
-class TurcanS extends Thread {
+class TurcanS implements Runnable {
   int start, stop, pas;
   int tablou[];
 
@@ -27,10 +27,8 @@ class TurcanS extends Thread {
         int suma = tablou[primPar] + tablou[pozitie];
         sumFin += suma;
 
-        System.out.println(
-            getName() + " poz val 1: " + primPar + " "
-                + tablou[primPar] + ", poz val 2: " + pozitie
-                + " " + tablou[pozitie] + ", suma: " + suma);
+        System.out.println(Thread.currentThread().getName() + " poz val 1: " + primPar + " " + tablou[primPar]
+            + ", poz val 2: " + pozitie + " " + tablou[pozitie] + ", suma: " + suma);
 
         nrSume++;
 
@@ -40,8 +38,7 @@ class TurcanS extends Thread {
           int sumaSume = sumaPrecedenta + suma;
 
           System.out.println(
-              getName() + " suma " + (nrSume - 1)
-                  + " + suma " + nrSume + " = " + sumaSume);
+              Thread.currentThread().getName() + " suma " + (nrSume - 1) + " + suma " + nrSume + " = " + sumaSume);
 
           sumaPrecedenta = -1;
         }
@@ -49,6 +46,6 @@ class TurcanS extends Thread {
         primPar = -1;
       }
     }
-    System.out.println("Suma totală " + getName() + ": " + sumFin);
+    System.out.println("Suma totală " + Thread.currentThread().getName() + ": " + sumFin);
   }
 }
