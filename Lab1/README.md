@@ -2,8 +2,8 @@
 
 Andrei Toma și Ganenco Bogdan, grupa CR-242.
 
-În partea mea, `Student1Threads`, folosesc două fire cu `Runnable`: primul
-parcurge pozițiile impare de la început, iar al doilea de la sfârșit.
+În partea mea, `Student1Threads`, implementez calculul prin `Runnable`.
+Sensul primit ca parametru stabilește parcurgerea de la început sau de la sfârșit.
 Înmulțesc numerele două câte două și adun produsele. Pozițiile sunt indicii
 Java `1, 3, ..., 99`, numerotați de la 0.
 
@@ -12,7 +12,9 @@ indicii folosind numărul perechii. Implementările diferă, dar suma finală
 este aceeași pentru același tablou.
 
 Avem un singur `Main`, un tablou comun de 100 de valori aleatorii între 1 și
-100 și patru fire de calcul. După `join()`, programul afișează ambele nume,
+100 și patru fire de calcul, create și pornite în `Main`. Clasele noastre
+conțin doar calculele; fiecare primește tabloul comun, sensul și afișarea.
+După `join()`, programul afișează ambele nume,
 caracter cu caracter, la 100 ms. `LabWindow` afișează rezultatele grafic.
 
 Pentru pornire, cu JDK 17 sau mai nou, din folderul repository-ului:

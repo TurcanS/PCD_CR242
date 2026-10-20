@@ -1,32 +1,24 @@
 import java.util.Objects;
 import java.util.function.Consumer;
 
-/** Partea lui Ganenco Bogdan: doua fire pentru varianta 6. */
+/** Calculul lui Ganenco Bogdan, executat intr-un fir creat de Main. */
 public final class Student2Threads implements Runnable {
     private final int[] mas;
+    private final boolean invers;
     private final Consumer<String> output;
-    private final Thread th1;
-    private final Thread th2;
 
-    public Student2Threads(int[] mas, Consumer<String> output) {
+    public Student2Threads(int[] mas, boolean invers, Consumer<String> output) {
         this.mas = Objects.requireNonNull(mas, "mas");
+        this.invers = invers;
         this.output = Objects.requireNonNull(output, "output");
         if (mas.length != 100) {
             throw new IllegalArgumentException("Tabloul trebuie sa aiba 100 de elemente.");
         }
-        // Ambele fire ruleaza acelasi Runnable, citind acelasi tablou comun.
-        th1 = new Thread(this, "Student2-Th1");
-        th2 = new Thread(this, "Student2-Th2");
-    }
-
-    public Thread[] getThreads() {
-        return new Thread[] { th1, th2 };
     }
 
     @Override
     public void run() {
         Thread current = Thread.currentThread();
-        boolean invers = current == th2;
         // Variabila locala: fiecare fir are propria suma.
         long suma = 0;
         for (int pereche = 0; pereche < 25; pereche++) {

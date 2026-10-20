@@ -1,7 +1,4 @@
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 import java.util.Random;
 import java.util.function.Consumer;
 
@@ -31,17 +28,17 @@ public final class Main {
                 + System.lineSeparator());
         output.accept("Pozitii impare = indici Java 1, 3, ..., 99.\n");
 
-        Student1Threads student1 = new Student1Threads(mas, output);
-        List<Thread> threads = new ArrayList<>();
-        Collections.addAll(threads, student1.getThreads());
-        String students = student1Name;
+        // Toate firele sunt create aici, cu acelasi tablou mas.
+        // Clasele studentilor contin doar sarcinile de calcul.
+        Thread[] threads = {
+            new Thread(new Student1Threads(mas, false, output), "Student1-Th1"),
+            new Thread(new Student1Threads(mas, true, output), "Student1-Th2"),
+            new Thread(new Student2Threads(mas, false, output), "Student2-Th1"),
+            new Thread(new Student2Threads(mas, true, output), "Student2-Th2")
+        };
+        String students = student1Name + ", Ganenco Bogdan";
 
-        Student2Threads student2 = new Student2Threads(mas, output);
-        Collections.addAll(threads, student2.getThreads());
-        students += ", Ganenco Bogdan";
-
-        output.accept("Fire de calcul: " + threads.size()
-                + (threads.size() == 2 ? " (partea studentului 1; echipa necesita 4).\n" : ".\n"));
+        output.accept("Fire de calcul: " + threads.length + ".\n");
 
         // Pornim TOATE firele inainte de a astepta vreunul.
         for (Thread thread : threads) {
