@@ -55,7 +55,7 @@ public class Vlad{
                     if (cnt == 4) {
                         long p1 = (long) g[0] * g[1];
                         long p2 = (long) g[2] * g[3];
-                        print(name + ": pare: " + g[0] + " " + g[1] + " " + g[2] + " " + g[3]
+                        print(name + ": pare, pare, pare: " + g[0] + " " + g[1] + " " + g[2] + " " + g[3]
                                 + " | " + g[0] + "*" + g[1] + "=" + p1
                                 + " | " + g[2] + "*" + g[3] + "=" + p2
                                 + " | suma = " + (p1 + p2));
