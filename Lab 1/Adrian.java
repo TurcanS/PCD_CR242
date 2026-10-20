@@ -68,7 +68,7 @@ public class Adrian {
                         found = 3;
                         break;
                     default:
-                        // x este al 4-lea numar par: calculam totul intr-un rand
+                        // x 
                         print(name + " | " + a + " " + b + " " + c + " " + x
                                 + " | " + a + "*" + b + "=" + (a * b)
                                 + " | " + c + "*" + x + "=" + (c * x)
