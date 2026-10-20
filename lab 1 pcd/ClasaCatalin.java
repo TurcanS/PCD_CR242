@@ -9,7 +9,7 @@ class ClasaCatalin extends Thread {
 
     @Override
     public void run() {
-        String eticheta = "Th" + idFir + " (Cătălin) : ";
+        String eticheta = "Th" + idFir + " (CATALIN) : ";
         int primaPozitie = -1;
         String linie1 = null; // prima adunare din grup
         int suma1 = 0;
