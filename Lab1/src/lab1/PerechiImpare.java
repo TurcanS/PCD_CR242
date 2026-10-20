@@ -37,7 +37,7 @@ final class PerechiImpare {
             }
             total += prima + i;
             adunate++;
-            out.accept(String.format("poz %2d + %2d = %3d   (valori %3d, %3d)   total = %3d",
+            out.accept(String.format("pozzzz %2d + %2d = %3d   (valori %3d, %3d)   total = %3d",
                     prima, i, prima + i, mas[prima], mas[i], total));
             prima = -1;
             Thread.sleep(PAUZA_MS);
