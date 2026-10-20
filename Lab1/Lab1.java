@@ -1,16 +1,6 @@
 
-/*
- Sumele numerelor impare două cate două
-începând căutarea şi sumarea de la primul
-element
+//Sumele numerelor impare două cate două începând căutarea şi sumarea de la primul/ultimul element
 
-Sumele numerelor impare două cate două
-începând căutarea şi sumarea de la ultimul
-element
-
-
-
-*/
 import javax.swing.*;
 import java.awt.*;
 
@@ -18,7 +8,7 @@ public class Lab1 {
 
   private static JTextArea output;
   private static JButton runButton;
-    
+
   public static void main(String[] args) {
     SwingUtilities.invokeLater(Lab1::createInterface);
   }
@@ -29,7 +19,7 @@ public class Lab1 {
     frame.setSize(850, 600);
     frame.setMinimumSize(new Dimension(650, 450));
     frame.setLocationRelativeTo(null);
-    
+
     JPanel mainPanel = new JPanel(new BorderLayout(12, 12));
     mainPanel.setBackground(new Color(25, 25, 25));
     mainPanel.setBorder(BorderFactory.createEmptyBorder(18, 18, 18, 18));
@@ -210,9 +200,9 @@ class Sum1 extends Thread {
             k++;
             suma = tablou[suma1] + tablou[suma2];
 
-            Lab1.log(getName() + ": Suma1=" +
-                tablou[suma1] + " ; Suma2=" +
-                tablou[suma2] + "; Suma=" +
+            Lab1.log(getName() + ": Summa1=" +
+                tablou[suma1] + " ; Summa2=" +
+                tablou[suma2] + "; Summa=" +
                 suma + ".\n");
 
             sum_t += suma;
@@ -283,7 +273,7 @@ class Sum2 implements Runnable{
       sum_t += sum;
 
       if (i % 4 == 0 && i != 0) {
-        Lab1.log(Thread.currentThread().getName() + "Suma Suma totala: " + sum_t + ".\n");
+        Lab1.log(Thread.currentThread().getName() + " Suma totala: " + sum_t + ".\n");
         sum_t = 0;
       }
     }
