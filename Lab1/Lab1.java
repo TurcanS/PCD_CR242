@@ -1,4 +1,16 @@
 
+/*
+ Sumele numerelor impare două cate două
+începând căutarea şi sumarea de la primul
+element
+
+Sumele numerelor impare două cate două
+începând căutarea şi sumarea de la ultimul
+element
+
+
+
+*/
 import javax.swing.*;
 import java.awt.*;
 
@@ -6,7 +18,7 @@ public class Lab1 {
 
   private static JTextArea output;
   private static JButton runButton;
-
+    
   public static void main(String[] args) {
     SwingUtilities.invokeLater(Lab1::createInterface);
   }
@@ -17,7 +29,7 @@ public class Lab1 {
     frame.setSize(850, 600);
     frame.setMinimumSize(new Dimension(650, 450));
     frame.setLocationRelativeTo(null);
-
+    
     JPanel mainPanel = new JPanel(new BorderLayout(12, 12));
     mainPanel.setBackground(new Color(25, 25, 25));
     mainPanel.setBorder(BorderFactory.createEmptyBorder(18, 18, 18, 18));
