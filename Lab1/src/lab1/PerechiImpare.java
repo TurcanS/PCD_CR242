@@ -20,6 +20,7 @@ final class PerechiImpare {
      */
     static void cauta(int[] mas, int from, int step, Consumer<String> out) throws InterruptedException {
         int prima = -1; // poziția primului număr impar din perechea curentă
+        int total = 0;  // suma tuturor sumelor găsite de acest fir până acum
         for (int i = from; i >= 0 && i < mas.length; i += step) {
             if (mas[i] % 2 == 0) {
                 continue;
@@ -28,10 +29,12 @@ final class PerechiImpare {
                 prima = i;
                 continue;
             }
-            out.accept(String.format("poz %2d + %2d = %3d   (valori %3d, %3d)",
-                    prima, i, prima + i, mas[prima], mas[i]));
+            total += prima + i;
+            out.accept(String.format("poz %2d + %2d = %3d   (valori %3d, %3d)   total = %4d",
+                    prima, i, prima + i, mas[prima], mas[i], total));
             prima = -1;
             Thread.sleep(PAUZA_MS);
         }
+        out.accept(String.format("SUMA TOTALĂ = %d", total));
     }
 }
