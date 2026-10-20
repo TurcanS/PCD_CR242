@@ -283,7 +283,7 @@ class Sum2 implements Runnable{
       sum_t += sum;
 
       if (i % 4 == 0 && i != 0) {
-        Lab1.log(Thread.currentThread().getName() + " Suma totala: " + sum_t + ".\n");
+        Lab1.log(Thread.currentThread().getName() + "Suma Suma totala: " + sum_t + ".\n");
         sum_t = 0;
       }
     }
