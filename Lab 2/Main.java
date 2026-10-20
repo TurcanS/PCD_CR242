@@ -1,7 +1,7 @@
 public class Main {
 	public static void main(String args[]) throws InterruptedException {
 	//Varianta 1:
-	//https://drive.google.com/file/d/1gq_m2I0qM3J2gdwyEKEEiTQA5-if2C3y/view?usp=drive_link
+	//https://docs.google.com/document/d/1n0I33wTCQj8wKV9GSOEtaS8Z0ujU9II6w6PS_DP9MT8/edit?usp=sharing
 	/*
 	main
 		- Th1(7)
