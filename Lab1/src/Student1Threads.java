@@ -29,7 +29,7 @@ public final class Student1Threads implements Runnable {
             long produs = (long) mas[i] * mas[j];
             suma += produs;
             output.accept(String.format(
-                    "%s: mas[%d]=%d * mas[%d]=%d => produs=%d; suma=%d%n",
+                    "%s: mas[%d]=%d * mas[%d]=%d => produs=%dd; suma=%d%nn",
                     nume, i, mas[i], j, mas[j], produs, suma));
         }
         output.accept(nume + ": suma finala = " + suma + System.lineSeparator());
