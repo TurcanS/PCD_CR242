@@ -41,7 +41,7 @@ class Adrian extends Thread {
                     int sumaSume = sumaPrecedenta + suma;
 
                     System.out.println(
-                            getName() + " suma " + (nrSume - 1)
+                            getName() + " summa " + (nrSume - 1)
                                     + " + suma " + nrSume + " = " + sumaSume);
 
                     sumaPrecedenta = -1;
