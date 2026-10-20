@@ -1,4 +1,5 @@
 // 2. ClasaAnatol - Folosește bucle WHILE, vectori temporari și flag-uri
+
 class ClasaAnatol extends Thread {
     private int idFir;
     private int[] date;
