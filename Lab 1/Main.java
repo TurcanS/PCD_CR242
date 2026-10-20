@@ -99,7 +99,7 @@ public class Main {
             Adrian fir5 = new Adrian(0, 99, 1, tablou);
             Adrian fir6 = new Adrian(99, 0, -1, tablou);
 
-            fir1.setName("Stefanita cresc");
+            fir1.setName("Stefanita cresc modificat");
             fir2.setName("Stefanita desc");
             fir3.setName("Stas Cresc");
             fir4.setName("Stas Desc");
