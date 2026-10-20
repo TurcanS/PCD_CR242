@@ -3,13 +3,11 @@ package lab1;
 import java.awt.BorderLayout;
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
-import java.awt.GridLayout;
 import java.util.Random;
 import java.util.function.Consumer;
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
@@ -29,7 +27,7 @@ public class Main {
     private static final Font MONO = new Font(Font.MONOSPACED, Font.PLAIN, 13);
 
     private static final boolean GUI = !GraphicsEnvironment.isHeadless();
-    private static JPanel panouFire;
+    private static JTextArea zonaFire;
     private static JLabel etichetaStudenti;
 
     public static void main(String[] args) throws Exception {
@@ -49,9 +47,6 @@ public class Main {
         SpranceanaMarius spranceana = new SpranceanaMarius(mas,
                 iesire("Spranceana Marius - Th1 (de la primul element)"),
                 iesire("Spranceana Marius - Th2 (de la ultimul element)"));
-        if (GUI) {
-            SwingUtilities.invokeLater(panouFire::revalidate);
-        }
 
         cornos.start();
         spranceana.start();
@@ -71,21 +66,15 @@ public class Main {
         System.out.println();
     }
 
-    /** Creează destinația în care un fir își scrie rezultatele: consola și, dacă există, un panou din fereastră. */
+    /** Creează destinația în care un fir își scrie rezultatele: consola și, dacă există, coloana comună din fereastră. */
     private static Consumer<String> iesire(String titlu) {
-        if (!GUI) {
-            return linie -> System.out.println(Thread.currentThread().getName() + ": " + linie);
-        }
-        JTextArea zona = new JTextArea();
-        zona.setEditable(false);
-        zona.setFont(MONO);
-        JScrollPane derulare = new JScrollPane(zona);
-        derulare.setBorder(BorderFactory.createTitledBorder(titlu));
-        SwingUtilities.invokeLater(() -> panouFire.add(derulare));
         return linie -> {
-            System.out.println(Thread.currentThread().getName() + ": " + linie);
-            // componentele Swing se modifică doar din firul de evenimente
-            SwingUtilities.invokeLater(() -> zona.append(linie + "\n"));
+            String mesaj = String.format("%-16s %s", Thread.currentThread().getName() + ":", linie);
+            System.out.println(mesaj);
+            if (GUI) {
+                // componentele Swing se modifică doar din firul de evenimente
+                SwingUtilities.invokeLater(() -> zonaFire.append(mesaj + "\n"));
+            }
         };
     }
 
@@ -97,7 +86,12 @@ public class Main {
         zonaTablou.setFont(MONO);
         zonaTablou.setBorder(BorderFactory.createTitledBorder("Tabloul mas (100 de valori între 1 și 100)"));
 
-        panouFire = new JPanel(new GridLayout(2, 2, 6, 6));
+        zonaFire = new JTextArea();
+        zonaFire.setEditable(false);
+        zonaFire.setFont(MONO);
+        JScrollPane panouFire = new JScrollPane(zonaFire);
+        panouFire.setBorder(BorderFactory.createTitledBorder(
+                "Rezultatele celor 4 fire (Cornos Th1, Th2 și Spranceana Th1, Th2) în ordinea execuției"));
 
         etichetaStudenti = new JLabel(" ");
         etichetaStudenti.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 14));
