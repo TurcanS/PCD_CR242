@@ -1,3 +1,6 @@
+import javax.swing.*;
+import java.io.*;
+
 public class Turcan extends Thread {
 
   public Turcan(ThreadGroup g, String name) {
@@ -11,6 +14,20 @@ public class Turcan extends Thread {
   }
 
   public static void main(String[] args) {
+    JTextArea area = new JTextArea();
+    area.setEditable(false);
+    JFrame frame = new JFrame("Turcan Stanislav");
+    frame.add(new JScrollPane(area));
+    frame.setSize(700, 400);
+    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    frame.setVisible(true);
+
+    System.setOut(new PrintStream(new OutputStream() {
+      public void write(int b) {
+        area.append(String.valueOf((char) b));
+      }
+    }, true));
+
     ThreadGroup sys = Thread.currentThread().getThreadGroup();
 
     Thread curr = Thread.currentThread();
@@ -23,7 +40,7 @@ public class Turcan extends Thread {
     ThreadGroup g2 = new ThreadGroup("G2");
     g2.setMaxPriority(Thread.MAX_PRIORITY);
 
-    // G3{Tha(3), Thb(3), Thc(3), Thd(3)}
+    // G3{Tha(2), Thb(2), Thc(2), Thd(2)}
     Thread t = new Turcan(g3, "Tha");
     t.start();
     t = new Turcan(g3, "Thb");
@@ -34,7 +51,7 @@ public class Turcan extends Thread {
     t.start();
     g3.list(); // (2)
 
-    // G2{Th1(4), Th2(5), Th3(5)}
+    // G2{Th1(3), Th2(4), Th3(4)}
     t = new Turcan(g2, "Th1");
     t.setPriority(3);
     t.start();
@@ -46,7 +63,7 @@ public class Turcan extends Thread {
     t.start();
     g2.list(); // (3)
 
-    // Th1(7), Th2(7), ThA(3)
+    // Th1(6), Th2(6), ThA(2)
     t = new Turcan(sys, "Th1");
     t.setPriority(6);
     t.start();
