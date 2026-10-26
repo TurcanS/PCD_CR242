@@ -2,15 +2,8 @@ import javax.swing.*;
 import java.io.*;
 
 public class Turcan extends Thread {
-
   public Turcan(ThreadGroup g, String name) {
     super(g, name);
-  }
-
-  public void run() {
-    System.out.println("Turcan Stanislav: Thread: " + getName()
-        + ", Grupul: " + getThreadGroup().getParent().getName() + "-" + getThreadGroup().getName()
-        + ", Prioritatea:: " + getPriority());
   }
 
   public static void main(String[] args) {
@@ -34,11 +27,8 @@ public class Turcan extends Thread {
     curr.setPriority(2);
 
     ThreadGroup g1 = new ThreadGroup("G1");
-    g1.setMaxPriority(Thread.MAX_PRIORITY);
     ThreadGroup g3 = new ThreadGroup(g1, "G3");
-    g3.setMaxPriority(Thread.MAX_PRIORITY);
     ThreadGroup g2 = new ThreadGroup("G2");
-    g2.setMaxPriority(Thread.MAX_PRIORITY);
 
     // G3{Tha(2), Thb(2), Thc(2), Thd(2)}
     Thread t = new Turcan(g3, "Tha");
@@ -75,5 +65,11 @@ public class Turcan extends Thread {
 
     sys.list(); // (4)
     System.out.println("Start la threaduri: ");
+  }
+
+  public void run() {
+    System.out.println("Turcan Stanislav: Thread: " + getName()
+        + ", Grupul: " + getThreadGroup().getParent().getName() + "-" + getThreadGroup().getName()
+        + ", Prioritatea:: " + getPriority());
   }
 }
