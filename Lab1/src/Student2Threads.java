@@ -28,7 +28,7 @@ public final class Student2Threads implements Runnable {
             long produs = (long) mas[i] * mas[j];
             suma += produs;
             output.accept(String.format(
-                    "%s: mas[%d]=%d * mas[%d]=%d => produs=%dd; suma=%d%nn",
+                    "%s: mas[%d]=%d * mas[%d]=%d => produs=%dn; suma=%d%nn",
                     current.getName(), i, mas[i], j, mas[j], produs, suma));
         }
         output.accept(current.getName() + ": suma finala = " + suma + System.lineSeparator());
