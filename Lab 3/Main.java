@@ -1,5 +1,5 @@
 /*
- * 5 - Extragem "Salut colegi" - Adrian
+ * 5 - Print "Salut colegi" - Adrian
  * 2 -numele - Stas
  * 4- grupa - David
  * 1 - familile - Stas
