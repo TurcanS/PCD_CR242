@@ -1,32 +1,13 @@
-//Varianta 1:
-	//https://drive.google.com/file/d/1ApeDaoUO_xtDDUAm209k39KqPsQiT4bk/view?usp=sharing
-	/*
-	main
-		- Th1(7)
-		- Th2(7)
-		- ThA(3)
-		- G1
-			- G3
-				- Tha(3)
-				- Thb(3)
-				- Thc(3)
-				- Thd(3)
-		-G2
-			- Th1(4)
-			- Th2(5)
-			- Th3(5)
-	*/
 import java.awt.BorderLayout;
-import java.io.IOException;
+import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
+import java.util.concurrent.CountDownLatch;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
-import java.io.ByteArrayOutputStream;
-
 
 public class Stefanita extends Thread {
 
@@ -90,62 +71,72 @@ public class Stefanita extends Thread {
 				}
 			}
 		}, true, StandardCharsets.UTF_8);
+
 		System.setOut(guiOutput);
 
+		CountDownLatch ready = new CountDownLatch(10);
+		CountDownLatch release = new CountDownLatch(1);
+
+		Runnable holdUntilListed = () -> {
+			ready.countDown();
+			try {
+				release.await();
+			} catch (InterruptedException e) {
+				Thread.currentThread().interrupt();
+			}
+		};
 
 		ThreadGroup sys = Thread.currentThread().getThreadGroup();
+		Thread.currentThread().setPriority(4);
+		sys.setDaemon(true);
 
-		Thread curr = Thread.currentThread();
-		curr.setPriority(4);
 
-		Thread t = new Stefanita(sys, "Th1");
+		Thread t = new Stefanita(sys, "Th1", holdUntilListed);
 		t.setPriority(8);
 		t.start();
-		t = new Stefanita(sys, "Th2");
+
+		t = new Stefanita(sys, "Th2", holdUntilListed);
 		t.setPriority(8);
 		t.start();
-		t = new Stefanita(sys, "ThA");
+
+		t = new Stefanita(sys, "ThA", holdUntilListed);
 		t.start();
 
 		ThreadGroup g1 = new ThreadGroup("G1");
 		ThreadGroup g3 = new ThreadGroup(g1, "G3");
 
-		t = new Stefanita(g3, "Tha");
+		t = new Stefanita(g3, "Tha", holdUntilListed);
 		t.start();
-		t = new Stefanita(g3, "Thb");
+
+		t = new Stefanita(g3, "Thb", holdUntilListed);
 		t.start();
-		t = new Stefanita(g3, "Thc");
+
+		t = new Stefanita(g3, "Thc", holdUntilListed);
 		t.start();
-		t = new Stefanita(g3, "Thd");
+
+		t = new Stefanita(g3, "Thd", holdUntilListed);
 		t.start();
 
 		ThreadGroup g2 = new ThreadGroup("G2");
 
-		t = new Stefanita(g2, "Th1");
+		t = new Stefanita(g2, "Th1", holdUntilListed);
 		t.setPriority(5);
 		t.start();
-		t = new Stefanita(g2, "Th2");
-		t.setPriority(6);
-		t.start();
-		t = new Stefanita(g2, "Th3");
+
+		t = new Stefanita(g2, "Th2", holdUntilListed);
 		t.setPriority(6);
 		t.start();
 
+		t = new Stefanita(g2, "Th3", holdUntilListed);
+		t.setPriority(6);
+		t.start();
+
+		ready.await();
 		sys.list();
-
+		release.countDown();
 	}
 
-	public Stefanita(ThreadGroup g, String name) {
-		super(g, name);
+	public Stefanita(ThreadGroup group, String name, Runnable task) {
+		super(group, task, name);
 	}
-
-	public void run() {
-		try{
-			Thread.sleep(100);
-		} catch (InterruptedException e){
-			System.out.println(e);
-		}
-		System.out.println( getName() + " are prioritatea " + getPriority() + ", se afla in grupul " +getThreadGroup().getName() + " care are grupul parinte " + getThreadGroup().getParent().getName() );
-	}
-
 }
