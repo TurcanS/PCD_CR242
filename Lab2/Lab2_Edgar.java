@@ -74,8 +74,7 @@ public class Lab2_Edgar extends JFrame {
     createThread(group, name, Thread.currentThread().getPriority());
     }
 
-    private void createThread(
-            ThreadGroup group, String name, int initialPriority) {
+    private void createThread(ThreadGroup group, String name, int initialPriority) {
 
         Thread thread = new Thread(group, name) {
             @Override
