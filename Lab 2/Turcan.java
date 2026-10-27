@@ -72,8 +72,8 @@ public class Turcan extends Thread {
   public void run() {
     while (true) {
         try {
-          Thread.sleep(100);
-        } catch (InterruptedException e) {
+          System.out.println(currentThread().getName() + " " + currentThread().isDaemon());
+        } catch (Exception e) {
         }
         break;
     }
