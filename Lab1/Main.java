@@ -31,7 +31,6 @@ public class Main {
         sb.append("\n");
         scrie(ta, sb.toString());
 
-        // firele Veniamin (implements Runnable)
         Thread fir1 = new Thread(new Veniamin(t, 0, 99, 1, ta));
         fir1.setName("Veniamin_cresc");
         scrie(ta, "\nS-a creat firul " + fir1.getName() + "\n");
@@ -40,7 +39,6 @@ public class Main {
         fir2.setName("Veniamin_desc");
         scrie(ta, "S-a creat firul " + fir2.getName() + "\n");
 
-        // firele Octavian (extends Thread)
         Octavian fir3 = new Octavian(t, 0, 99, 1, ta);
         fir3.setName("Octavian_cresc");
         scrie(ta, "S-a creat firul " + fir3.getName() + "\n");
@@ -71,7 +69,6 @@ public class Main {
     }
 }
 
-// ---------------- Veniamin: implements Runnable ----------------
 class Veniamin implements Runnable {
     private int[] t;
     private int start;
@@ -116,7 +113,6 @@ class Veniamin implements Runnable {
     }
 }
 
-// ---------------- Octavian: extends Thread ----------------
 class Octavian extends Thread {
     private int[] t;
     private int start;
@@ -143,18 +139,15 @@ class Octavian extends Thread {
             Main.scrie(ta, "\n" + nume + " descrescator:\n");
         }
 
-        // restul impartirii la 4 pe care trebuie sa-l aiba pozitia de start a unei perechi
         int rest = (pas > 0) ? 0 : 2;
         int min = Math.min(start, end);
         int max = Math.max(start, end);
 
-        // se parcurge FIECARE pozitie, una cate una
         for (int i = start; i != end + pas; i += pas) {
             if (i % 4 == rest) {
                 int poz1 = i;
                 int poz2 = i + 2 * pas;
 
-                // a doua pozitie trebuie sa ramana in vector
                 if (poz2 < min || poz2 > max) {
                     continue;
                 }
