@@ -14,9 +14,9 @@ public class Lab2_Edgar extends JFrame {
 
         terminal = new JTextArea();
         terminal.setEditable(false);
-        terminal.setBackground(Color.BLACK);
-        terminal.setForeground(Color.GREEN);
-        terminal.setCaretColor(Color.GREEN);
+        terminal.setBackground(Color.WHITE);
+        terminal.setForeground(Color.BLACK);
+        terminal.setCaretColor(Color.BLACK);
         terminal.setFont(new Font("Monospaced", Font.PLAIN, 14));
 
         JScrollPane scrollPane = new JScrollPane(terminal);
