@@ -18,7 +18,7 @@ public class Lab2_Vleju extends Thread {
   public static void main(String[] args) {
     JTextArea area = new JTextArea();
     area.setEditable(false);
-    JFrame frame = new JFrame("Turcan Stanislav");
+    JFrame frame = new JFrame("Lab2");
     frame.add(new JScrollPane(area));
     frame.setSize(700, 400);
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
