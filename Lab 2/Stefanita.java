@@ -108,9 +108,7 @@ public class Stefanita extends Thread {
 		t.start();
 
 		ThreadGroup g1 = new ThreadGroup("G1");
-		g1.setMaxPriority(Thread.MAX_PRIORITY);
 		ThreadGroup g3 = new ThreadGroup(g1, "G3");
-		g3.setMaxPriority(Thread.MAX_PRIORITY);
 
 		t = new Stefanita(g3, "Tha");
 		t.start();
@@ -122,7 +120,6 @@ public class Stefanita extends Thread {
 		t.start();
 
 		ThreadGroup g2 = new ThreadGroup("G2");
-		g2.setMaxPriority(Thread.MAX_PRIORITY);
 
 		t = new Stefanita(g2, "Th1");
 		t.setPriority(5);
