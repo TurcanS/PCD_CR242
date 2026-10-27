@@ -22,6 +22,7 @@ public class Turcan extends Thread {
     }, true));
 
     ThreadGroup sys = Thread.currentThread().getThreadGroup();
+    sys.setDaemon(true);
 
     Thread curr = Thread.currentThread();
     curr.setPriority(2);
@@ -67,9 +68,14 @@ public class Turcan extends Thread {
     System.out.println("Start la threaduri: ");
   }
 
+  @Override
   public void run() {
-    System.out.println("Turcan Stanislav: Thread: " + getName()
-        + ", Grupul: " + getThreadGroup().getParent().getName() + "-" + getThreadGroup().getName()
-        + ", Prioritatea:: " + getPriority());
+    while (true) {
+        try {
+          Thread.sleep(100);
+        } catch (InterruptedException e) {
+        }
+        break;
+    }
   }
 }
