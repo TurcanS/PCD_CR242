@@ -22,7 +22,7 @@ public class Adrian extends Thread {
         super(g, name);
     }
 
-    // ---------------------------------------------------------- nivel avansat
+
     @Override
     public void run() {
         System.out.println("Adrian: Thread: " + getName()
@@ -40,7 +40,7 @@ public class Adrian extends Thread {
         }
     }
 
-    // --------------------------------------------------------------- structura
+
     static Thread fir(boolean avansat, ThreadGroup g, String nume, int prioritate) {
         Thread t = avansat ? new Adrian(g, nume) : new Thread(g, Adrian::pauza, nume);
         t.setPriority(prioritate);
@@ -85,10 +85,10 @@ public class Adrian extends Thread {
         System.out.println(indent + "Grupa " + g.getName() + " (prioritate maxima " + g.getMaxPriority() + ")");
 
         Thread[] fire = new Thread[g.activeCount() + 10];
-        int n = g.enumerate(fire, false);               // doar firele din aceasta grupa
+        int n = g.enumerate(fire, false);
         for (int i = 0; i < n; i++) {
             if (!fireCreate.contains(fire[i])) {
-                continue;                               // sarim peste firul main si firele interfetei grafice
+                continue;
             }
             numarFire++;
             System.out.println(indent + "    Fir: " + fire[i].getName()
@@ -97,7 +97,7 @@ public class Adrian extends Thread {
         }
 
         ThreadGroup[] subgrupe = new ThreadGroup[g.activeGroupCount() + 5];
-        int m = g.enumerate(subgrupe, false);           // doar subgrupele directe
+        int m = g.enumerate(subgrupe, false);
         for (int i = 0; i < m; i++) {
             if (grupeCreate.contains(subgrupe[i])) {
                 afiseaza(subgrupe[i], indent + "    ");
@@ -110,7 +110,7 @@ public class Adrian extends Thread {
                 ? "===== NIVEL AVANSAT (run() suprascris) ====="
                 : "===== NIVEL MEDIU (run() nesuprascris) =====");
         construieste(avansat, main);
-        Thread.sleep(300);                              // lasam firele sa-si afiseze mesajul din run()
+        Thread.sleep(300);
 
         numarFire = 0;
         System.out.println("--- Enumerarea firelor ---");
@@ -119,11 +119,11 @@ public class Adrian extends Thread {
         System.out.println();
 
         for (Thread t : fireCreate) {
-            t.join();                                   // asteptam terminarea tuturor firelor
+            t.join();
         }
     }
 
-    // ---------------------------------------------------------------------- main
+
     public static void main(String[] args) throws Exception {
         JTextArea area = new JTextArea(35, 80);
         area.setEditable(false);
@@ -136,7 +136,7 @@ public class Adrian extends Thread {
             frame.setVisible(true);
         });
 
-        // tot ce se afiseaza cu System.out ajunge in fereastra (linie cu linie, din orice fir)
+
         System.setOut(new PrintStream(new OutputStream() {
             private final ByteArrayOutputStream linie = new ByteArrayOutputStream();
 
