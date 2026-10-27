@@ -53,7 +53,7 @@ public class Main {
             fir2.join();
             //fir3.join();
             //fir4.join();
-            String name = "Veniamin Spînu și Demenco Octavian si cinevaaa";
+            String name = "Veniamin Spînu și Demenco Octavian si cineva";
             for (int i = 0; i < name.length(); i++) {
                 scrie(ta, String.valueOf(name.charAt(i)));
                 Thread.sleep(100);
