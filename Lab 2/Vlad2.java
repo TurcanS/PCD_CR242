@@ -1,10 +1,10 @@
-import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
+import javax.swing.*;
 
 /**
  * Lucrare de laborator nr. 2 - Gruparea firelor de executie. Prioritatea.
@@ -12,7 +12,7 @@ import java.util.concurrent.CountDownLatch;
  * Main{ ThA(3), G2{Th1(5), Th2(3), Th33(7)}, Th11(3), Th22(3),
  *       G1{ G3{Thaa(2), Thbb(3), Thcc(8), Thdd(3)} } }
  */
-public class Lab2 {
+public class Vlad2 {
 
     // Grupul "main" (radacina structurii) - luat din firul main la pornire
     private static ThreadGroup ROOT;
@@ -114,7 +114,7 @@ public class Lab2 {
         log(advanced ? "=== NIVEL AVANSAT (run() suprascris) ===\n"
                      : "=== NIVEL MEDIU (run() NU este suprascris) ===\n");
 
-        List<Thread> all = build(advanced ? AdvancedThread::new : Lab2::simpleThread);
+        List<Thread> all = build(advanced ? AdvancedThread::new : Vlad2::simpleThread);
 
         try { Thread.sleep(300); } catch (InterruptedException ignored) { }
 
