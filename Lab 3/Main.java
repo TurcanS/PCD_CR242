@@ -44,7 +44,7 @@ public class Main {
 
         ThreadS2 t2 = new ThreadS2(a, "David, Stas, Adrian", null, textArea);
         ThreadS4 t4 = new ThreadS4(t2, "CR-242", textArea);
-        ThreadS1 t1 = new ThreadS1(a, "Stefanita, Curcan, Spinu", textArea, t4);
+        ThreadS1 t1 = new ThreadS1(a, "Stefanita, Turcan, Spinu", textArea, t4);
         ThreadS3 t3 = new ThreadS3(intervalS3, "Programarea Concurenta Distribuita", t1, textArea);
 
         t1.setName("Th1");
