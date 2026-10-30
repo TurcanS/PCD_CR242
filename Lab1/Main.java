@@ -51,7 +51,7 @@ public class Main {
         fir2.start();
         fir3.start();
         fir4.start();
-
+//hihuihjihji
         try {
             fir1.join();
             fir2.join();
