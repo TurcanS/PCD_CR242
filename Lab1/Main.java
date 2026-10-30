@@ -32,19 +32,15 @@ public class Main {
 
         Thread fir1 = new Thread(new Veniamin(t, 0, 99, 1, ta));
         fir1.setName("Veniamin_cresc");
-        scrie(ta, "\nS-a creat firul " + fir1.getName() + "\n");
 
         Thread fir2 = new Thread(new Veniamin(t, 98, 0, -1, ta));
         fir2.setName("Veniamin_desc");
-        scrie(ta, "S-a creat firul " + fir2.getName() + "\n");
 
         Octavian fir3 = new Octavian(t, 0, 99, 1, ta);
         fir3.setName("Octavian_cresc");
-        scrie(ta, "S-a creat firul " + fir3.getName() + "\n");
 
         Octavian fir4 = new Octavian(t, 99, 0, -1, ta);
         fir4.setName("Octavian_desc");
-        scrie(ta, "S-a creat firul " + fir4.getName() + "\n");
 
         fir1.start();
         fir2.start();
@@ -132,11 +128,7 @@ class Octavian extends Thread {
         int suma = 0;
         String nume = getName();
 
-        if (pas > 0) {
-            Main.scrie(ta, "\n" + nume + " crescator:\n");
-        } else {
-            Main.scrie(ta, "\n" + nume + " descrescator:\n");
-        }
+        Main.scrie(ta, "\n" + nume + (pas > 0 ? " crescator:\n" : " descrescator:\n"));
 
         int rest = (pas > 0) ? 0 : 2;
         int min = Math.min(start, end);
