@@ -2,7 +2,6 @@ import javax.swing.*;
 import java.awt.*;
 
 public class Main {
-
     static void scrie(JTextArea ta, String text) {
         SwingUtilities.invokeLater(() -> {
             ta.append(text);
@@ -51,7 +50,7 @@ public class Main {
         fir2.start();
         fir3.start();
         fir4.start();
-//hihuihjihjidwsdasdadasasdaasaa
+
         try {
             fir1.join();
             fir2.join();
