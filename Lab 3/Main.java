@@ -8,256 +8,288 @@
  */
 
 import javax.swing.*;
+import java.io.*;
 
 public class Main {
-    public static void main(String[] args){
+  public static void main(String[] args) {
 
-        JFrame frame = new JFrame("Interfață");
-        frame.setSize(800, 500);
-        JTextArea textArea = new JTextArea();
-        textArea.setEditable(false);
-        JScrollPane scrollPane = new JScrollPane(textArea);
-        frame.add(scrollPane);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setVisible(true);
+    JTextArea area = new JTextArea();
+    area.setEditable(false);
+    JFrame frame = new JFrame("Turcan Stanislav");
+    frame.add(new JScrollPane(area));
+    frame.setSize(700, 400);
+    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    frame.setVisible(true);
 
-        int[] a = new int[100];
-        for(int i=0; i<100; i++) a[i] = i+1;
+    System.setOut(new PrintStream(new OutputStream() {
+      public void write(int b) {
+        area.append(String.valueOf((char) b));
+      }
+    }, true));
 
-        int[] intervalS3 = new int[201];
-        int idx=0; for(int i=100; i<=300; i++) intervalS3[idx++] = i;
+    int[] a = new int[100];
+    for (int i = 0; i < 100; i++)
+      a[i] = i + 1;
 
-        StringBuilder sb = new StringBuilder("Tablou a[100]:\n");
-        for (int i = 0; i < a.length; i++) {
-            sb.append(a[i]).append(' ');
-            if ((i+1)%30==0) sb.append('\n');
-        }
-        sb.append("\n\nInterval S3 [100..300]:\n");
-        for (int i = 0; i < intervalS3.length; i++) {
-            sb.append(intervalS3[i]).append(' ');
-            if ((i+1)%30==0) sb.append('\n');
-        }
-        sb.append("\n\n");
-        String head = sb.toString();
-        System.out.print(head);
-        SwingUtilities.invokeLater(() -> textArea.append(head));
+    int[] intervalS3 = new int[201];
+    int idx = 0;
+    for (int i = 100; i <= 300; i++)
+      intervalS3[idx++] = i;
 
-        ThreadS2 t2 = new ThreadS2(a, "David, Stas, Adrian", null, textArea);
-        ThreadS4 t4 = new ThreadS4(t2, "CR-242", textArea);
-        ThreadS1 t1 = new ThreadS1(a, "Stefanita, Turcan, Spinu", textArea, t4);
-        ThreadS3 t3 = new ThreadS3(intervalS3, "Programarea Concurenta Distribuita", t1, textArea);
-
-        t1.setName("Th1");
-        t2.setName("Th2");
-        t3.setName("Th3");
-        t4.setName("Th4");
-
-        t2.start();
-        t4.start();
-        t1.start();
-        t3.start();
+    StringBuilder sb = new StringBuilder("Tablou a[100]:\n");
+    for (int i = 0; i < a.length; i++) {
+      sb.append(a[i]).append(' ');
+      if ((i + 1) % 30 == 0)
+        sb.append('\n');
     }
+    sb.append("\n\nInterval S3 [100..300]:\n");
+    for (int i = 0; i < intervalS3.length; i++) {
+      sb.append(intervalS3[i]).append(' ');
+      if ((i + 1) % 30 == 0)
+        sb.append('\n');
+    }
+    sb.append("\n\n");
+    String head = sb.toString();
+    System.out.print(head);
+
+    ThreadS1_S2 t2 = new ThreadS1_S2(a, "David, Stas, Adrian", null, 99, 0, -1);
+    ThreadS4 t4 = new ThreadS4(t2, "CR-242");
+    ThreadS1_S2 t1 = new ThreadS1_S2(a, "Stefanita, Turcan, Spinu", t4, 0, 99, 1);
+    ThreadS5 t5 = new ThreadS5("Salut colegi", t2);
+    ThreadS6 t6 = new ThreadS6("Realizarea lucrarri de laborator pentru", t1);
+    ThreadS3 t3 = new ThreadS3(intervalS3, "Programarea Concurenta Distribuita", t6);
+
+    t1.setName("Th1");
+    t2.setName("Th2");
+    t3.setName("Th3");
+    t4.setName("Th4");
+    t5.setName("Th5");
+    t6.setName("Th6");
+
+    t5.start();
+    t2.start();
+    t4.start();
+    t1.start();
+    t6.start();
+    t3.start();
+  }
 }
 
-class ThreadS1 extends Thread {
-    private int[] data;
-    private String prenume;
-    private JTextArea textArea;
-    private ThreadS4 t4;
+class ThreadS1_S2 extends Thread {
+  private int start, stop, pas;
+  private int[] tablou;
+  private String text;
+  private Thread thread;
 
-    public ThreadS1(int[] data, String prenume, JTextArea textArea, ThreadS4 t4) {
-        this.data = data;
-        this.prenume = prenume;
-        this.textArea = textArea;
-        this.t4 = t4;
+  public ThreadS1_S2(int[] tablou, String text, Thread thread, int start, int stop, int pas) {
+    this.start = start;
+    this.stop = stop;
+    this.pas = pas;
+    this.tablou = tablou;
+    this.text = text;
+    this.thread = thread;
+  }
+
+  @Override
+  public void run() {
+    int sumFin = 0;
+    int primPar = -1;
+    int sumaPrecedenta = -1;
+    int nrSume = 0;
+
+    for (int pozitie = start; pozitie != stop + pas; pozitie += pas) {
+      if (tablou[pozitie] % 2 != 0) {
+        continue;
+      }
+
+      if (primPar == -1) {
+        primPar = pozitie;
+      } else {
+        int suma = tablou[primPar] + tablou[pozitie];
+        sumFin += suma;
+
+        System.out.println(Thread.currentThread().getName() + " poz val 1: " + primPar + " " + tablou[primPar]
+            + ", poz val 2 complet: " + pozitie + " " + tablou[pozitie] + ", suma: " + suma);
+
+        nrSume++;
+
+        if (sumaPrecedenta == -1) {
+          sumaPrecedenta = suma;
+        } else {
+          int sumaSume = sumaPrecedenta + suma;
+
+          System.out.println(
+              Thread.currentThread().getName() + " suma " + (nrSume - 1) + " + suma " + nrSume + " = " + sumaSume);
+          sumaPrecedenta = -1;
+        }
+        primPar = -1;
+      }
+    }
+    System.out.println("Suma totală " + Thread.currentThread().getName() + ": " + sumFin);
+
+    if (thread != null) {
+      while (thread.isAlive()) {
+        Thread.yield();
+      }
+    } else {
+      while (true) {
+        try {
+          Thread.sleep(100);
+        } catch (Exception e) {
+          break;
+        }
+      }
     }
 
-    @Override
-    public void run() {
-        int cnt = 0;
-        long sum = 0;
-
-        for(int i = 0; i < data.length - 1; i++){
-            if(data[i] % 2 == 0){
-                for(int j = i + 1; j < data.length; j++){
-                    if(data[j] % 2 == 0){
-                        sum += (long)data[i] + data[j];
-                        cnt++;
-                        break;
-                    }
-                }
-            }
-        }
-
-        String line = "\n"+currentThread().getName()+" - suma totala:"+sum+" ("+cnt+" perechi)";
-        System.out.print(line);
-        SwingUtilities.invokeLater(() -> textArea.append(line));
-
-        while(!t4.done){
-            Thread.onSpinWait();
-        }
-
-        String prefix = "\n"+currentThread().getName()+" - ";
-        System.out.print(prefix);
-        SwingUtilities.invokeLater(() -> textArea.append(prefix));
-        for(char ch : prenume.toCharArray()){
-            System.out.print(ch);
-            char c = ch;
-            SwingUtilities.invokeLater(() -> textArea.append(String.valueOf(c)));
-            try{ Thread.sleep(100);}catch(Exception e){}
-        }
-        System.out.println();
-        SwingUtilities.invokeLater(() -> textArea.append("\n"));
+    System.out.print("\n" + getName() + " - ");
+    for (int i = 0; i < text.length(); i++) {
+      System.out.print(text.charAt(i));
+      try {
+        Thread.sleep(100);
+      } catch (Exception e) {
+      }
     }
-}
-
-class ThreadS2 extends Thread {
-    private int[] a;
-    private String nume;
-    private ThreadS1 t1;
-    private JTextArea textArea;
-
-    public ThreadS2(int[] a, String nume, ThreadS1 t1, JTextArea textArea){
-        this.a = a;
-        this.nume = nume;
-        this.t1 = t1;
-        this.textArea = textArea;
-    }
-
-    @Override
-    public void run() {
-        int cnt = 0;
-        int sum = 0;
-        int firstIdx = -1;
-
-        for(int i = a.length-1; i>=0; i--){
-            if(a[i] % 2 == 0){
-                cnt++;
-                if(cnt == 1){
-                    firstIdx = i;
-                    sum = i;
-                } else if(cnt == 2){
-                    sum += i;
-                    String out = "\n"+currentThread().getName()+" - suma:"+sum+" ("+firstIdx+"+"+i+")\n";
-                    System.out.print(out);
-                    String s = out;
-                    SwingUtilities.invokeLater(() -> textArea.append(s));
-                    cnt = 0;
-                    sum = 0;
-                    try{ Thread.sleep(50);}catch(Exception e){}
-                }
-            }
-        }
-
-        try{ Thread.sleep(6000); }catch(Exception e){}
-
-        String prefix = "\n"+currentThread().getName()+" - ";
-        System.out.print(prefix);
-        SwingUtilities.invokeLater(() -> textArea.append(prefix));
-        for(char ch : nume.toCharArray()){
-            System.out.print(ch);
-            char c = ch;
-            SwingUtilities.invokeLater(() -> textArea.append(String.valueOf(c)));
-            try{ Thread.sleep(100);}catch(Exception e){}
-        }
-        System.out.println();
-        SwingUtilities.invokeLater(() -> textArea.append("\n"));
-    }
+    System.out.println();
+  }
 }
 
 class ThreadS3 extends Thread {
-    private int[] interval;
-    private String disciplina;
-    private ThreadS1 t1;
-    private JTextArea textArea;
+  private int[] interval;
+  private String disciplina;
+  private Thread t6;
 
-    public ThreadS3(int[] interval, String disciplina ,ThreadS1 t1, JTextArea textArea){
-        this.interval = interval;
-        this.disciplina = disciplina;
-        this.t1= t1;
-        this.textArea = textArea;
+  public ThreadS3(int[] interval, String disciplina, Thread t6) {
+    this.interval = interval;
+    this.disciplina = disciplina;
+    this.t6 = t6;
+  }
+
+  @Override
+  public void run() {
+    for (int i = 0; i < interval.length; i++) {
+      if (i % 20 == 0) {
+        String hdr = "\n" + currentThread().getName() + " - ";
+        System.out.print(hdr);
+      }
+      String tok = interval[i] + " ";
+      System.out.print(tok);
+      try {
+        Thread.sleep(5);
+      } catch (Exception e) {
+      }
+    }
+    System.out.println();
+
+    while (t6.isAlive()) {
+      Thread.yield();
     }
 
-    @Override
-    public void run() {
-        for(int i = 0; i < interval.length; i++){
-            if(i % 20 == 0){
-                String hdr = "\n"+currentThread().getName()+" - ";
-                System.out.print(hdr);
-                String h = hdr;
-                SwingUtilities.invokeLater(() -> textArea.append(h));
-            }
-            String tok = interval[i]+" ";
-            System.out.print(tok);
-            String t = tok;
-            SwingUtilities.invokeLater(() -> textArea.append(t));
-            try{ Thread.sleep(5);}catch(Exception e){}
-        }
-        System.out.println();
-        SwingUtilities.invokeLater(() -> textArea.append("\n"));
-
-        while(t1.isAlive()){
-            Thread.yield();
-        }
-
-        String prefix = "\n"+currentThread().getName()+" - ";
-        System.out.print(prefix);
-        SwingUtilities.invokeLater(() -> textArea.append(prefix));
-        for(char ch : disciplina.toCharArray()){
-            System.out.print(ch);
-            char c = ch;
-            SwingUtilities.invokeLater(() -> textArea.append(String.valueOf(c)));
-            try{ Thread.sleep(100);}catch(Exception e){}
-        }
-        System.out.println();
-        SwingUtilities.invokeLater(() -> textArea.append("\n"));
+    System.out.print("\n" + currentThread().getName() + " - ");
+    for (char ch : disciplina.toCharArray()) {
+      System.out.print(ch);
+      try {
+        Thread.sleep(100);
+      } catch (Exception e) {
+      }
     }
+    System.out.println();
+  }
 }
 
 class ThreadS4 extends Thread {
-    private ThreadS2 t2;
-    private String grupa;
-    private JTextArea textArea;
-    public boolean done=false;
+  private ThreadS1_S2 t2;
+  private String grupa;
 
+  public ThreadS4(ThreadS1_S2 t2, String grupa) {
+    this.t2 = t2;
+    this.grupa = grupa;
+  }
 
-    public ThreadS4(ThreadS2 t2, String grupa, JTextArea textArea){
-        this.t2 = t2;
-        this.grupa = grupa;
-        this.textArea = textArea;
+  @Override
+  public void run() {
+    for (int i = 700; i >= 300; i--) {
+
+      String hdr = " " + currentThread().getName() + " - ";
+      System.out.print(hdr);
+
+      String tok = i + " ";
+      System.out.print(tok);
+      try {
+        Thread.sleep(5);
+      } catch (Exception e) {
+      }
+    }
+    System.out.println();
+
+    try {
+      t2.join();
+    } catch (Exception e) {
     }
 
-    @Override
-    public void run() {
-        for(int i=700; i>=300; i--){
-
-            String hdr = " "+currentThread().getName()+" - ";
-            System.out.print(hdr);
-            String h = hdr;
-            SwingUtilities.invokeLater(() -> textArea.append(h));
-
-            String tok = i+" ";
-            System.out.print(tok);
-            String t = tok;
-            SwingUtilities.invokeLater(() -> textArea.append(t));
-            try{ Thread.sleep(5);}catch(Exception e){}
-        }
-        System.out.println();
-        SwingUtilities.invokeLater(() -> textArea.append("\n"));
-
-        try{ t2.join(); }catch(Exception e){}
-
-        String prefix = "\n"+currentThread().getName()+" - ";
-        System.out.print(prefix);
-        SwingUtilities.invokeLater(() -> textArea.append(prefix));
-        for(char ch : grupa.toCharArray()){
-            System.out.print(ch);
-            char c = ch;
-            SwingUtilities.invokeLater(() -> textArea.append(String.valueOf(c)));
-            try{ Thread.sleep(100);}catch(Exception e){}
-        }
-        System.out.println();
-        SwingUtilities.invokeLater(() -> textArea.append("\n"));
-        done=true;
+    System.out.print("\n" + currentThread().getName() + " - ");
+    for (char ch : grupa.toCharArray()) {
+      System.out.print(ch);
+      try {
+        Thread.sleep(100);
+      } catch (Exception e) {
+      }
     }
+    System.out.println();
+  }
+}
+
+class ThreadS5 extends Thread {
+  String text;
+  Thread t2;
+
+  public ThreadS5(String text, Thread t2) {
+    this.text = text;
+    this.t2 = t2;
+  }
+
+  @Override
+  public void run() {
+    try {
+      Thread.sleep(3000);
+    } catch (InterruptedException e) {
+    }
+
+    System.out.print("\n" + getName() + " - ");
+    for (char ch : text.toCharArray()) {
+      System.out.print(ch);
+      try {
+        Thread.sleep(100);
+      } catch (InterruptedException e) {
+      }
+    }
+    t2.interrupt();
+  }
+}
+
+class ThreadS6 extends Thread {
+  String text;
+  Thread t1;
+
+  public ThreadS6(String text, Thread t1) {
+    this.text = text;
+    this.t1 = t1;
+  }
+
+  @Override
+  public void run() {
+    try {
+      t1.join();
+    } catch (InterruptedException e) {
+    }
+
+    System.out.print("\n" + getName() + " - ");
+    for (char ch : text.toCharArray()) {
+      System.out.print(ch);
+      try {
+        Thread.sleep(100);
+      } catch (InterruptedException e) {
+      }
+    }
+    System.out.println();
+  }
 }
