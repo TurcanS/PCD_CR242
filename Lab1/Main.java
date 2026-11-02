@@ -1,34 +1,27 @@
 import javax.swing.*;
-import java.awt.*;
 
 public class Main {
     static void scrie(JTextArea ta, String text) {
         SwingUtilities.invokeLater(() -> {
             ta.append(text);
-            ta.setCaretPosition(ta.getDocument().getLength());
         });
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         JFrame frame = new JFrame("Rezultat");
         JTextArea ta = new JTextArea();
-        ta.setEditable(false);
-        ta.setFont(new Font("Monospaced", Font.PLAIN, 13));
         ta.setLineWrap(true);
-        ta.setWrapStyleWord(true);
         frame.add(new JScrollPane(ta));
         frame.setSize(900, 700);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
 
         int[] t = new int[100];
-        StringBuilder sb = new StringBuilder();
         for (int i = 0; i < 100; i++) {
             t[i] = (int) (Math.random() * 99);
-            sb.append(t[i]).append(" ");
+            scrie(ta, t[i] + " ");
         }
-        sb.append("\n");
-        scrie(ta, sb.toString());
+        scrie(ta, "\n");
 
         Thread fir1 = new Thread(new Veniamin(t, 0, 99, 1, ta));
         fir1.setName("Veniamin_cresc");
@@ -47,19 +40,17 @@ public class Main {
         fir3.start();
         fir4.start();
 
-        try {
-            fir1.join();
-            fir2.join();
-            fir3.join();
-            fir4.join();
-            String name = "Veniamin Spînu și Demenco Octavian";
-            scrie(ta, "\n");
-            for (int i = 0; i < name.length(); i++) {
-                scrie(ta, String.valueOf(name.charAt(i)));
-                Thread.sleep(100);
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        fir1.join();
+        fir2.join();
+        fir3.join();
+        fir4.join();
+
+        String name = "Veniamin Spînu și Demenco Octavian";
+        scrie(ta, "\n");
+
+        for (int i = 0; i < name.length(); i++) {
+            scrie(ta, String.valueOf(name.charAt(i)));
+            Thread.sleep(100);
         }
     }
 }
@@ -128,7 +119,7 @@ class Octavian extends Thread {
         int suma = 0;
         String nume = getName();
 
-        Main.scrie(ta, "\n" + nume + (pas > 0 ? " crescator:\n" : " descrescator:\n"));
+        Main.scrie(ta, "\n" + nume + " creat:\n");
 
         int rest = (pas > 0) ? 0 : 2;
         int min = Math.min(start, end);
@@ -146,9 +137,7 @@ class Octavian extends Thread {
                 int produs = t[poz1] * t[poz2];
                 suma += produs;
 
-                String linie = "\n" + nume + " pozitii: " + poz1 + " si " + poz2
-                        + " valori: " + t[poz1] + " * " + t[poz2] + " = " + produs + "\n";
-                Main.scrie(ta, linie);
+                Main.scrie(ta, "\n" + nume + " pozitii: " + poz1 + " si " + poz2 + " valori: " + t[poz1] + " * " + t[poz2] + " = " + produs + "\n");
             }
         }
 
