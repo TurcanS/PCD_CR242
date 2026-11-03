@@ -245,7 +245,7 @@ class ThreadS5 extends Thread {
   @Override
   public void run() {
     try {
-      Thread.sleep(5000);
+      Thread.sleep(3500);
     } catch (InterruptedException e) {
     }
 
