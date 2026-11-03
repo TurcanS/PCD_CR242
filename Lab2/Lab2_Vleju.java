@@ -42,13 +42,10 @@ public class Lab2_Vleju extends Thread {
     t[2] = new Lab2_Vleju(GM, "Th3");
     t[2].start();
 
-    GM.list();
-
     // GN
 
     t[3] = new Lab2_Vleju(GN, "ThA");
     t[3].start();
-    GN.list();
 
     // GH
 
@@ -66,7 +63,6 @@ public class Lab2_Vleju extends Thread {
     t[7] = new Lab2_Vleju(GH, "Thd");
     t[7].start();
 
-    GH.list();
     // Main
 
     t[8] = new Lab2_Vleju(sys, "Th2");
