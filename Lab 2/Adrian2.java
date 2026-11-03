@@ -16,7 +16,7 @@ import java.util.List;
  * Nivel avansat : clasa Worker suprascrie run(): firul isi afiseaza numele si grupul;
  *                 apoi se extrag prioritatile firelor.
  */
-public class GroupsLab {
+public class Adrian2 {
 
     // ------------------------------------------------------------------
     // Descrierea declarativa a structurii (arbore de grupuri si fire)
