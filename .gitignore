@@ -1,0 +1,7 @@
+# Setari locale IntelliJ IDEA
+.idea/
+*.iml
+
+# Fisiere generate la compilare
+out/
+*.class
