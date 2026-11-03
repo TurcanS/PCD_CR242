@@ -204,11 +204,9 @@ class ThreadS4 extends Thread {
   public void run() {
     for (int i = 700; i >= 300; i--) {
 
-      String hdr = " " + currentThread().getName() + " - ";
+      String hdr = " " + currentThread().getName() + " - " + i + " ";
       System.out.print(hdr);
 
-      String tok = i + " ";
-      System.out.print(tok);
       try {
         Thread.sleep(5);
       } catch (Exception e) {
@@ -256,7 +254,9 @@ class ThreadS5 extends Thread {
         Thread.sleep(100);
       } catch (InterruptedException e) {
       }
+
     }
+    System.out.print("\n");
     t2.interrupt();
   }
 }
