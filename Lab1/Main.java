@@ -122,17 +122,11 @@ class Octavian extends Thread {
         Main.scrie(ta, "\n" + nume + " creat:\n");
 
         int rest = (pas > 0) ? 0 : 2;
-        int min = Math.min(start, end);
-        int max = Math.max(start, end);
 
         for (int i = start; i != end + pas; i += pas) {
             if (i % 4 == rest) {
                 int poz1 = i;
                 int poz2 = i + 2 * pas;
-
-                if (poz2 < min || poz2 > max) {
-                    continue;
-                }
 
                 int produs = t[poz1] * t[poz2];
                 suma += produs;
