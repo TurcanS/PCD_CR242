@@ -45,12 +45,7 @@ public class Main {
       if ((i + 1) % 30 == 0)
         sb.append('\n');
     }
-    sb.append("\n\nInterval S3 [100..300]:\n");
-    for (int i = 0; i < intervalS3.length; i++) {
-      sb.append(intervalS3[i]).append(' ');
-      if ((i + 1) % 30 == 0)
-        sb.append('\n');
-    }
+
     sb.append("\n\n");
     String head = sb.toString();
     System.out.print(head);
