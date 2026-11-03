@@ -119,7 +119,7 @@ class Octavian extends Thread {
                 int poz2 = i + 2 * pasul;
 
                 int produs = t[poz1] * t[poz2];
-                Main.scrie(ta, "\n" + nume + " POZITILII: " + poz1 + " si " + poz2 + " valori: " + t[poz1] + " * " + t[poz2] + " = " + produs + "\n");
+                Main.scrie(ta, "\n" + nume + " POZITILII: " + poz1 + " Si " + poz2 + " valori: " + t[poz1] + " * " + t[poz2] + " = " + produs + "\n");
             }
         }
     }
