@@ -122,7 +122,6 @@ class Octavian extends Thread {
         Main.scrie(ta, "\n" + nume + " creat:\n");
 
         int rest = (pas > 0) ? 0 : 2;
-
         for (int i = start; i != end + pas; i += pas) {
             if (i % 4 == rest) {
                 int poz1 = i;
