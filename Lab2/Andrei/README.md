@@ -1,10 +1,14 @@
 # Laboratorul 2 - Andrei Toma - CR-242
 
-Varianta 6. Partea mea: prioritatile din conditie +1.
+Varianta 6. Prioritatile finale sunt introduse direct: Thb=8, Th9=5, restul=4.
+Aceste valori corespund modificarii +1 cerute pentru partea mea;
+programul nu mai face adunarea la rulare.
 Java 8 sau mai nou, fara biblioteci externe.
 
 Programul ruleaza pe rand nivelul mediu si nivelul avansat.
-Rezultatul apare in consola si intr-o fereastra simpla cu text.
+Rezultatul apare in consola si intr-o fereastra cu numele meu, doua sectiuni
+numerotate si un rezumat al prioritatilor. Fiecare grup arata si cate fire
+contine direct, fara a numara firele din subgrupe.
 
 ## Pornire
 
@@ -26,7 +30,7 @@ In IntelliJ se poate rula direct metoda main din `andrei.Main`.
 ## Cele trei fisiere
 
 - `Main.java`: porneste cele doua niveluri si deschide fereastra cu rezultatul.
-- `Lab2.java`: creeaza grupurile si cele 10 fire, adauga +1 la prioritati,
+- `Lab2.java`: creeaza grupurile si cele 10 fire, seteaza direct prioritatile,
   porneste firele, afiseaza structura si asteapta terminarea lor.
 - `FirAvansat.java`: un fir care isi afiseaza singur numele, grupul si
   prioritatea, in metoda `run()` suprascrisa.
@@ -54,7 +58,7 @@ confirmata cu profesoara.
 ## Cum explic programul
 
 1. Creez grupurile cu `new ThreadGroup(parinte, nume)`.
-2. Creez firele si le dau prioritatea din conditie +1, cu `setPriority()`.
+2. Creez firele si le dau direct prioritatile 8, 5 sau 4, cu `setPriority()`.
 3. Pornesc fiecare fir cu `start()`.
 4. Citesc firele active dintr-un grup cu `enumerate(..., false)`.
    Apoi fac acelasi lucru pentru fiecare subgrup: aceasta este recursivitatea.

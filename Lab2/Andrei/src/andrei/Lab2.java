@@ -19,9 +19,9 @@ public class Lab2 {
         }
     }
 
-    // Creeaza un fir mediu sau avansat si ii aplica prioritatea din tabel +1.
+    // Creeaza firul si ii seteaza direct prioritatea finala.
     static Thread creeaza(boolean avansat, ThreadGroup grup, String nume,
-                          int prioritateDinTabel, CountDownLatch terminare) {
+                          int prioritate, CountDownLatch terminare) {
         Thread fir;
         if (avansat) {
             fir = new FirAvansat(grup, nume, terminare);
@@ -29,12 +29,12 @@ public class Lab2 {
             // Folosim Thread cu Runnable, fara sa suprascriem Thread.run().
             fir = new Thread(grup, () -> asteapta(terminare), nume);
         }
-        fir.setPriority(prioritateDinTabel + 1);
+        fir.setPriority(prioritate);
         return fir;
     }
 
     static void executa(boolean avansat) throws InterruptedException {
-        afiseaza("\nVarianta 6 | nivel " + (avansat ? "avansat" : "mediu") + " | +1");
+        afiseaza("\n--- " + (avansat ? "2. NIVEL AVANSAT" : "1. NIVEL MEDIU") + " ---");
 
         // 1. Cream grupurile. Structura este aceeasi ca in partea colegului.
         // Formula din PDF are acolade gresite; interpretarea ramane de confirmat.
@@ -46,18 +46,18 @@ public class Lab2 {
         // Acest semnal tine firele active pana terminam enumerarea.
         CountDownLatch terminare = new CountDownLatch(1);
 
-        // 2. Cream cele 10 fire, cu prioritatile initiale din conditie.
+        // 2. Cream cele 10 fire cu prioritatile finale: Thb=8, Th9=5, restul=4.
         Thread[] fire = {
-            creeaza(avansat, g1, "ThA", 3, terminare),
-            creeaza(avansat, g3, "Thf", 3, terminare),
-            creeaza(avansat, g3, "Thb", 7, terminare),
-            creeaza(avansat, g3, "Thc", 3, terminare),
-            creeaza(avansat, g3, "Thd", 3, terminare),
-            creeaza(avansat, g2, "Th8", 3, terminare),
-            creeaza(avansat, g2, "Th9", 4, terminare),
-            creeaza(avansat, g2, "Th3", 3, terminare),
-            creeaza(avansat, main, "Th1", 3, terminare),
-            creeaza(avansat, main, "Th2", 3, terminare)
+            creeaza(avansat, g1, "ThA", 4, terminare),
+            creeaza(avansat, g3, "Thf", 4, terminare),
+            creeaza(avansat, g3, "Thb", 8, terminare),
+            creeaza(avansat, g3, "Thc", 4, terminare),
+            creeaza(avansat, g3, "Thd", 4, terminare),
+            creeaza(avansat, g2, "Th8", 4, terminare),
+            creeaza(avansat, g2, "Th9", 5, terminare),
+            creeaza(avansat, g2, "Th3", 4, terminare),
+            creeaza(avansat, main, "Th1", 4, terminare),
+            creeaza(avansat, main, "Th2", 4, terminare)
         };
 
         try {
@@ -83,10 +83,10 @@ public class Lab2 {
 
     // Afisam grupul, firele sale directe, apoi fiecare subgrup.
     static int enumera(ThreadGroup grup, String spatii) {
-        afiseaza(spatii + "Grup: " + grup.getName());
         // Varianta are exact 10 fire si 3 subgrupe; aceste tablouri sunt suficiente.
         Thread[] fire = new Thread[10];
         int numar = grup.enumerate(fire, false);
+        afiseaza(spatii + "Grup: " + grup.getName() + " [fire directe: " + numar + "]");
         for (int i = 0; i < numar; i++) {
             afiseaza(spatii + "  Fir: " + fire[i].getName()
                     + " | grup: " + fire[i].getThreadGroup().getName()
