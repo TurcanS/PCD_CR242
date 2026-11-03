@@ -1,46 +1,50 @@
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 
 /**
- * Lucrare de laborator nr. 2 - Gruparea firelor de executie. Prioritati.
+ * Lucrarea de laborator nr. 2 (PCD) - Gruparea firelor de executie. Prioritati.
  * Varianta 7:
- * Main{ ThA(3), G2{Th1(5), Th2(3), Th33(7)}, Th11(3), Th22(3),
- *       G1{ G3{Thaa(2), Thbb(3), Thcc(8), Thdd(3)} } }
+ *   Main{ ThA(3), G2{Th1(5), Th2(3), Th33(7)}, Th11(3), Th22(3),
+ *         G1{ G3{Thaa(2), Thbb(3), Thcc(8), Thdd(3)} } }
+ *
+ * Nivel mediu   : structura se enumera si se afiseaza (nume fir, grup, prioritate);
+ *                 metoda run() din Thread NU este suprascrisa.
+ * Nivel avansat : clasa Worker suprascrie run(): firul isi afiseaza numele si grupul;
+ *                 apoi se extrag prioritatile firelor.
  */
-public class Adrian2 {
+public class GroupsLab {
 
     // ------------------------------------------------------------------
-    // 1. Descrierea structurii (modelul), independenta de Thread/ThreadGroup
+    // Descrierea declarativa a structurii (arbore de grupuri si fire)
     // ------------------------------------------------------------------
-    static class Node {
+    static final class Node {
         final String name;
+        final int priority;          // doar pentru fire
         final boolean isGroup;
-        final int priority;               // doar pentru fire
         final List<Node> children = new ArrayList<>();
 
-        private Node(String name, boolean isGroup, int priority) {
+        private Node(String name, int priority, boolean isGroup) {
             this.name = name;
-            this.isGroup = isGroup;
             this.priority = priority;
-        }
-
-        static Node group(String name, Node... kids) {
-            Node n = new Node(name, true, 0);
-            for (Node k : kids) n.children.add(k);
-            return n;
+            this.isGroup = isGroup;
         }
 
         static Node thread(String name, int priority) {
-            return new Node(name, false, priority);
+            return new Node(name, priority, false);
+        }
+
+        static Node group(String name, Node... kids) {
+            Node n = new Node(name, 0, true);
+            n.children.addAll(List.of(kids));
+            return n;
         }
     }
 
-    /** Formula variantei 7 din tabelul 1. */
-    static Node buildFormula() {
+    static Node variant7() {
         return Node.group("Main",
                 Node.thread("ThA", 3),
                 Node.group("G2",
@@ -58,155 +62,208 @@ public class Adrian2 {
     }
 
     // ------------------------------------------------------------------
-    // 2. Fire de executie
+    // Crearea firelor
     // ------------------------------------------------------------------
+    interface Maker {
+        Thread make(ThreadGroup group, String name);
+    }
 
-    /** Nivel avansat: clasa care SUPRASCRIE run(). */
-    static class AdvancedThread extends Thread {
-        private final Consumer<String> out;
+    static final int ALIVE_MS = 2000;   // cat timp raman active firele
 
-        AdvancedThread(ThreadGroup group, String name, Consumer<String> out) {
-            super(group, name);          // plasare in grup + nume
-            this.out = out;
+    static void pause(int ms) {
+        try {
+            Thread.sleep(ms);
+        } catch (InterruptedException ignored) {
+            Thread.currentThread().interrupt();
+        }
+    }
+
+    /** Nivel mediu: firul primeste un Runnable simplu; run() din Thread ramane neschimbat. */
+    static Maker mediumMaker() {
+        return (g, name) -> new Thread(g, () -> pause(ALIVE_MS), name);
+    }
+
+    /** Nivel avansat: run() este suprascrisa. */
+    static class Worker extends Thread {
+        Worker(ThreadGroup g, String name) {
+            super(g, name);
         }
 
         @Override
         public void run() {
-            out.accept("Firul " + getName()
-                    + " | grup: " + getThreadGroup().getName()
-                    + " | prioritate: " + getPriority());
+            log("  > run(): firul " + getName() + " din grupul " + getThreadGroup().getName());
+            pause(ALIVE_MS);
         }
     }
 
-    /** Creeaza un fir; pentru nivelul mediu se foloseste Thread simplu, fara run(). */
-    interface Factory {
-        Thread create(ThreadGroup group, String name);
+    static Maker advancedMaker() {
+        return Worker::new;
     }
 
-    // ------------------------------------------------------------------
-    // 3. Instantierea structurii: Node -> ThreadGroup / Thread reale
-    // ------------------------------------------------------------------
-    static void instantiate(Node node, ThreadGroup parent, Factory factory,
-                            List<Thread> allThreads) {
-        if (node.isGroup) {
-            ThreadGroup g = (parent == null)
-                    ? new ThreadGroup("Main")
-                    : new ThreadGroup(parent, node.name);
-            for (Node child : node.children) {
-                instantiate(child, g, factory, allThreads);
+    static ThreadGroup build(Node spec, ThreadGroup parent, Maker maker, List<Thread> created) {
+        ThreadGroup g = (parent == null) ? new ThreadGroup(spec.name)
+                                         : new ThreadGroup(parent, spec.name);
+        for (Node child : spec.children) {
+            if (child.isGroup) {
+                build(child, g, maker, created);
+            } else {
+                Thread t = maker.make(g, child.name);
+                t.setDaemon(true);
+                t.setPriority(child.priority);
+                created.add(t);
             }
-        } else {
-            Thread t = factory.create(parent, node.name);
-            t.setPriority(node.priority);
-            allThreads.add(t);
         }
+        return g;
     }
 
     // ------------------------------------------------------------------
-    // 4. Nivel mediu si nivel avansat
+    // Enumerarea
     // ------------------------------------------------------------------
-
-    /**
-     * Nivel mediu: firele sunt create (fara run() suprascris), apoi
-     * enumerate cu numele, grupul si prioritatea.
-     * Firele nu sunt pornite, deci le tinem in lista proprie:
-     * ThreadGroup.enumerate() returneaza doar firele active (pornite).
-     */
-    static void runMedium(Consumer<String> out) {
-        out.accept("=== NIVEL MEDIU ===");
-        List<Thread> threads = new ArrayList<>();
-        instantiate(buildFormula(), null, (g, n) -> new Thread(g, n), threads);
-        for (Thread t : threads) {
-            out.accept("Fir: " + t.getName()
-                    + " | grup: " + t.getThreadGroup().getName()
-                    + " | prioritate: " + t.getPriority());
-        }
-        out.accept("Total fire: " + threads.size());
+    static Thread[] threadsOf(ThreadGroup g) {
+        Thread[] buf = new Thread[g.activeCount() + 4];
+        int n = g.enumerate(buf, false);
+        return java.util.Arrays.copyOf(buf, n);
     }
 
-    /** Nivel avansat: firele cu run() suprascris sunt pornite. */
-    static void runAdvanced(Consumer<String> out) {
-        out.accept("=== NIVEL AVANSAT ===");
-        List<Thread> threads = new ArrayList<>();
-        instantiate(buildFormula(), null,
-                (g, n) -> new AdvancedThread(g, n, out), threads);
-        for (Thread t : threads) t.start();
+    static ThreadGroup[] groupsOf(ThreadGroup g) {
+        ThreadGroup[] buf = new ThreadGroup[g.activeGroupCount() + 4];
+        int n = g.enumerate(buf, false);
+        return java.util.Arrays.copyOf(buf, n);
+    }
 
-        // asteptam terminarea intr-un fir separat, ca sa nu blocam interfata
-        Thread waiter = new Thread(() -> {
-            for (Thread t : threads) {
-                try {
-                    t.join();
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                    return;
+    static void report(ThreadGroup g, int depth, boolean advanced, StringBuilder sb) {
+        String pad = "    ".repeat(depth);
+        sb.append(pad).append("[Grup] ").append(g.getName())
+          .append(" (prioritate maxima = ").append(g.getMaxPriority()).append(")\n");
+        for (Thread t : threadsOf(g)) {
+            sb.append(pad).append("    - ").append(t.getName());
+            if (advanced) {
+                sb.append("  prioritate = ").append(t.getPriority());
+            } else {
+                sb.append("  | grup = ").append(t.getThreadGroup().getName())
+                  .append("  | prioritate = ").append(t.getPriority());
+            }
+            sb.append("  | demon = ").append(t.isDaemon());
+            sb.append('\n');
+        }
+        for (ThreadGroup sub : groupsOf(g)) {
+            report(sub, depth + 1, advanced, sb);
+        }
+    }
+
+    static DefaultMutableTreeNode toTree(ThreadGroup g) {
+        DefaultMutableTreeNode node =
+                new DefaultMutableTreeNode(g.getName() + "  [max=" + g.getMaxPriority() + "]");
+        for (Thread t : threadsOf(g)) {
+            node.add(new DefaultMutableTreeNode(t.getName() + "  (prio " + t.getPriority() + ")"));
+        }
+        for (ThreadGroup sub : groupsOf(g)) {
+            node.add(toTree(sub));
+        }
+        return node;
+    }
+
+    // ------------------------------------------------------------------
+    // Interfata grafica
+    // ------------------------------------------------------------------
+    private static JTextArea out;
+    private static JTree tree;
+    private static JButton mediumBtn;
+    private static JButton advancedBtn;
+
+    static void log(String s) {
+        System.out.println(s);
+        if (out != null) {
+            SwingUtilities.invokeLater(() -> {
+                out.append(s + "\n");
+                out.setCaretPosition(out.getDocument().getLength());
+            });
+        }
+    }
+
+    /** Porneste structura; dupa 300 ms (firele sunt active) o enumera. */
+    private static void execute(boolean advanced) {
+        log(advanced ? "=== NIVEL AVANSAT (fire demon, run() suprascrisa) ==="
+                     : "=== NIVEL MEDIU (fire demon, fara run) ===");
+        List<Thread> created = new ArrayList<>();
+        ThreadGroup root = build(variant7(), null, advanced ? advancedMaker() : mediumMaker(), created);
+        for (Thread t : created) {
+            t.start();
+        }
+        pause(300);
+        StringBuilder sb = new StringBuilder();
+        report(root, 0, advanced, sb);
+        log(sb.toString());
+        if (tree != null) {
+            DefaultMutableTreeNode top = toTree(root);
+            SwingUtilities.invokeLater(() -> {
+                tree.setModel(new DefaultTreeModel(top));
+                for (int i = 0; i < tree.getRowCount(); i++) {
+                    tree.expandRow(i);
                 }
-            }
-            out.accept("Toate cele " + threads.size() + " fire s-au terminat.");
-        });
-        waiter.start();
+            });
+        }
     }
 
-    // ------------------------------------------------------------------
-    // 5. Interfata grafica
-    // ------------------------------------------------------------------
-    static DefaultMutableTreeNode toTree(Node n) {
-        String label = n.isGroup ? n.name + "  [grup]"
-                                 : n.name + "  (prioritate " + n.priority + ")";
-        DefaultMutableTreeNode t = new DefaultMutableTreeNode(label);
-        for (Node c : n.children) t.add(toTree(c));
-        return t;
+    private static void startAsync(boolean advanced) {
+        mediumBtn.setEnabled(false);
+        advancedBtn.setEnabled(false);
+        out.setText("");
+        // firul care lanseaza structura nu blocheaza interfata
+        new Thread(() -> {
+            execute(advanced);
+            SwingUtilities.invokeLater(() -> {
+                mediumBtn.setEnabled(true);
+                advancedBtn.setEnabled(true);
+            });
+        }, "launcher").start();
     }
 
-    static void showGui() {
-        JFrame frame = new JFrame("Lab 2 - Varianta 7 - Grupuri de fire si prioritati");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    private static void buildGui() {
+        JFrame f = new JFrame("Lab 2 PCD - ThreadGroup si prioritati (varianta 7)");
+        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        JTree tree = new JTree(toTree(buildFormula()));
-        for (int i = 0; i < tree.getRowCount(); i++) tree.expandRow(i);
+        out = new JTextArea();
+        out.setEditable(false);
+        out.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 13));
 
-        JTextArea console = new JTextArea();
-        console.setEditable(false);
-        console.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 13));
+        tree = new JTree(new DefaultMutableTreeNode("(apasa un buton)"));
 
-        // iesirea poate veni din fire diferite, de aceea o trimitem pe firul Swing
-        Consumer<String> out = s -> SwingUtilities.invokeLater(() -> {
-            console.append(s + "\n");
-            console.setCaretPosition(console.getDocument().getLength());
+        mediumBtn = new JButton("Nivel mediu");
+        advancedBtn = new JButton("Nivel avansat");
+        mediumBtn.addActionListener(e -> startAsync(false));
+        advancedBtn.addActionListener(e -> startAsync(true));
+
+        JButton clearBtn = new JButton("Curata");
+        clearBtn.addActionListener(e -> {
+            out.setText("");
+            tree.setModel(new DefaultTreeModel(new DefaultMutableTreeNode("(apasa un buton)")));
         });
 
-        JButton medium = new JButton("Nivel mediu");
-        JButton advanced = new JButton("Nivel avansat");
-        JButton clear = new JButton("Sterge");
-        medium.addActionListener(e -> runMedium(out));
-        advanced.addActionListener(e -> runAdvanced(out));
-        clear.addActionListener(e -> console.setText(""));
-
-        JPanel buttons = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        buttons.add(medium);
-        buttons.add(advanced);
-        buttons.add(clear);
+        JPanel bar = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        bar.add(mediumBtn);
+        bar.add(advancedBtn);
+        bar.add(clearBtn);
 
         JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
-                new JScrollPane(tree), new JScrollPane(console));
-        split.setDividerLocation(280);
+                new JScrollPane(tree), new JScrollPane(out));
+        split.setDividerLocation(240);
 
-        frame.add(buttons, BorderLayout.NORTH);
-        frame.add(split, BorderLayout.CENTER);
-        frame.setSize(900, 480);
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
+        f.add(bar, BorderLayout.NORTH);
+        f.add(split, BorderLayout.CENTER);
+        f.setSize(900, 560);
+        f.setLocationRelativeTo(null);
+        f.setVisible(true);
     }
 
-    public static void main(String[] args) throws Exception {
-        if (args.length > 0 && args[0].equals("console")) {
-            // mod fara interfata grafica, util pentru verificare
-            Consumer<String> out = System.out::println;
-            runMedium(out);
-            runAdvanced(out);
-            Thread.sleep(500);
+    public static void main(String[] args) {
+        if (GraphicsEnvironment.isHeadless()) {   // rulare in consola, fara fereastra
+            execute(false);
+            pause(ALIVE_MS);
+            execute(true);
+            pause(ALIVE_MS);
         } else {
-            SwingUtilities.invokeLater(Adrian2::showGui);
+            SwingUtilities.invokeLater(GroupsLab::buildGui);
         }
     }
 }
