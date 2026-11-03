@@ -263,7 +263,7 @@ public class Adrian2 {
             execute(true);
             pause(ALIVE_MS);
         } else {
-            SwingUtilities.invokeLater(GroupsLab::buildGui);
+            SwingUtilities.invokeLater(Adrian2::buildGui);
         }
     }
 }
