@@ -164,13 +164,10 @@ class ThreadS3 extends Thread {
 
   @Override
   public void run() {
+
     for (int i = 0; i < interval.length; i++) {
-      if (i % 20 == 0) {
-        String hdr = "\n" + currentThread().getName() + " - ";
-        System.out.print(hdr);
-      }
-      String tok = interval[i] + " ";
-      System.out.print(tok);
+      String hdr = currentThread().getName() + " - " + interval[i] + " ";
+      System.out.print(hdr);
       try {
         Thread.sleep(5);
       } catch (Exception e) {
