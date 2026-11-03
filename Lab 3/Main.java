@@ -1,6 +1,6 @@
 /*
  * 5 - Print "Salut colegi" - Adrian sleep()
- * 2 -numele - Stas yield()
+ * 2 -numele - Stas sleep interrupt
  * 4- grupa - David join()
  * 1 - familile - Stas yield()
  * 6 - "Realizarea lucrarea de laborator pentru" - Adrian join()
@@ -28,10 +28,10 @@ public class Main {
       }
     }, true));
 
-    //generates random numbers actually
+    // generates random numbers actually
     int[] a = new int[100];
     for (int i = 0; i < a.length; i++) {
-        a[i] = ThreadLocalRandom.current().nextInt(0, 101); // 0–100 inclusive
+      a[i] = ThreadLocalRandom.current().nextInt(0, 101); // 0–100 inclusive
     }
 
     int[] intervalS3 = new int[201];
