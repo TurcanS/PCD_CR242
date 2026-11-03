@@ -1,5 +1,5 @@
 /*
- * PARTEA COLEGULUI (Adrian): Thread 1 si Thread 2 (Varianta 7)
+ * PARTEA MEA (Adrian): Thread 1 si Thread 2 (Varianta 7)
  *
  * !!! Versiune de lucru, ca programul sa ruleze - Adrian o inlocuieste/completeaza cu codul lui. !!!
  *
