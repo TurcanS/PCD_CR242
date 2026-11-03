@@ -24,7 +24,7 @@ public class Lab2_Edgar extends Thread {
     }
 
     public static void main(String[] args) {
-        JFrame frame = new JFrame("Cemirtan Edgar");
+        JFrame frame = new JFrame("Lab2");
         area.setEditable(false);
         frame.add(new JScrollPane(area));
         frame.setSize(750, 400);
