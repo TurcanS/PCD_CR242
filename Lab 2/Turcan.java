@@ -71,11 +71,11 @@ public class Turcan extends Thread {
   @Override
   public void run() {
     while (true) {
-        try {
-          System.out.println(currentThread().getName() + " " + currentThread().isDaemon());
-        } catch (Exception e) {
-        }
-        break;
+      try {
+        Thread.sleep(100);
+      } catch (Exception e) {
+      }
+      break;
     }
   }
 }
