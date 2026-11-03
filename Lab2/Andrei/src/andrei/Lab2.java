@@ -1,124 +1,101 @@
 package andrei;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
 import java.util.concurrent.CountDownLatch;
-import java.util.function.Consumer;
 
-public final class Lab2 {
-    // Varianta 6: aceeasi interpretare a structurii ca in partea colegului.
-    // In PDF, secventa G1{ThA(3)}{G3 are o acolada suplimentara;
-    // folosim Main{G1{ThA,G3{...},G2{...}},Th1,Th2}.
-    public static final String[][] DATE = {
-        {"Main/G1", "ThA", "3"},
-        {"Main/G1/G3", "Thf", "3"}, {"Main/G1/G3", "Thb", "7"},
-        {"Main/G1/G3", "Thc", "3"}, {"Main/G1/G3", "Thd", "3"},
-        {"Main/G1/G2", "Th8", "3"}, {"Main/G1/G2", "Th9", "4"},
-        {"Main/G1/G2", "Th3", "3"}, {"Main", "Th1", "3"},
-        {"Main", "Th2", "3"}
-    };
+public class Lab2 {
+    // Pastram mesajele pentru a le arata si in fereastra.
+    static final StringBuilder rezultat = new StringBuilder();
 
-    public static void executa(boolean avansat, Consumer<String> output)
-            throws InterruptedException {
+    static synchronized void afiseaza(String mesaj) {
+        System.out.println(mesaj);
+        rezultat.append(mesaj).append("\n");
+    }
+
+    static void asteapta(CountDownLatch terminare) {
+        try {
+            terminare.await();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
+
+    // Creeaza un fir mediu sau avansat si ii aplica prioritatea din tabel +1.
+    static Thread creeaza(boolean avansat, ThreadGroup grup, String nume,
+                          int prioritateDinTabel, CountDownLatch terminare) {
+        Thread fir;
+        if (avansat) {
+            fir = new FirAvansat(grup, nume, terminare);
+        } else {
+            // Folosim Thread cu Runnable, fara sa suprascriem Thread.run().
+            fir = new Thread(grup, () -> asteapta(terminare), nume);
+        }
+        fir.setPriority(prioritateDinTabel + 1);
+        return fir;
+    }
+
+    static void executa(boolean avansat) throws InterruptedException {
+        afiseaza("\nVarianta 6 | nivel " + (avansat ? "avansat" : "mediu") + " | +1");
+
+        // 1. Cream grupurile. Structura este aceeasi ca in partea colegului.
+        // Formula din PDF are acolade gresite; interpretarea ramane de confirmat.
         ThreadGroup main = new ThreadGroup("Main");
         ThreadGroup g1 = new ThreadGroup(main, "G1");
         ThreadGroup g3 = new ThreadGroup(g1, "G3");
         ThreadGroup g2 = new ThreadGroup(g1, "G2");
-        List<Thread> fire = new ArrayList<>();
-        CountDownLatch pregatite = new CountDownLatch(DATE.length);
-        CountDownLatch eliberare = new CountDownLatch(1);
 
-        output.accept("Varianta 6 | nivel " + (avansat ? "avansat" : "mediu")
-                + " | modificare +1");
-        for (String[] date : DATE) {
-            ThreadGroup grup;
-            switch (date[0]) {
-                case "Main/G1": grup = g1; break;
-                case "Main/G1/G3": grup = g3; break;
-                case "Main/G1/G2": grup = g2; break;
-                default: grup = main;
-            }
-            Thread fir;
-            if (avansat) {
-                fir = new FirAvansat(grup, date[1], pregatite, eliberare, output);
-            } else {
-                // Nivel mediu: obiect Thread obisnuit, fara suprascrierea Thread.run().
-                // Runnable mentine firul activ doar pana la enumerarea structurii.
-                fir = new Thread(grup, () -> {
-                    pregatite.countDown();
-                    asteapta(eliberare);
-                }, date[1]);
-            }
-            int prioritate = Integer.parseInt(date[2]) + 1;
-            fir.setPriority(prioritate); // Inainte de start, pentru a evita o cursa.
-            if (fir.getPriority() != prioritate) {
-                throw new IllegalStateException("Grupul limiteaza prioritatea ceruta: " + date[1]);
-            }
-            fire.add(fir);
-        }
+        // Acest semnal tine firele active pana terminam enumerarea.
+        CountDownLatch terminare = new CountDownLatch(1);
+
+        // 2. Cream cele 10 fire, cu prioritatile initiale din conditie.
+        Thread[] fire = {
+            creeaza(avansat, g1, "ThA", 3, terminare),
+            creeaza(avansat, g3, "Thf", 3, terminare),
+            creeaza(avansat, g3, "Thb", 7, terminare),
+            creeaza(avansat, g3, "Thc", 3, terminare),
+            creeaza(avansat, g3, "Thd", 3, terminare),
+            creeaza(avansat, g2, "Th8", 3, terminare),
+            creeaza(avansat, g2, "Th9", 4, terminare),
+            creeaza(avansat, g2, "Th3", 3, terminare),
+            creeaza(avansat, main, "Th1", 3, terminare),
+            creeaza(avansat, main, "Th2", 3, terminare)
+        };
 
         try {
+            // 3. Pornim firele si enumeram structura.
             for (Thread fir : fire) {
                 fir.start();
             }
-            pregatite.await(); // Toate cele 10 fire sunt active la enumerare.
-            output.accept("\nENUMERAREA RECURSIVA A STRUCTURII:");
-            int numar = enumera(main, "", output);
-            output.accept("Total fire enumerate: " + numar);
-            if (numar != DATE.length) {
-                throw new IllegalStateException("Numar incorect de fire enumerate: " + numar);
-            }
+            afiseaza("Enumerarea grupurilor si firelor:");
+            int total = enumera(main, "");
+            afiseaza("Total fire enumerate: " + total);
         } finally {
-            eliberare.countDown(); // Deblocheaza firele inclusiv in caz de eroare.
-            boolean intrerupt = false;
+            // 4. Dam voie firelor sa termine, inclusiv daca apare o eroare.
+            terminare.countDown();
             for (Thread fir : fire) {
-                while (fir.isAlive()) {
-                    try {
-                        fir.join();
-                    } catch (InterruptedException e) {
-                        intrerupt = true;
-                    }
-                }
-            }
-            if (intrerupt) {
-                Thread.currentThread().interrupt();
+                fir.join();
             }
         }
-        output.accept("Toate cele 10 fire s-au terminat.");
+        afiseaza("Toate cele 10 fire s-au terminat.");
     }
 
-    private static int enumera(ThreadGroup grup, String indent, Consumer<String> output) {
-        output.accept(indent + "Grup: " + grup.getName() + " | prioritate maxima: " + grup.getMaxPriority());
-        // activeCount() este estimativ: marim tabloul daca s-a umplut.
-        Thread[] fire = new Thread[Math.max(1, grup.activeCount() + 1)];
-        int n;
-        while ((n = grup.enumerate(fire, false)) == fire.length) {
-            fire = new Thread[fire.length * 2];
+    // Afisam grupul, firele sale directe, apoi fiecare subgrup.
+    static int enumera(ThreadGroup grup, String spatii) {
+        afiseaza(spatii + "Grup: " + grup.getName());
+        // Varianta are exact 10 fire si 3 subgrupe; aceste tablouri sunt suficiente.
+        Thread[] fire = new Thread[10];
+        int numar = grup.enumerate(fire, false);
+        for (int i = 0; i < numar; i++) {
+            afiseaza(spatii + "  Fir: " + fire[i].getName()
+                    + " | grup: " + fire[i].getThreadGroup().getName()
+                    + " | prioritate: " + fire[i].getPriority());
         }
-        java.util.Arrays.sort(fire, 0, n, Comparator.comparing(Thread::getName));
-        for (int i = 0; i < n; i++) {
-            Thread fir = fire[i];
-            output.accept(indent + "  Fir: " + fir.getName() + " | grup: "
-                    + fir.getThreadGroup().getName() + " | prioritate: " + fir.getPriority());
-        }
-        int total = n;
-        ThreadGroup[] subgrupe = new ThreadGroup[Math.max(1, grup.activeGroupCount() + 1)];
-        while ((n = grup.enumerate(subgrupe, false)) == subgrupe.length) {
-            subgrupe = new ThreadGroup[subgrupe.length * 2];
-        }
-        java.util.Arrays.sort(subgrupe, 0, n, Comparator.comparing(ThreadGroup::getName));
-        for (int i = 0; i < n; i++) {
-            total += enumera(subgrupe[i], indent + "  ", output);
+
+        ThreadGroup[] subgrupe = new ThreadGroup[3];
+        int numarGrupe = grup.enumerate(subgrupe, false);
+        int total = numar;
+        for (int i = 0; i < numarGrupe; i++) {
+            total += enumera(subgrupe[i], spatii + "  ");
         }
         return total;
-    }
-
-    static void asteapta(CountDownLatch semnal) {
-        try {
-            semnal.await();
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
     }
 }

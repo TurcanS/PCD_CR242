@@ -1,29 +1,21 @@
 package andrei;
 
 import java.util.concurrent.CountDownLatch;
-import java.util.function.Consumer;
 
-public final class FirAvansat extends Thread {
-    private final CountDownLatch pregatite;
-    private final CountDownLatch eliberare;
-    private final Consumer<String> output;
+public class FirAvansat extends Thread {
+    private final CountDownLatch terminare;
 
-    public FirAvansat(ThreadGroup grup, String nume, CountDownLatch pregatite,
-                      CountDownLatch eliberare, Consumer<String> output) {
+    public FirAvansat(ThreadGroup grup, String nume, CountDownLatch terminare) {
         super(grup, nume);
-        this.pregatite = pregatite;
-        this.eliberare = eliberare;
-        this.output = output;
+        this.terminare = terminare;
     }
 
     @Override
     public void run() {
-        try {
-            output.accept("run(): " + getName() + " | grup: " + getThreadGroup().getName()
-                    + " | prioritate: " + getPriority());
-        } finally {
-            pregatite.countDown();
-        }
-        Lab2.asteapta(eliberare);
+        // Fiecare fir avansat isi afiseaza singur informatiile.
+        Lab2.afiseaza("run(): " + getName()
+                + " | grup: " + getThreadGroup().getName()
+                + " | prioritate: " + getPriority());
+        Lab2.asteapta(terminare);
     }
 }

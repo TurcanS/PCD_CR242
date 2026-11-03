@@ -1,9 +1,10 @@
 # Laboratorul 2 - Andrei Toma - CR-242
 
-Varianta 6. Prioritatea fiecarui fir din tabel este marita cu 1.
-Programul include nivelul mediu, nivelul avansat si o interfata grafica
-cu schema grupurilor si jurnalul executiei. Nu contine partea cu -1.
+Varianta 6. Partea mea: prioritatile din conditie +1.
 Java 8 sau mai nou, fara biblioteci externe.
+
+Programul ruleaza pe rand nivelul mediu si nivelul avansat.
+Rezultatul apare in consola si intr-o fereastra simpla cu text.
 
 ## Pornire
 
@@ -14,28 +15,23 @@ javac -encoding UTF-8 -d Lab2/Andrei/out Lab2/Andrei/src/andrei/*.java
 java -cp Lab2/Andrei/out andrei.Main
 ```
 
-Din acest folder (`Lab2/Andrei`), comenzile sunt:
+Pentru rulare doar in consola:
 
 ```text
-javac -encoding UTF-8 -d out src/andrei/*.java
-java -cp out andrei.Main
+java -cp Lab2/Andrei/out andrei.Main --console
 ```
 
-Implicit se deschide fereastra, cu nivelul avansat selectat.
-Alege nivelul si apasa **Ruleaza programul**. Informatiile despre fire
-apar in jurnal si in consola. Prioritatile sunt intotdeauna cele din tabel +1.
+In IntelliJ se poate rula direct metoda main din `andrei.Main`.
 
-Doar consola, din acest folder:
+## Cele trei fisiere
 
-```text
-java -cp out andrei.Main --console --mediu
-java -cp out andrei.Main --console --avansat
-```
+- `Main.java`: porneste cele doua niveluri si deschide fereastra cu rezultatul.
+- `Lab2.java`: creeaza grupurile si cele 10 fire, adauga +1 la prioritati,
+  porneste firele, afiseaza structura si asteapta terminarea lor.
+- `FirAvansat.java`: un fir care isi afiseaza singur numele, grupul si
+  prioritatea, in metoda `run()` suprascrisa.
 
-Clasele folosesc pachetul `andrei`, pentru a nu intra in conflict cu
-clasele `Main` si `LabWindow` din laboratorul 1.
-
-## Structura si prioritati
+## Structura
 
 ```text
 Main
@@ -48,41 +44,39 @@ Main
       Th8(4), Th9(5), Th3(4)
 ```
 
-Sunt 10 fire si 4 grupuri, inclusiv grupul creat `Main`.
-`Thb`: 7 + 1 = 8; `Th9`: 4 + 1 = 5; celelalte fire: 3 + 1 = 4.
+Sunt 10 fire si 4 grupuri, inclusiv Main.
+Thb are 7 + 1 = 8. Th9 are 4 + 1 = 5. Celelalte au 3 + 1 = 4.
 
-Formula variantei 6 din PDF (pagina 7) are acolade/separatori incorecti.
-Pentru consistenta in echipa, folosim aceeasi interpretare ca in partea
-colegului: `G2` si `G3` sunt subgrupe ale lui `G1`. Aceasta interpretare
-nu este confirmata de profesoara.
+Formula din PDF are acolade/separatori gresiti. Folosim aceeasi interpretare
+ca in partea colegului: G2 si G3 sunt in G1. Aceasta interpretare trebuie
+confirmata cu profesoara.
 
-## Ce face programul
+## Cum explic programul
 
-- `Main.java`: citeste optiunile si porneste consola sau fereastra.
-- `Lab2.java`: creeaza grupurile si cele 10 fire, seteaza prioritatile cu +1,
-  porneste firele, enumera recursiv structura si asteapta terminarea lor.
-- `FirAvansat.java`: mosteneste `Thread` si suprascrie `run()`, unde fiecare
-  fir isi afiseaza numele, grupul si prioritatea.
-- `LabWindow.java`: afiseaza schema, alegerea nivelului si jurnalul.
+1. Creez grupurile cu `new ThreadGroup(parinte, nume)`.
+2. Creez firele si le dau prioritatea din conditie +1, cu `setPriority()`.
+3. Pornesc fiecare fir cu `start()`.
+4. Citesc firele active dintr-un grup cu `enumerate(..., false)`.
+   Apoi fac acelasi lucru pentru fiecare subgrup: aceasta este recursivitatea.
+5. Eliberez firele si astept terminarea lor cu `join()`.
 
-La nivel mediu sunt folosite obiecte `Thread` cu `Runnable`, fara
-suprascrierea metodei `Thread.run()`. La nivel avansat se foloseste
-clasa `FirAvansat` cu metoda `run()` suprascrisa.
+La nivel mediu folosesc Thread cu Runnable, fara sa suprascriu Thread.run().
+La nivel avansat folosesc FirAvansat, care suprascrie run() si afiseaza
+informatiile chiar din firul respectiv.
 
-`setPriority()` stabileste prioritatea inainte de `start()`.
-`start()` porneste executia separata a fiecarui fir.
-`CountDownLatch` mentine firele active pana la enumerare, fara pauze
-de timp alese arbitrar. `enumerate(..., false)` obtine doar firele sau
-subgrupele directe; recursivitatea parcurge intreaga structura.
-`join()` asteapta terminarea firelor.
+`CountDownLatch` este un semnal: `await()` spune "asteapta", iar
+`countDown()` spune "puteti termina". Il folosesc ca firele sa ramana
+active pana le enumar. Nu trebuie sa ghicesc cate milisecunde sa doarma.
 
-Liniile `run(): ...` sunt afisate de fire, iar enumerarea de dupa ele
-este afisata de coordonator. Ordinea mesajelor `run()` poate varia:
-prioritatea nu garanteaza ordinea executiei. In enumerare, numele sunt
-sortate doar pentru lizibilitate. Prioritatea maxima de grup `10`
-este limita permisa, nu prioritatea tuturor firelor.
+`getName()` citeste numele, `getThreadGroup()` citeste grupul,
+iar `getPriority()` citeste prioritatea firului.
+
+Mesajele run() pot aparea in ordine diferita sau intre liniile enumerarii.
+Prioritatea mai mare nu garanteaza ca firul afiseaza primul.
+`synchronized` din afiseaza() permite unui singur fir odata sa adauge
+mesajul in rezultatul comun.
 
 Material pregatit cu ajutorul AI; codul trebuie inteles pentru sustinere.
-Raportul PDF/Word cerut pentru ELSE se pregateste separat.
+Raportul PDF/Word pentru ELSE se pregateste separat.
 
 Cod: https://github.com/TurcanS/PCD_CR242/tree/Grup-6/Lab2/Andrei

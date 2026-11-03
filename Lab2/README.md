@@ -54,8 +54,7 @@ java -cp Lab2/Andrei/out andrei.Main
 Pentru consola:
 
 ```text
-java -cp Lab2/Andrei/out andrei.Main --console --mediu
-java -cp Lab2/Andrei/out andrei.Main --console --avansat
+java -cp Lab2/Andrei/out andrei.Main --console
 ```
 
 Ambele implementari folosesc `G2` si `G3` ca subgrupe ale lui `G1`.
