@@ -77,7 +77,7 @@ public class Vlad2 {
                 + (detailed ? " (maxPriority=" + g.getMaxPriority() + ")" : ""));
 
         Thread[] threads = new Thread[g.activeCount() + 10];
-        int n = g.enumerate(threads, false);          // doar firele directe ale grupului
+        int n = g.enumerate(threads, false);          // doar firele directe ale grupului 
         for (int i = 0; i < n; i++) {
             Thread t = threads[i];
             if (!created.contains(t)) continue;
@@ -95,7 +95,7 @@ public class Vlad2 {
 
     /**
      * advanced = false: nume, grup, prioritate.
-     * advanced = true : in plus maxPriority al grupului si statutul de demon.
+     * advanced = true : in plus maxPriority al grupului si statuul de demon.
      */
     private static void run(boolean advanced) {
         output.setText("");
