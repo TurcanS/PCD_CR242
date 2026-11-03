@@ -87,8 +87,6 @@ class Veniamin implements Runnable {
 
             i += 4 * pas;
         }
-
-        Main.scrie(ta, "\n" + nume + " suma = " + "\n");
     }
 }
 
