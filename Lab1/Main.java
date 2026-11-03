@@ -40,12 +40,7 @@ public class Main {
         fir3.start();
         fir4.start();
 
-        fir1.join();
-        fir2.join();
-        fir3.join();
-        fir4.join();
-
-        String name = "Veniamin Spînu și Demenco Octavian";
+        String name = " Veniamin Spînu și Demenco Octavian";
         scrie(ta, "\n");
 
         for (int i = 0; i < name.length(); i++) {
@@ -72,7 +67,6 @@ class Veniamin implements Runnable {
 
     @Override
     public void run() {
-        int suma = 0;
         String nume = Thread.currentThread().getName();
 
         if (pas > 0) {
@@ -86,7 +80,6 @@ class Veniamin implements Runnable {
             int poz1 = i;
             int poz2 = i + 2 * pas;
             int produs = t[poz1] * t[poz2];
-            suma += produs;
 
             String linie = "\n" + nume + " pozitii: " + poz1 + " si " + poz2
                     + " valori: " + t[poz1] + " * " + t[poz2] + " = " + produs + "\n";
@@ -95,7 +88,7 @@ class Veniamin implements Runnable {
             i += 4 * pas;
         }
 
-        Main.scrie(ta, "\n" + nume + " suma = " + suma + "\n");
+        Main.scrie(ta, "\n" + nume + " suma = " + "\n");
     }
 }
 
