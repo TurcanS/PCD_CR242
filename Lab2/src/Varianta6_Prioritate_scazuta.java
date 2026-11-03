@@ -3,7 +3,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Varianta6 {
+public class Varianta6_Prioritate_scazuta {
 
     static final StringBuilder rezultat = new StringBuilder();
 

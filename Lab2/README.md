@@ -2,7 +2,7 @@
 
 Andrei Toma și Ganenco Bogdan, grupa CR-242.
 
-Programul `Varianta6` (nivel mediu) construiește o ierarhie de grupuri de fire
+Programul `Varianta6_Prioritate_scazuta` (nivel mediu) construiește o ierarhie de grupuri de fire
 și afișează, recursiv, fiecare grup împreună cu firele lui active.
 
 Structura creată în `main`:
@@ -16,7 +16,7 @@ main
     └── G2: Th8, Th9, Th3
 ```
 
-Toate firele au prioritatea 3, cu excepția `Thb` (7) și `Th9` (4). Firele nu
+Toate firele au prioritatea 2, cu excepția `Thb` (6) și `Th9` (3). Firele nu
 suprascriu `run()`: corpul lor este dat ca `Runnable` (o pauză de 1500 ms) prin
 metoda `creeaza`. Toate sunt fire daemon, iar `setDaemon(true)` este apelat
 înainte de `start()`.
@@ -33,7 +33,7 @@ Pentru pornire, cu JDK 17 sau mai nou, din folderul repository-ului:
 ```powershell
 cd Lab2
 javac -encoding UTF-8 -d out src/*.java
-java -cp out Varianta6
+java -cp out Varianta6_Prioritate_scazuta
 ```
 
 Lucrarea a fost încărcată pe ramura `Grup-6`.
