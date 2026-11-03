@@ -9,6 +9,9 @@ Programul ruleaza pe rand nivelul mediu si nivelul avansat.
 Rezultatul apare in consola si intr-o fereastra cu numele meu, doua sectiuni
 numerotate si un rezumat al prioritatilor. Fiecare grup arata si cate fire
 contine direct, fara a numara firele din subgrupe.
+Langa numele fiecarui grup apare si prioritatea maxima permisa, citita
+cu `getMaxPriority()`. Aceasta este limita pentru firele din grup,
+nu o prioritate de executie proprie grupului.
 
 ## Pornire
 

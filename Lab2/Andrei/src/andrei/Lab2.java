@@ -86,7 +86,9 @@ public class Lab2 {
         // Varianta are exact 10 fire si 3 subgrupe; aceste tablouri sunt suficiente.
         Thread[] fire = new Thread[10];
         int numar = grup.enumerate(fire, false);
-        afiseaza(spatii + "Grup: " + grup.getName() + " [fire directe: " + numar + "]");
+        afiseaza(spatii + "Grup: " + grup.getName()
+                + " | prioritate maxima: " + grup.getMaxPriority()
+                + " | fire directe: " + numar);
         for (int i = 0; i < numar; i++) {
             afiseaza(spatii + "  Fir: " + fire[i].getName()
                     + " | grup: " + fire[i].getThreadGroup().getName()
