@@ -19,6 +19,7 @@ public class Main {
         int[] t = new int[100];
         for (int i = 0; i < 100; i++) {
             t[i] = (int) (Math.random() * 99);
+
             scrie(ta, t[i] + " ");
         }
         scrie(ta, "\n");
@@ -93,38 +94,33 @@ class Veniamin implements Runnable {
 class Octavian extends Thread {
     private int[] t;
     private int start;
-    private int end;
-    private int pas;
+    private int stop;
+    private int pasul;
     private JTextArea ta;
 
-    Octavian(int[] t, int start, int end, int pas, JTextArea ta) {
+    Octavian(int[] t, int start, int stop, int pasul, JTextArea ta) {
         this.t = t;
         this.start = start;
-        this.end = end;
-        this.pas = pas;
+        this.stop = stop;
+        this.pasul = pasul;
         this.ta = ta;
     }
 
     @Override
     public void run() {
-        int suma = 0;
         String nume = getName();
 
         Main.scrie(ta, "\n" + nume + " creat:\n");
 
-        int rest = (pas > 0) ? 0 : 2;
-        for (int i = start; i != end + pas; i += pas) {
+        int rest = (pasul > 0) ? 0 : 2;
+        for (int i = start; i != stop + pasul; i += pasul) {
             if (i % 4 == rest) {
                 int poz1 = i;
-                int poz2 = i + 2 * pas;
+                int poz2 = i + 2 * pasul;
 
                 int produs = t[poz1] * t[poz2];
-                suma += produs;
-
-                Main.scrie(ta, "\n" + nume + " pozitii: " + poz1 + " si " + poz2 + " valori: " + t[poz1] + " * " + t[poz2] + " = " + produs + "\n");
+                Main.scrie(ta, "\n" + nume + " POZITILII: " + poz1 + " Si " + poz2 + " valori: " + t[poz1] + " * " + t[poz2] + " = " + produs + "\n");
             }
         }
-
-        Main.scrie(ta, "\n" + nume + " suma = " + suma + "\n");
     }
 }
