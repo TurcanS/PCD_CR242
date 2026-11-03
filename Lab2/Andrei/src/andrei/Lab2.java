@@ -68,6 +68,9 @@ public class Lab2 {
             afiseaza("Enumerarea grupurilor si firelor:");
             int total = enumera(main, "");
             afiseaza("Total fire enumerate: " + total);
+            // list() afiseaza direct in consola grupul, subgrupele si firele active.
+            System.out.println("Structura afisata cu list():");
+            main.list();
         } finally {
             // 4. Dam voie firelor sa termine, inclusiv daca apare o eroare.
             terminare.countDown();

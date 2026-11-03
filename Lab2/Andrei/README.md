@@ -60,6 +60,11 @@ confirmata cu profesoara.
    Apoi fac acelasi lucru pentru fiecare subgrup: aceasta este recursivitatea.
 5. Eliberez firele si astept terminarea lor cu `join()`.
 
+Inainte de terminarea firelor, apelez si `main.list()`. Aceasta metoda
+afiseaza automat in consola grupul Main, subgrupele si firele lor active,
+cu prioritatile. Rezultatul nativ al `list()` apare doar in consola IntelliJ;
+fereastra pastreaza afisarea explicita prin `enumerate()`.
+
 La nivel mediu folosesc Thread cu Runnable, fara sa suprascriu Thread.run().
 La nivel avansat folosesc FirAvansat, care suprascrie run() si afiseaza
 informatiile chiar din firul respectiv.
