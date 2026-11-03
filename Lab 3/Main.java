@@ -1,14 +1,15 @@
 /*
- * 5 - Print "Salut colegi" - Adrian
- * 2 -numele - Stas
- * 4- grupa - David
- * 1 - familile - Stas
- * 6 - "Realizarea lucrarea de laborator pentru" - Adrian
- * 3 - Disciplina - David
+ * 5 - Print "Salut colegi" - Adrian sleep()
+ * 2 -numele - Stas yield()
+ * 4- grupa - David join()
+ * 1 - familile - Stas yield()
+ * 6 - "Realizarea lucrarea de laborator pentru" - Adrian join()
+ * 3 - Disciplina - David yield()
  */
 
 import javax.swing.*;
 import java.io.*;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class Main {
   public static void main(String[] args) {
@@ -27,9 +28,11 @@ public class Main {
       }
     }, true));
 
+    //generates random numbers actually
     int[] a = new int[100];
-    for (int i = 0; i < 100; i++)
-      a[i] = i + 1;
+    for (int i = 0; i < a.length; i++) {
+        a[i] = ThreadLocalRandom.current().nextInt(0, 101); // 0–100 inclusive
+    }
 
     int[] intervalS3 = new int[201];
     int idx = 0;
@@ -56,7 +59,7 @@ public class Main {
     ThreadS4 t4 = new ThreadS4(t2, "CR-242");
     ThreadS1_S2 t1 = new ThreadS1_S2(a, "Stefanita, Turcan, Spinu", t4, 0, 99, 1);
     ThreadS5 t5 = new ThreadS5("Salut colegi", t2);
-    ThreadS6 t6 = new ThreadS6("Realizarea lucrarri de laborator pentru", t1);
+    ThreadS6 t6 = new ThreadS6("Realizarea lucrarii de laborator pentru", t1);
     ThreadS3 t3 = new ThreadS3(intervalS3, "Programarea Concurenta Distribuita", t6);
 
     t1.setName("Th1");
@@ -125,7 +128,7 @@ class ThreadS1_S2 extends Thread {
         primPar = -1;
       }
     }
-    System.out.println("Suma totală " + Thread.currentThread().getName() + ": " + sumFin);
+    System.out.println("Suma totala " + Thread.currentThread().getName() + ": " + sumFin);
 
     if (thread != null) {
       while (thread.isAlive()) {
@@ -250,7 +253,7 @@ class ThreadS5 extends Thread {
   @Override
   public void run() {
     try {
-      Thread.sleep(3000);
+      Thread.sleep(5000);
     } catch (InterruptedException e) {
     }
 
