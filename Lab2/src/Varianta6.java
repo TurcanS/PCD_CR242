@@ -55,19 +55,19 @@ public class Varianta6 {
         ThreadGroup g2 = new ThreadGroup(g1, "G2");
 
         List<Thread> toate = new ArrayList<>();
-        toate.add(creeaza(g1, "ThA", 3));
+        toate.add(creeaza(g1, "ThA", 2));
 
-        toate.add(creeaza(g3, "Thf", 3));
-        toate.add(creeaza(g3, "Thb", 7));
-        toate.add(creeaza(g3, "Thc", 3));
-        toate.add(creeaza(g3, "Thd", 3));
+        toate.add(creeaza(g3, "Thf", 2));
+        toate.add(creeaza(g3, "Thb", 6));
+        toate.add(creeaza(g3, "Thc", 2));
+        toate.add(creeaza(g3, "Thd", 2));
 
-        toate.add(creeaza(g2, "Th8", 3));
-        toate.add(creeaza(g2, "Th9", 4));
-        toate.add(creeaza(g2, "Th3", 3));
+        toate.add(creeaza(g2, "Th8", 2));
+        toate.add(creeaza(g2, "Th9", 3));
+        toate.add(creeaza(g2, "Th3", 2));
 
-        toate.add(creeaza(main, "Th1", 3));
-        toate.add(creeaza(main, "Th2", 3));
+        toate.add(creeaza(main, "Th1", 2));
+        toate.add(creeaza(main, "Th2", 2));
 
         afiseaza("=== Varianta 6, nivel mediu ===");
         for (Thread t : toate) t.start();
