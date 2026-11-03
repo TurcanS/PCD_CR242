@@ -19,20 +19,6 @@ public class Lab2 {
         }
     }
 
-    // Creeaza firul si ii seteaza direct prioritatea finala.
-    static Thread creeaza(boolean avansat, ThreadGroup grup, String nume,
-                          int prioritate, CountDownLatch terminare) {
-        Thread fir;
-        if (avansat) {
-            fir = new FirAvansat(grup, nume, terminare);
-        } else {
-            // Folosim Thread cu Runnable, fara sa suprascriem Thread.run().
-            fir = new Thread(grup, () -> asteapta(terminare), nume);
-        }
-        fir.setPriority(prioritate);
-        return fir;
-    }
-
     static void executa(boolean avansat) throws InterruptedException {
         afiseaza("\n--- " + (avansat ? "2. NIVEL AVANSAT" : "1. NIVEL MEDIU") + " ---");
 
@@ -46,19 +32,24 @@ public class Lab2 {
         // Acest semnal tine firele active pana terminam enumerarea.
         CountDownLatch terminare = new CountDownLatch(1);
 
-        // 2. Cream cele 10 fire cu prioritatile finale: Thb=8, Th9=5, restul=4.
-        Thread[] fire = {
-            creeaza(avansat, g1, "ThA", 4, terminare),
-            creeaza(avansat, g3, "Thf", 4, terminare),
-            creeaza(avansat, g3, "Thb", 8, terminare),
-            creeaza(avansat, g3, "Thc", 4, terminare),
-            creeaza(avansat, g3, "Thd", 4, terminare),
-            creeaza(avansat, g2, "Th8", 4, terminare),
-            creeaza(avansat, g2, "Th9", 5, terminare),
-            creeaza(avansat, g2, "Th3", 4, terminare),
-            creeaza(avansat, main, "Th1", 4, terminare),
-            creeaza(avansat, main, "Th2", 4, terminare)
+        // 2. Elementele de pe aceeasi pozitie descriu acelasi fir.
+        // De exemplu, pozitia 4: Thb, grupul g3, prioritatea 8.
+        String[] nume = {
+            "Th1", "Th2", "ThA", "Thf", "Thb", "Thc", "Thd", "Th8", "Th9", "Th3"
         };
+        ThreadGroup[] grupe = { main, main, g1, g3, g3, g3, g3, g2, g2, g2 };
+        int[] prioritati =    {    4,    4,  4,  4,  8,  4,  4,  4,  5,  4 };
+
+        Thread[] fire = new Thread[nume.length];
+        for (int i = 0; i < nume.length; i++) {
+            if (avansat) {
+                fire[i] = new FirAvansat(grupe[i], nume[i], terminare);
+            } else {
+                // Nivel mediu: Thread cu Runnable, fara suprascrierea Thread.run().
+                fire[i] = new Thread(grupe[i], () -> asteapta(terminare), nume[i]);
+            }
+            fire[i].setPriority(prioritati[i]);
+        }
 
         try {
             // 3. Pornim firele si enumeram structura.

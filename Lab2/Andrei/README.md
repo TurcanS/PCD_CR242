@@ -67,6 +67,12 @@ confirmata cu profesoara.
    Apoi fac acelasi lucru pentru fiecare subgrup: aceasta este recursivitatea.
 5. Eliberez firele si astept terminarea lor cu `join()`.
 
+Numele, grupurile si prioritatile sunt pastrate in trei tablouri:
+`nume`, `grupe`, `prioritati`. Elementele de pe aceeasi pozitie apartin
+aceluiasi fir. De exemplu, pe pozitia 4 (numararea incepe de la 0)
+sunt `Thb`, `g3` si `8`. O singura bucla creeaza toate firele si aplica
+`fire[i].setPriority(prioritati[i])`. Nu mai exista metoda `creeaza()`.
+
 Inainte de terminarea firelor, apelez si `main.list()`. Aceasta metoda
 afiseaza automat in consola grupul Main, subgrupele si firele lor active,
 cu prioritatile. Rezultatul nativ al `list()` apare doar in consola IntelliJ;
