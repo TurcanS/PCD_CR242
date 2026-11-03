@@ -67,11 +67,12 @@ confirmata cu profesoara.
    Apoi fac acelasi lucru pentru fiecare subgrup: aceasta este recursivitatea.
 5. Eliberez firele si astept terminarea lor cu `join()`.
 
-Numele, grupurile si prioritatile sunt pastrate in trei tablouri:
-`nume`, `grupe`, `prioritati`. Elementele de pe aceeasi pozitie apartin
-aceluiasi fir. De exemplu, pe pozitia 4 (numararea incepe de la 0)
-sunt `Thb`, `g3` si `8`. O singura bucla creeaza toate firele si aplica
-`fire[i].setPriority(prioritati[i])`. Nu mai exista metoda `creeaza()`.
+Tabloul `grupe` contine fiecare grup o singura data: main, g1, g3, g2.
+In `nume` si `prioritati`, fiecare rand corespunde unui grup.
+De exemplu, randul pentru g3 contine Thf, Thb, Thc, Thd si 4, 8, 4, 4.
+Bucla cu `i` alege grupul; bucla cu `j` alege un fir din acel grup.
+`pozitie` indica locul urmator in tabloul cu toate cele 10 fire.
+Prioritatea se aplica prin `fire[pozitie].setPriority(prioritati[i][j])`.
 
 Inainte de terminarea firelor, apelez si `main.list()`. Aceasta metoda
 afiseaza automat in consola grupul Main, subgrupele si firele lor active,

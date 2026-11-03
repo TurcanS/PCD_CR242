@@ -32,23 +32,34 @@ public class Lab2 {
         // Acest semnal tine firele active pana terminam enumerarea.
         CountDownLatch terminare = new CountDownLatch(1);
 
-        // 2. Elementele de pe aceeasi pozitie descriu acelasi fir.
-        // De exemplu, pozitia 4: Thb, grupul g3, prioritatea 8.
-        String[] nume = {
-            "Th1", "Th2", "ThA", "Thf", "Thb", "Thc", "Thd", "Th8", "Th9", "Th3"
+        // 2. Fiecare grup apare o singura data; fiecare rand contine firele lui.
+        ThreadGroup[] grupe = { main, g1, g3, g2 };
+        String[][] nume = {
+            { "Th1", "Th2" },
+            { "ThA" },
+            { "Thf", "Thb", "Thc", "Thd" },
+            { "Th8", "Th9", "Th3" }
         };
-        ThreadGroup[] grupe = { main, main, g1, g3, g3, g3, g3, g2, g2, g2 };
-        int[] prioritati =    {    4,    4,  4,  4,  8,  4,  4,  4,  5,  4 };
+        int[][] prioritati = {
+            { 4, 4 },
+            { 4 },
+            { 4, 8, 4, 4 },
+            { 4, 5, 4 }
+        };
 
-        Thread[] fire = new Thread[nume.length];
-        for (int i = 0; i < nume.length; i++) {
-            if (avansat) {
-                fire[i] = new FirAvansat(grupe[i], nume[i], terminare);
-            } else {
-                // Nivel mediu: Thread cu Runnable, fara suprascrierea Thread.run().
-                fire[i] = new Thread(grupe[i], () -> asteapta(terminare), nume[i]);
+        Thread[] fire = new Thread[10];
+        int pozitie = 0;
+        for (int i = 0; i < grupe.length; i++) { // Alegem grupul.
+            for (int j = 0; j < nume[i].length; j++) { // Alegem firul din grup.
+                if (avansat) {
+                    fire[pozitie] = new FirAvansat(grupe[i], nume[i][j], terminare);
+                } else {
+                    // Nivel mediu: Thread cu Runnable, fara suprascrierea Thread.run().
+                    fire[pozitie] = new Thread(grupe[i], () -> asteapta(terminare), nume[i][j]);
+                }
+                fire[pozitie].setPriority(prioritati[i][j]);
+                pozitie++;
             }
-            fire[i].setPriority(prioritati[i]);
         }
 
         try {
