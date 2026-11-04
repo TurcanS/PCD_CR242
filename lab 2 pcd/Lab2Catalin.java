@@ -102,7 +102,7 @@ public class Lab2Catalin {
     }
 
     /**
-     * Valideaza numarul de fire si prioritatile cerute
+     * Valideaza numarul de fire si prioritatile cerut
      */
     private static boolean valideazaStructura(ThreadGroup mainGroup, List<Thread> fire) {
         if (mainGroup.activeCount() != 10) {
