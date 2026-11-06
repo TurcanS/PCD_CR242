@@ -83,7 +83,7 @@ class Veniamin implements Runnable {
             int produs = t[poz1] * t[poz2];
 
             String linie = "\n" + nume + " Pozitii: " + poz1 + " Si " + poz2
-                    + " Valori: " + t[poz1] + " * " + t[poz2] + " = " + produs + "\n";
+                    + " VAlori: " + t[poz1] + " * " + t[poz2] + " = " + produs + "\n";
             Main.scrie(ta, linie);
 
             i += 4 * pas;
