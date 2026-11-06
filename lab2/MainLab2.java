@@ -18,7 +18,8 @@ public class MainLab2 extends Thread {
 
         System.setOut(new PrintStream(new OutputStream() {
             public void write(int b) {
-                SwingUtilities.invokeLater(() -> area.append(String.valueOf((char) b))
+                SwingUtilities.invokeLater(() ->
+                        area.append(String.valueOf((char) b))
                 );
             }
         }, true));
@@ -27,9 +28,10 @@ public class MainLab2 extends Thread {
         ThreadGroup GE = new ThreadGroup(Main, "GE");
         ThreadGroup GH = new ThreadGroup(GE, "GH");
         ThreadGroup GK = new ThreadGroup(Main, "GK");
+        Thread.currentThread().setPriority(4);
 
         MainLab2 firTh1Main = new MainLab2(Main, "Th1");
-        firTh1Main.setPriority(4);
+        firTh1Main.setPriority(Thread.currentThread().getPriority());
         firTh1Main.start();
 
         MainLab2 firTha = new MainLab2(GH, "Tha");
@@ -37,7 +39,7 @@ public class MainLab2 extends Thread {
         firTha.start();
 
         MainLab2 firThb = new MainLab2(GH, "Thb");
-        firThb.setPriority(4);
+        firThb.setPriority(Thread.currentThread().getPriority());
         firThb.start();
 
         MainLab2 firThc = new MainLab2(GH, "Thc");
@@ -49,11 +51,11 @@ public class MainLab2 extends Thread {
         firThd.start();
 
         MainLab2 firThA = new MainLab2(GE, "ThA");
-        firThA.setPriority(4);
+        firThA.setPriority(Thread.currentThread().getPriority());
         firThA.start();
 
         MainLab2 firTh1GK = new MainLab2(GK, "Th1");
-        firTh1GK.setPriority(4);
+        firTh1GK.setPriority(Thread.currentThread().getPriority());
         firTh1GK.start();
 
         MainLab2 firTh2GK = new MainLab2(GK, "Th2");
@@ -61,20 +63,14 @@ public class MainLab2 extends Thread {
         firTh2GK.start();
 
         MainLab2 firTh3GK = new MainLab2(GK, "Th3");
-        firTh3GK.setPriority(4);
+        firTh3GK.setPriority(Thread.currentThread().getPriority());
         firTh3GK.start();
 
         MainLab2 firTh2Main = new MainLab2(Main, "Th2");
         firTh2Main.setPriority(8);
         firTh2Main.start();
 
-        System.out.println("Grupu GH ");
-        GH.list();
-        System.out.println("\nGrupu GE ");
-        GE.list();
-        System.out.println("\nGrupu GK ");
-        GK.list();
-        System.out.println("\nGrupu MAIN ");
+        System.out.println("\nGrupul MAIN:");
         Main.list();
     }
 
