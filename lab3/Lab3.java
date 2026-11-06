@@ -1,6 +1,17 @@
-import java.io.*;
-import javax.swing.*;
 
+import javax.swing.*;
+import java.io.*;
+
+/*
+ 
+2 - nu are sincronizare 
+1 - foloseste isAlive sa verifice daca 4 mai ruleaza 
+3 - foloseste doar sleep 
+4 - asteapta ca 2 sa termine prin join
+
+
+
+*/
 public class Lab3 {
 
   public static void main(String[] args) {
@@ -17,25 +28,23 @@ public class Lab3 {
         area.append(String.valueOf((char) b));
       }
     }, true));
-
     int[] tablou = new int[2112];
 
     for (int i = 0; i < 2112; i++) {
       tablou[i] = (int) (Math.random() * 99);
     }
-
     Sar12 s2 = new Sar12(tablou, 2111, 0, -1);
-    Sarcina s4 = new Sarcina(tablou, 4);
-    Sarcina s3 = new Sarcina(tablou, 3, s4);
-    Sar12 s1 = new Sar12(tablou, 0, 2111, 1, s2);
-
+    Sarcina s3 = new Sarcina(tablou, 3);
+    Sarcina s4 = new Sarcina(tablou, 4, s2);
+    Sar12 s1 = new Sar12(tablou, 0, 2111, 1, s4);
     s1.setName("Thread 1: ");
     s2.setName("Thread 2: ");
     s3.setName("Thread 3: ");
     s4.setName("Thread 4: ");
-
     s2.start();
+
     s4.start();
+
     s1.start();
     s3.start();
   }
@@ -44,17 +53,17 @@ public class Lab3 {
 class Sarcina extends Thread {
   private int sar;
   private int[] tablou;
-  private Thread altFir;
+  private Sar12 Th2;
 
   public Sarcina(int[] tablou, int sar) {
     this.sar = sar;
     this.tablou = tablou;
   }
 
-  public Sarcina(int[] tablou, int sar, Thread altFir) {
+  public Sarcina(int[] tablou, int sar, Sar12 Th2) {
     this.sar = sar;
     this.tablou = tablou;
-    this.altFir = altFir;
+    this.Th2 = Th2;
   }
 
   @Override
@@ -62,58 +71,51 @@ class Sarcina extends Thread {
     if (sar == 3) {
       System.out.print("Thread 3:");
       System.out.print("\n");
-
       for (int i = 0; i <= 798; i++) {
         System.out.print(tablou[i] + " ");
       }
 
       try {
-        Thread.sleep(4000);
-      } catch (InterruptedException e) {
-        Thread.currentThread().interrupt();
-      }
 
+        Thread.sleep(3500);
+      } catch (InterruptedException e) {
+        System.out.print(e);
+      }
       String disciplina = "Programarea Concurenta si Distribuita";
 
       System.out.print("\n");
       System.out.print(Thread.currentThread().getName());
-
       for (int i = 0; i < disciplina.length(); i++) {
-        System.out.print(disciplina.charAt(i));
+        System.out.print(disciplina.charAt(i) + "");
         try {
+
           Thread.sleep(100);
         } catch (InterruptedException e) {
-          Thread.currentThread().interrupt();
-          break;
+          System.out.print(e);
         }
       }
-    
-      altFir.interrupt();
-
     } else if (sar == 4) {
       System.out.print("\n");
       System.out.print(Thread.currentThread().getName());
-
       for (int i = 2111; i >= 1456; i--) {
+
         System.out.print(tablou[i] + " ");
       }
 
-      while (!isInterrupted()) {
-        Thread.yield();
+      try {
+        Th2.join();
+      } catch (InterruptedException e) {
+        e.printStackTrace();
       }
-
-      Thread.interrupted();
-
       System.out.print("\n" + Thread.currentThread().getName());
       String Grupa = "CR-242 ";
-
       for (int i = 0; i < Grupa.length(); i++) {
-        System.out.print(Grupa.charAt(i));
+        System.out.print(Grupa.charAt(i) + "");
         try {
+
           Thread.sleep(100);
         } catch (InterruptedException e) {
-          Thread.currentThread().interrupt();
-          break;
+          System.out.print(e);
         }
       }
     }
@@ -123,7 +125,7 @@ class Sarcina extends Thread {
 class Sar12 extends Thread {
   private int from, to, step;
   private int[] tablou;
-  private Thread sar;
+  private Sarcina sar;
 
   public Sar12(int[] tablou, int from, int to, int step) {
     this.from = from;
@@ -132,7 +134,7 @@ class Sar12 extends Thread {
     this.step = step;
   }
 
-  public Sar12(int[] tablou, int from, int to, int step, Thread sar) {
+  public Sar12(int[] tablou, int from, int to, int step, Sarcina sar) {
     this.from = from;
     this.to = to;
     this.tablou = tablou;
@@ -149,7 +151,6 @@ class Sar12 extends Thread {
       if (tablou[i] % 2 == 1) {
         suma1 = i;
         i += step;
-
         if ((i < to && step < 0) || (i > to && step > 0))
           break;
 
@@ -157,66 +158,56 @@ class Sar12 extends Thread {
           if (tablou[i] % 2 == 1) {
             suma2 = i;
             suma = tablou[suma1] + tablou[suma2];
-
             System.out.println(
-                getName() + ": Suma1=" + tablou[suma1]
-                + " ;  Suma2=" + tablou[suma2]
-                + ";  Suma=" + suma + ".");
-
+                getName() + ": Suma1=" + tablou[suma1] + " ;  Suma2=" + tablou[suma2] + ";  Suma=" + suma + ".");
             sum_t += suma;
             break;
           }
-
           i += step;
-
           if ((i < to && step < 0) || (i > to && step > 0))
             break;
-
         } while (true);
       }
-
       i += step;
-
       if ((i < to && step < 0) || (i > to && step > 0))
         break;
+
     }
 
     System.out.println(getName() + " Suma totala: " + sum_t);
-
     if (step == -1) {
-      System.out.print("\n" + getName());
-      String nume = " Cemirtan Vleju";
+      try {
 
-      for (int k = 0; k < nume.length(); k++) {
-        System.out.print(nume.charAt(k));
-        try {
-          Thread.sleep(100);
-        } catch (InterruptedException e) {
-          Thread.currentThread().interrupt();
-          break;
-        }
+        Thread.sleep(200);
+      } catch (InterruptedException e) {
+        System.out.print(e);
       }
-
-    } else {
-      if (sar.isAlive()) {
-        try {
-          sar.join();
-        } catch (InterruptedException e) {
-          Thread.currentThread().interrupt();
-          return;
-        }
-      }
-
       System.out.print("\n" + getName());
-      String prenume = "Edgar Dumitru";
-
+      String prenume = "Cemirtan Vleju";
       for (int k = 0; k < prenume.length(); k++) {
-        System.out.print(prenume.charAt(k));
+        System.out.print(prenume.charAt(k) + "");
         try {
+
           Thread.sleep(100);
         } catch (InterruptedException e) {
-          Thread.currentThread().interrupt();
-          break;
+          System.out.print(e);
+        }
+      }
+
+    }
+
+    else {
+      while (sar.isAlive()) {
+      }
+      System.out.print("\n" + getName());
+      String nume = "Edgar Dumitru";
+      for (int k = 0; k < nume.length(); k++) {
+        System.out.print(nume.charAt(k) + "");
+        try {
+
+          Thread.sleep(100);
+        } catch (InterruptedException e) {
+          System.out.print(e);
         }
       }
     }
