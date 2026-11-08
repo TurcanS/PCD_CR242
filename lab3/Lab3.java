@@ -34,9 +34,11 @@ public class Lab3 {
       tablou[i] = (int) (Math.random() * 99);
     }
     Sar12 s2 = new Sar12(tablou, 2111, 0, -1);
-    Sarcina s3 = new Sarcina(tablou, 3);
-    Sarcina s4 = new Sarcina(tablou, 4, s2);
+    Thread[] arr2 = { s2 };
+    Sarcina s4 = new Sarcina(tablou, 4, arr2);
     Sar12 s1 = new Sar12(tablou, 0, 2111, 1, s4);
+    Thread[] arr = { s2, s1, s4 };
+    Sarcina s3 = new Sarcina(tablou, 3, arr);
     s1.setName("Thread 1: ");
     s2.setName("Thread 2: ");
     s3.setName("Thread 3: ");
@@ -53,17 +55,12 @@ public class Lab3 {
 class Sarcina extends Thread {
   private int sar;
   private int[] tablou;
-  private Sar12 Th2;
+  private Thread[] Thr;
 
-  public Sarcina(int[] tablou, int sar) {
+  public Sarcina(int[] tablou, int sar, Thread[] Thr) {
     this.sar = sar;
     this.tablou = tablou;
-  }
-
-  public Sarcina(int[] tablou, int sar, Sar12 Th2) {
-    this.sar = sar;
-    this.tablou = tablou;
-    this.Th2 = Th2;
+    this.Thr = Thr;
   }
 
   @Override
@@ -75,11 +72,9 @@ class Sarcina extends Thread {
         System.out.print(tablou[i] + " ");
       }
 
-      try {
-
-        Thread.sleep(3500);
-      } catch (InterruptedException e) {
-        System.out.print(e);
+      for (Thread i : Thr) {
+        while (i.isAlive()) {
+        }
       }
       String disciplina = "Programarea Concurenta si Distribuita";
 
@@ -103,7 +98,7 @@ class Sarcina extends Thread {
       }
 
       try {
-        Th2.join();
+        Thr[0].join();
       } catch (InterruptedException e) {
         e.printStackTrace();
       }
