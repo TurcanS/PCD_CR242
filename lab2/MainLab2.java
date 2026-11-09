@@ -1,8 +1,9 @@
 import javax.swing.*;
+import java.io.*;
 
 public class MainLab2 extends Thread {
-    public MainLab2(ThreadGroup g, String name) {
-        super(g, name);
+    public MainLab2(ThreadGroup grupa, String nume) {
+        super(grupa, nume);
         setDaemon(true);
     }
 
@@ -11,67 +12,66 @@ public class MainLab2 extends Thread {
         JTextArea area = new JTextArea();
         area.setEditable(false);
         frame.add(new JScrollPane(area));
-        frame.setSize(700, 450);
+        frame.setSize(700, 500);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
+
+        System.setOut(new PrintStream(new OutputStream() {
+            public void write(int b) {
+                SwingUtilities.invokeLater(() ->
+                        area.append(String.valueOf((char) b))
+                );
+            }
+        }, true));
 
         ThreadGroup Main = new ThreadGroup("Main");
         ThreadGroup GE = new ThreadGroup(Main, "GE");
         ThreadGroup GH = new ThreadGroup(GE, "GH");
         ThreadGroup GK = new ThreadGroup(Main, "GK");
+        Thread.currentThread().setPriority(4);
 
-        Thread t;
-        t = new MainLab2(Main, "Th1");
-        t.setPriority(4);
-        t.start();
+        MainLab2 firTh1Main = new MainLab2(Main, "Th1");
+        firTh1Main.setPriority(Thread.currentThread().getPriority());
+        firTh1Main.start();
 
-        t = new MainLab2(GH, "Tha");
-        t.setPriority(5);
-        t.start();
+        MainLab2 firTha = new MainLab2(GH, "Tha");
+        firTha.setPriority(5);
+        firTha.start();
 
-        t = new MainLab2(GH, "Thb");
-        t.setPriority(4);
-        t.start();
+        MainLab2 firThb = new MainLab2(GH, "Thb");
+        firThb.setPriority(Thread.currentThread().getPriority());
+        firThb.start();
 
-        t = new MainLab2(GH, "Thc");
-        t.setPriority(3);
-        t.start();
+        MainLab2 firThc = new MainLab2(GH, "Thc");
+        firThc.setPriority(3);
+        firThc.start();
 
-        t = new MainLab2(GH, "Thd");
-        t.setPriority(2);
-        t.start();
+        MainLab2 firThd = new MainLab2(GH, "Thd");
+        firThd.setPriority(2);
+        firThd.start();
 
-        t = new MainLab2(GE, "ThA");
-        t.setPriority(4);
-        t.start();
+        MainLab2 firThA = new MainLab2(GE, "ThA");
+        firThA.setPriority(Thread.currentThread().getPriority());
+        firThA.start();
 
-        t = new MainLab2(GK, "Th1");
-        t.setPriority(4);
-        t.start();
+        MainLab2 firTh1GK = new MainLab2(GK, "Th1");
+        firTh1GK.setPriority(Thread.currentThread().getPriority());
+        firTh1GK.start();
 
-        t = new MainLab2(GK, "Th2");
-        t.setPriority(7);
-        t.start();
+        MainLab2 firTh2GK = new MainLab2(GK, "Th2");
+        firTh2GK.setPriority(7);
+        firTh2GK.start();
 
-        t = new MainLab2(GK, "Th3");
-        t.setPriority(4);
-        t.start();
+        MainLab2 firTh3GK = new MainLab2(GK, "Th3");
+        firTh3GK.setPriority(Thread.currentThread().getPriority());
+        firTh3GK.start();
 
-        t = new MainLab2(Main, "Th2");
-        t.setPriority(8);
-        t.start();
+        MainLab2 firTh2Main = new MainLab2(Main, "Th2");
+        firTh2Main.setPriority(8);
+        firTh2Main.start();
 
-        area.append("ENUMERAREA FIRELOR DE EXECUTIE\n\n");
-
-        Thread[] fire = new Thread[20];
-        int numar = Main.enumerate(fire, true);
-
-        for (int i = 0; i < numar; i++) {
-            area.append("Nume: " + fire[i].getName() + "\n");
-            area.append("Grupa: " + fire[i].getThreadGroup().getName() + "\n");
-            area.append("Prioritate: " + fire[i].getPriority() + "\n");
-            area.append("Daemon: " + fire[i].isDaemon() + "\n\n");
-        }
+        System.out.println("\nGrupul MAIN:");
+        Main.list();
     }
 
     @Override
