@@ -18,7 +18,7 @@ public class Main {
     area.setEditable(false);
     JFrame frame = new JFrame("Turcan Stanislav");
     frame.add(new JScrollPane(area));
-    frame.setSize(700, 400);
+    frame.setSize(900, 600);
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     frame.setVisible(true);
 
