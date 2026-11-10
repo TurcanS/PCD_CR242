@@ -2,11 +2,34 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.Random;
 
+/*
+ * Lucrarea de laborator nr. 3 - Sincronizarea firelor de executie prin metodele clasei Thread
+ * VARIANTA 7
+ *
+ * PARTEA COMUNA (Main2):
+ *   - datele studentilor si intervalele din Tabelul 3 (varianta 7);
+ *   - interfata grafica Swing (4 panouri - cate unul pentru fiecare fir + rezultatul final);
+ *   - referintele statice catre cele 4 fire (folosite de ambele parti pentru join/interrupt);
+ *   - metodele log() si printSlow() prin care firele scriu in interfata;
+ *   - startRun() - creeaza si porneste firele (in ordinea corecta).
+ *
+ * Fisiere:
+ *   Main2.java   - partea comuna
+ *   Vlad3.java   - Thread3 si Thread4
+ *   Adrian3.java - Thread1 si Thread2
+ *
+ * Ordinea afisarii textelor (dupa terminarea sarcinilor):
+ *   Th2 (Numele) -> Th4 (Grupa) -> Th1 (Prenumele) -> Th3 (Disciplina)
+ *
+ * Compilare:  javac Main2.java Vlad3.java Adrian3.java
+ * Rulare:     java Main2
+ */
 public class Main2 {
 
-    static final String NUME       = "Verdes, Neagu";
-    static final String PRENUME    = "Vlad, Adrian";
-    static final String GRUPA      = "CR-242";
+    // ===== DATELE STUDENTILOR (de completat) =====
+    static final String NUME       = "Numele";
+    static final String PRENUME    = "Prenumele";
+    static final String GRUPA      = "Grupa";
     static final String DISCIPLINA = "Programarea concurenta si distribuita";
 
     /** Intervalul dintre litere la afisarea textului (ms) - cerinta lucrarii. */
@@ -37,8 +60,11 @@ public class Main2 {
      */
     static volatile Thread gate;
 
-    /** Numerele pare din tabloul generat (folosite de Th1 si Th2). */
-    static volatile int[] evens = new int[0];
+    /**
+     * Tabloul generat (numere aleatoare din [15, 115]) - il folosesc Th1 si Th2.
+     * Filtrarea numerelor pare se face in codul lui Adrian (Adrian3.java).
+     */
+    static volatile int[] numbers = new int[0];
 
     // ===== COMPONENTELE INTERFETEI =====
     static final JTextArea[] areas = new JTextArea[4];   // Th1..Th4
@@ -124,23 +150,12 @@ public class Main2 {
     private static void generateData() {
         Random rnd = new Random();
         int[] b = new int[ARRAY_SIZE];
-        int count = 0;
         StringBuilder sb = new StringBuilder("Tabloul generat: ");
         for (int i = 0; i < b.length; i++) {
             b[i] = 15 + rnd.nextInt(101); // [15, 115]
             sb.append(b[i]).append(' ');
-            if (b[i] % 2 == 0) {
-                count++;
-            }
         }
-        int[] ev = new int[count];
-        int k = 0;
-        for (int v : b) {
-            if (v % 2 == 0) {
-                ev[k++] = v;
-            }
-        }
-        evens = ev;
+        numbers = b;
         final String text = sb.toString();
         SwingUtilities.invokeLater(new Runnable() {
             @Override
@@ -245,7 +260,7 @@ public class Main2 {
         // Sus: titlu + tabloul generat + buton
         JPanel top = new JPanel(new BorderLayout(8, 4));
         top.setBorder(BorderFactory.createEmptyBorder(8, 8, 4, 8));
-        JLabel title = new JLabel("Varianta 7 - sincronizare prin metodele clasei Thread (join, interrupt, isAlive, yield)");
+        JLabel title = new JLabel("Varianta 7 - sincronizare prin metodele clasei Thread (join, interrupt, isAlive, getState)");
         title.setFont(title.getFont().deriveFont(Font.BOLD, 14f));
         top.add(title, BorderLayout.NORTH);
         top.add(new JScrollPane(arrayArea), BorderLayout.CENTER);
