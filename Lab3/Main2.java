@@ -1,4 +1,6 @@
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.Random;
 
@@ -8,9 +10,10 @@ import java.util.Random;
  *
  * PARTEA COMUNA (Main2):
  *   - datele studentilor si intervalele din Tabelul 3 (varianta 7);
- *   - interfata grafica Swing (4 panouri - cate unul pentru fiecare fir + rezultatul final);
+ *   - interfata grafica Swing: UN SINGUR TABEL in care toate cele 4 fire scriu pe rand
+ *     (coloanele: #, Fir, Mesaj), fiecare fir avand culoarea lui;
  *   - referintele statice catre cele 4 fire (folosite de ambele parti pentru join/interrupt);
- *   - metodele log() si printSlow() prin care firele scriu in interfata;
+ *   - metodele log() si printSlow() prin care firele scriu in interfata (API neschimbat);
  *   - startRun() - creeaza si porneste firele (in ordinea corecta).
  *
  * Fisiere:
@@ -67,18 +70,29 @@ public class Main2 {
     static volatile int[] numbers = new int[0];
 
     // ===== COMPONENTELE INTERFETEI =====
-    static final JTextArea[] areas = new JTextArea[4];   // Th1..Th4
+    /** Tabelul unic: fiecare apel log() adauga un rand (#, Fir, Mesaj). */
+    static final DefaultTableModel model = new DefaultTableModel(new String[] { "#", "Fir", "Mesaj" }, 0) {
+        @Override
+        public boolean isCellEditable(int row, int column) {
+            return false;
+        }
+    };
+    static final JTable table = new JTable(model);
+
     static final JTextArea arrayArea  = new JTextArea(3, 60);
-    static final JTextArea resultArea = new JTextArea(4, 60);
+    static final JTextArea resultArea = new JTextArea(3, 60);
     static final JButton startButton  = new JButton("Start");
     static final JLabel statusLabel   = new JLabel("Apasa Start pentru a porni cele 4 fire.");
 
+    /** Culori pentru randurile celor 4 fire (Th1..Th4). */
+    private static final Color[] COLORS = {
+        new Color(255, 235, 235),   // Th1
+        new Color(235, 245, 255),   // Th2
+        new Color(235, 255, 235),   // Th3
+        new Color(255, 250, 225)    // Th4
+    };
+
     static {
-        for (int i = 0; i < areas.length; i++) {
-            areas[i] = new JTextArea();
-            areas[i].setEditable(false);
-            areas[i].setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
-        }
         arrayArea.setEditable(false);
         arrayArea.setLineWrap(true);
         arrayArea.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
@@ -88,36 +102,43 @@ public class Main2 {
 
     // ===================== METODE AJUTATOARE (apelabile din orice fir) =====================
 
-    private static void append(final JTextArea area, final String text) {
+    /** Adauga un rand in tabelul unic: firul n (1..4) a scris "line". */
+    static void log(final int n, final String line) {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                area.append(text);
-                area.setCaretPosition(area.getDocument().getLength());
+                model.addRow(new Object[] { model.getRowCount() + 1, "Th" + n, line });
+                int last = model.getRowCount() - 1;
+                table.scrollRectToVisible(table.getCellRect(last, 0, true));
             }
         });
     }
 
-    /** Scrie o linie in panoul firului n (1..4). */
-    static void log(int n, String line) {
-        append(areas[n - 1], line + "\n");
+    private static void appendResult(final String text) {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                resultArea.append(text);
+                resultArea.setCaretPosition(resultArea.getDocument().getLength());
+            }
+        });
     }
 
     /** Afiseaza textul litera cu litera (100 ms intre litere) in zona "Rezultat final". */
     static void printSlow(String text) {
+        boolean interrupted = false;
         for (int i = 0; i < text.length(); i++) {
-            boolean interrupted = false;
             try {
                 Thread.sleep(LETTER_DELAY_MS);
             } catch (InterruptedException e) {
-                interrupted = true;
+                interrupted = true; // nu repunem flagul in bucla, ca sa pastram cei 100 ms intre litere
             }
-            append(resultArea, String.valueOf(text.charAt(i)));
-            if (interrupted) {
-                Thread.currentThread().interrupt(); // pastram semnalul de intrerupere
-            }
+            appendResult(String.valueOf(text.charAt(i)));
         }
-        append(resultArea, "\n");
+        appendResult("\n");
+        if (interrupted) {
+            Thread.currentThread().interrupt(); // pastram semnalul de intrerupere, o singura data
+        }
     }
 
     /**
@@ -171,9 +192,7 @@ public class Main2 {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                for (JTextArea a : areas) {
-                    a.setText("");
-                }
+                model.setRowCount(0);
                 resultArea.setText("");
                 startButton.setEnabled(false);
                 statusLabel.setText("Firele ruleaza...");
@@ -247,8 +266,8 @@ public class Main2 {
 
     // ===================== INTERFATA GRAFICA =====================
 
-    private static JScrollPane panel(String title, JTextArea area) {
-        JScrollPane sp = new JScrollPane(area);
+    private static JScrollPane panel(String title, Component c) {
+        JScrollPane sp = new JScrollPane(c);
         sp.setBorder(BorderFactory.createTitledBorder(title));
         return sp;
     }
@@ -272,13 +291,29 @@ public class Main2 {
         });
         top.add(startButton, BorderLayout.EAST);
 
-        // Centru: 4 panouri (2x2)
-        JPanel grid = new JPanel(new GridLayout(2, 2, 6, 6));
-        grid.setBorder(BorderFactory.createEmptyBorder(4, 8, 4, 8));
-        grid.add(panel("Th1 - Sarcina 1: sumele produselor numerelor pare, 2 cate 2, de la primul element", areas[0]));
-        grid.add(panel("Th2 - Sarcina 2: sumele produselor numerelor pare, 2 cate 2, de la ultimul element", areas[1]));
-        grid.add(panel("Th3 - Sarcina 3: de la inceput intervalul [" + T3_FROM + ", " + T3_TO + "]", areas[2]));
-        grid.add(panel("Th4 - Sarcina 4: de la sfarsit intervalul [" + T4_TO + " -> " + T4_FROM + "]", areas[3]));
+        // Centru: UN SINGUR tabel cu toate firele
+        table.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
+        table.setRowHeight(20);
+        table.setShowGrid(true);
+        table.getColumnModel().getColumn(0).setPreferredWidth(60);
+        table.getColumnModel().getColumn(0).setMaxWidth(80);
+        table.getColumnModel().getColumn(1).setPreferredWidth(60);
+        table.getColumnModel().getColumn(1).setMaxWidth(80);
+        table.getColumnModel().getColumn(2).setPreferredWidth(950);
+        table.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable t, Object value, boolean selected,
+                                                           boolean focus, int row, int col) {
+                Component c = super.getTableCellRendererComponent(t, value, selected, focus, row, col);
+                if (!selected) {
+                    String fir = String.valueOf(t.getValueAt(row, 1)); // "Th1".."Th4"
+                    int idx = fir.length() == 3 ? fir.charAt(2) - '1' : -1;
+                    c.setBackground(idx >= 0 && idx < 4 ? COLORS[idx] : Color.WHITE);
+                }
+                return c;
+            }
+        });
+        JScrollPane tablePane = panel("Toate firele (Th1..Th4) - in ordinea in care scriu", table);
 
         // Jos: rezultatul final + status
         JPanel bottom = new JPanel(new BorderLayout(4, 4));
@@ -287,9 +322,13 @@ public class Main2 {
                 BorderLayout.CENTER);
         bottom.add(statusLabel, BorderLayout.SOUTH);
 
+        JPanel middle = new JPanel(new BorderLayout());
+        middle.setBorder(BorderFactory.createEmptyBorder(4, 8, 4, 8));
+        middle.add(tablePane, BorderLayout.CENTER);
+
         frame.setLayout(new BorderLayout());
         frame.add(top, BorderLayout.NORTH);
-        frame.add(grid, BorderLayout.CENTER);
+        frame.add(middle, BorderLayout.CENTER);
         frame.add(bottom, BorderLayout.SOUTH);
         frame.setSize(1150, 800);
         frame.setLocationRelativeTo(null);
