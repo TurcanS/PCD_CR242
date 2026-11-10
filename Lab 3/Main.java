@@ -187,7 +187,6 @@ class ThreadS3 extends Thread {
       } catch (Exception e) {
       }
     }
-    System.out.println();
   }
 }
 
