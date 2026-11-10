@@ -1,8 +1,5 @@
 import javax.swing.*;
 import java.awt.*;
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-import java.nio.charset.StandardCharsets;
 
 public class Veniamin_Priority extends Thread {
 
@@ -20,57 +17,75 @@ public class Veniamin_Priority extends Thread {
         }
     }
 
+    private static void afiseaza(ThreadGroup g, int nivel, StringBuilder sb) {
+        String tab = "".repeat(nivel);
+
+        sb.append(tab).append("ThreadGroup[name=").append(g.getName())
+                .append(",maxpri=").append(g.getMaxPriority()).append("]\n");
+
+        Thread[] fire = new Thread[g.activeCount() + 10];
+        int n = g.enumerate(fire, false);
+        for (int i = 0; i < n; i++) {
+            Thread t = fire[i];
+            sb.append(tab).append("Thread[").append(t.getName())
+                    .append(",").append(t.getPriority())
+                    .append(",").append(t.getThreadGroup().getName())
+                    .append(",daemon=").append(t.isDaemon())
+                    .append("]\n");
+        }
+
+        ThreadGroup[] subgrupuri = new ThreadGroup[g.activeGroupCount() + 10];
+        int m = g.enumerate(subgrupuri, false);
+        for (int i = 0; i < m; i++) {
+            afiseaza(subgrupuri[i], nivel + 1, sb);
+        }
+    }
+
     public static void main(String[] args) {
 
         ThreadGroup main = new ThreadGroup("main");
         ThreadGroup GK = new ThreadGroup(main, "GK");
         ThreadGroup GE = new ThreadGroup(main, "GE");
         ThreadGroup GH = new ThreadGroup(GE, "GH");
-        main.setDaemon(true);
-        Thread.currentThread().setPriority(4);
 
         Veniamin_Priority Th1 = new Veniamin_Priority(main, "Th1");
-        Th1.setPriority(3);
+        Th1.setPriority(2);
         Th1.start();
         Veniamin_Priority Th2 = new Veniamin_Priority(main, "Th2");
-        Th2.setPriority(7);
+        Th2.setPriority(6);
+        Th2.setDaemon(true);
         Th2.start();
         Veniamin_Priority ThA = new Veniamin_Priority(GE, "ThA");
-        ThA.setPriority(3);
+        ThA.setPriority(2);
         ThA.start();
         Veniamin_Priority GKth1 = new Veniamin_Priority(GK, "Th1");
-        GKth1.setPriority(3);
+        GKth1.setPriority(2);
         GKth1.start();
         Veniamin_Priority GKth2 = new Veniamin_Priority(GK, "Th2");
-        GKth2.setPriority(6);
+        GKth2.setPriority(5);
+        GKth2.setDaemon(true);
         GKth2.start();
         Veniamin_Priority GKth3 = new Veniamin_Priority(GK, "Th3");
-        GKth3.setPriority(3);
+        GKth3.setPriority(2);
         GKth3.start();
         Veniamin_Priority GHtha = new Veniamin_Priority(GH, "Tha");
-        GHtha.setPriority(4);
+        GHtha.setPriority(3);
+        GHtha.setDaemon(true);
         GHtha.start();
         Veniamin_Priority GHthb = new Veniamin_Priority(GH, "Thb");
-        GHthb.setPriority(3);
+        GHthb.setPriority(2);
         GHthb.start();
         Veniamin_Priority GHthc = new Veniamin_Priority(GH, "Thc");
-        GHthc.setPriority(2);
+        GHthc.setPriority(1);
         GHthc.start();
         Veniamin_Priority GHthd = new Veniamin_Priority(GH, "Thd");
         GHthd.setPriority(1);
         GHthd.start();
 
-        // captam ce afiseaza main.list() (el scrie in System.out)
-        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-        PrintStream consola = System.out;
-        System.setOut(new PrintStream(buffer, true, StandardCharsets.UTF_8));
-        System.out.println("Grupul MAIN:");
-        main.list();
-        System.out.flush();
-        System.setOut(consola); // revenim la consola normala
-        String rezultat = buffer.toString(StandardCharsets.UTF_8);
+        StringBuilder sb = new StringBuilder("Grupul MAIN:\n");
+        afiseaza(main, 0, sb);
+        String rezultat = sb.toString();
 
-        // interfata grafica simpla
         SwingUtilities.invokeLater(() -> {
             JFrame frame = new JFrame("Grupuri de fire si prioritati");
             JTextArea ta = new JTextArea(rezultat);
@@ -78,7 +93,7 @@ public class Veniamin_Priority extends Thread {
             ta.setFont(new Font("Monospaced", Font.PLAIN, 14));
             frame.add(new JScrollPane(ta));
             frame.setSize(600, 400);
-            frame.setLocationRelativeTo(null); // centrat pe ecran
+            frame.setLocationRelativeTo(null);
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setVisible(true);
         });

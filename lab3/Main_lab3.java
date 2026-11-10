@@ -100,8 +100,8 @@ class Fir1 extends Thread {
         Main_lab3.scrie(ta, "\n" + nume +  "\n");
 
         try {
-            precedent.join(); // asteapta sa-si termine afisarea fir4
-            Main_lab3.scrieLitere(ta, "Prenume: Veniamin");
+            precedent.join();
+            Main_lab3.scrieLitere(ta, "Prenume: Veniamin și Octavian");
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -142,7 +142,7 @@ class Fir2 extends Thread {
         Main_lab3.scrie(ta, "\n" + nume + "\n");
 
         try {
-            Main_lab3.scrieLitere(ta, "Nume: Spînu");
+            Main_lab3.scrieLitere(ta, "Nume: Spînu și Demenco");
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
