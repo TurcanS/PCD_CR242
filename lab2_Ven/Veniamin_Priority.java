@@ -1,5 +1,8 @@
 import javax.swing.*;
 import java.awt.*;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
 
 public class Veniamin_Priority extends Thread {
 
@@ -17,29 +20,9 @@ public class Veniamin_Priority extends Thread {
             }
         }
     }
-
-    private static void afiseaza(ThreadGroup g, int nivel, StringBuilder sb) {
-        String tab = "".repeat(nivel);
-
-        sb.append(tab).append("ThreadGroup[name=").append(g.getName())
-                .append(",maxpri=").append(g.getMaxPriority()).append("]\n");
-
-        Thread[] fire = new Thread[g.activeCount() + 10];
-        int n = g.enumerate(fire, false);
-        for (int i = 0; i < n; i++) {
-            Thread t = fire[i];
-            sb.append(tab).append("Thread[").append(t.getName())
-                    .append(",").append(t.getPriority())
-                    .append(",").append(t.getThreadGroup().getName())
-                    .append(",daemon=").append(t.isDaemon())
-                    .append("]\n");
-        }
-
-        ThreadGroup[] subgrupuri = new ThreadGroup[g.activeGroupCount() + 10];
-        int m = g.enumerate(subgrupuri, false);
-        for (int i = 0; i < m; i++) {
-            afiseaza(subgrupuri[i], nivel + 1, sb);
-        }
+    @Override
+    public String toString() {
+        return "Thread[" + getName() + "," + getPriority() + "," + getThreadGroup().getName() + ",daemon=" + isDaemon() + "]";
     }
 
     public static void main(String[] args) {
@@ -54,6 +37,7 @@ public class Veniamin_Priority extends Thread {
         Th1.start();
         Veniamin_Priority Th2 = new Veniamin_Priority(main, "Th2");
         Th2.setPriority(6);
+        Th2.setDaemon(true);
         Th2.start();
         Veniamin_Priority ThA = new Veniamin_Priority(GE, "ThA");
         ThA.setPriority(2);
@@ -63,12 +47,14 @@ public class Veniamin_Priority extends Thread {
         GKth1.start();
         Veniamin_Priority GKth2 = new Veniamin_Priority(GK, "Th2");
         GKth2.setPriority(5);
+        GKth2.setDaemon(true);
         GKth2.start();
         Veniamin_Priority GKth3 = new Veniamin_Priority(GK, "Th3");
         GKth3.setPriority(2);
         GKth3.start();
         Veniamin_Priority GHtha = new Veniamin_Priority(GH, "Tha");
         GHtha.setPriority(3);
+        GHtha.setDaemon(true);
         GHtha.start();
         Veniamin_Priority GHthb = new Veniamin_Priority(GH, "Thb");
         GHthb.setPriority(2);
@@ -80,9 +66,14 @@ public class Veniamin_Priority extends Thread {
         GHthd.setPriority(1);
         GHthd.start();
 
-        StringBuilder sb = new StringBuilder("Main:\n");
-        afiseaza(main, 0, sb);
-        String rezultat = sb.toString();
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        PrintStream consola = System.out;
+        System.setOut(new PrintStream(buffer, true, StandardCharsets.UTF_8));
+        System.out.println("main:");
+        main.list();
+        System.out.flush();
+        System.setOut(consola);
+        String rezultat = buffer.toString(StandardCharsets.UTF_8);
 
         SwingUtilities.invokeLater(() -> {
             JFrame frame = new JFrame("Grupuri de fire si prioritati");
