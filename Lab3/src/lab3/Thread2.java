@@ -41,6 +41,7 @@ public class Thread2 extends Thread {
                 linii.accept("poz " + prima + " + poz " + i + " = " + (prima + i)
                         + "   (numerele " + mas[prima] + " și " + mas[i] + ")");
                 prima = -1;
+                pauzaLinie();
             }
         }
         linii.accept("Sarcina 2 este gata. Aștept semnalul de la Th1...");
@@ -61,6 +62,19 @@ public class Thread2 extends Thread {
             } catch (InterruptedException e) {
                 return;
             }
+        }
+    }
+
+    /**
+     * Pauză mică între linii, doar ca să se vadă pe ecran că firele rulează în paralel.
+     * Dacă Th1 trimite semnalul chiar în timpul pauzei, îl păstrez (interrupt()), ca să nu se piardă:
+     * sleep() de mai jos, care așteaptă semnalul, se va opri imediat.
+     */
+    private void pauzaLinie() {
+        try {
+            Thread.sleep(20);
+        } catch (InterruptedException e) {
+            interrupt();
         }
     }
 }

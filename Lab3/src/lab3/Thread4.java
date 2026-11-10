@@ -39,6 +39,7 @@ public class Thread4 extends Thread {
                 linii.accept(linie.toString());
                 linie.setLength(0);
                 peLinie = 0;
+                pauzaLinie();
             }
         }
         linii.accept("Sarcina 4 este gata. Aștept terminarea lui Th2...");
@@ -60,6 +61,15 @@ public class Thread4 extends Thread {
             } catch (InterruptedException e) {
                 return;
             }
+        }
+    }
+
+    /** Pauză mică între linii, doar ca să se vadă pe ecran că firele rulează în paralel (nu sincronizează nimic). */
+    private static void pauzaLinie() {
+        try {
+            Thread.sleep(5);
+        } catch (InterruptedException e) {
+            // nimeni nu întrerupe acest fir în timpul sarcinii
         }
     }
 }

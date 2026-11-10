@@ -45,6 +45,7 @@ public class Thread1 extends Thread {
                 linii.accept("poz " + prima + " + poz " + i + " = " + (prima + i)
                         + "   (numerele " + mas[prima] + " și " + mas[i] + ")");
                 prima = -1; // începem o pereche nouă
+                pauzaLinie();
             }
         }
         linii.accept("Sarcina 1 este gata.");
@@ -67,6 +68,15 @@ public class Thread1 extends Thread {
             } catch (InterruptedException e) {
                 return;
             }
+        }
+    }
+
+    /** Pauză mică între linii, doar ca să se vadă pe ecran că firele rulează în paralel (nu sincronizează nimic). */
+    private static void pauzaLinie() {
+        try {
+            Thread.sleep(20);
+        } catch (InterruptedException e) {
+            // nimeni nu întrerupe acest fir în timpul sarcinii
         }
     }
 }
