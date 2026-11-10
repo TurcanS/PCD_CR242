@@ -5,6 +5,7 @@ public class Veniamin_Priority extends Thread {
 
     public Veniamin_Priority(ThreadGroup grup, String name) {
         super(grup, name);
+        setDaemon(true);
     }
 
     @Override
@@ -53,7 +54,6 @@ public class Veniamin_Priority extends Thread {
         Th1.start();
         Veniamin_Priority Th2 = new Veniamin_Priority(main, "Th2");
         Th2.setPriority(6);
-        Th2.setDaemon(true);
         Th2.start();
         Veniamin_Priority ThA = new Veniamin_Priority(GE, "ThA");
         ThA.setPriority(2);
@@ -63,14 +63,12 @@ public class Veniamin_Priority extends Thread {
         GKth1.start();
         Veniamin_Priority GKth2 = new Veniamin_Priority(GK, "Th2");
         GKth2.setPriority(5);
-        GKth2.setDaemon(true);
         GKth2.start();
         Veniamin_Priority GKth3 = new Veniamin_Priority(GK, "Th3");
         GKth3.setPriority(2);
         GKth3.start();
         Veniamin_Priority GHtha = new Veniamin_Priority(GH, "Tha");
         GHtha.setPriority(3);
-        GHtha.setDaemon(true);
         GHtha.start();
         Veniamin_Priority GHthb = new Veniamin_Priority(GH, "Thb");
         GHthb.setPriority(2);
@@ -82,7 +80,7 @@ public class Veniamin_Priority extends Thread {
         GHthd.setPriority(1);
         GHthd.start();
 
-        StringBuilder sb = new StringBuilder("Grupul MAIN:\n");
+        StringBuilder sb = new StringBuilder("Main:\n");
         afiseaza(main, 0, sb);
         String rezultat = sb.toString();
 
