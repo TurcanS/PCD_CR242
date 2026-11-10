@@ -1,17 +1,14 @@
 package lab3;
 
-import java.awt.BorderLayout;
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
-import java.awt.GridLayout;
 import java.util.Random;
 import java.util.function.Consumer;
-import javax.swing.BorderFactory;
 import javax.swing.JFrame;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
+import javax.swing.text.DefaultCaret;
 
 /**
  * Lucrarea de laborator nr. 3 (PCD) - Sincronizarea firelor de execuție prin metodele clasei Thread. Varianta 4.
@@ -24,7 +21,6 @@ public class Main {
     private static final Font MONO = new Font(Font.MONOSPACED, Font.PLAIN, 13);
 
     private static final boolean GUI = !GraphicsEnvironment.isHeadless();
-    private static JPanel panouFire;
     private static JTextArea zonaText;
 
     public static void main(String[] args) throws Exception {
@@ -40,17 +36,14 @@ public class Main {
         }
         Consumer<String> litere = litere();
 
-        // Panourile din fereastră, în ordinea Th1, Th2, Th3, Th4
-        Consumer<String> linii1 = linii("Th1 (Cornos Ilie) - pozițiile numerelor impare, de la primul element");
-        Consumer<String> linii2 = linii("Th2 (Cornos Ilie) - pozițiile numerelor impare, de la ultimul element");
-        Consumer<String> linii3 = linii("Th3 (Spranceana Marius) - intervalul [234, 987] de la început");
-        Consumer<String> linii4 = linii("Th4 (Spranceana Marius) - intervalul [123, 890] de la sfârșit");
+        // Toate liniile firelor se scriu în aceeași zonă de text, una sub alta
+        Consumer<String> linii = linii();
 
         // Creăm firele: fiecare primește referințele la firele pe care le așteaptă sau cărora le trimite semnal
-        Thread2 th2 = new Thread2(mas, linii2, litere);
-        Thread4 th4 = new Thread4(th2, linii4, litere);
-        Thread1 th1 = new Thread1(mas, th2, th4, linii1, litere);
-        Thread3 th3 = new Thread3(th1, th2, th4, linii3, litere);
+        Thread2 th2 = new Thread2(mas, linii, litere);
+        Thread4 th4 = new Thread4(th2, linii, litere);
+        Thread1 th1 = new Thread1(mas, th2, th4, linii, litere);
+        Thread3 th3 = new Thread3(th1, th2, th4, linii, litere);
 
         // Pornim fiecare fir înaintea firelor care îl așteaptă sau îi trimit semnal:
         // Th2 înaintea lui Th4 (isAlive) și Th1 (interrupt), iar Th3 (join pe toate) ultimul.
@@ -60,28 +53,19 @@ public class Main {
         th3.start();
     }
 
-    /** Destinația liniilor unui fir: consola și, dacă există, panoul lui din fereastră. */
-    private static Consumer<String> linii(String titlu) {
-        if (!GUI) {
-            return linie -> System.out.println(Thread.currentThread().getName() + ": " + linie);
-        }
-        JTextArea zona = new JTextArea();
-        zona.setEditable(false);
-        zona.setFont(MONO);
-        JScrollPane derulare = new JScrollPane(zona);
-        derulare.setBorder(BorderFactory.createTitledBorder(titlu));
-        SwingUtilities.invokeLater(() -> {
-            panouFire.add(derulare);
-            panouFire.revalidate();
-        });
+    /** Destinația liniilor tuturor firelor: consola și zona unică din fereastră, cu numele firului în față. */
+    private static Consumer<String> linii() {
         return linie -> {
-            System.out.println(Thread.currentThread().getName() + ": " + linie);
-            // componentele Swing se modifică doar din firul de evenimente
-            SwingUtilities.invokeLater(() -> zona.append(linie + "\n"));
+            String text = Thread.currentThread().getName() + ": " + linie;
+            System.out.println(text);
+            if (GUI) {
+                // componentele Swing se modifică doar din firul de evenimente
+                SwingUtilities.invokeLater(() -> zonaText.append(text + "\n"));
+            }
         };
     }
 
-    /** Destinația textelor afișate literă cu literă după terminarea sarcinilor. */
+    /** Destinația textelor afișate literă cu literă după terminarea sarcinilor (aceeași zonă, la sfârșit). */
     private static Consumer<String> litere() {
         return litera -> {
             System.out.print(litera);
@@ -93,27 +77,17 @@ public class Main {
     }
 
     private static void creeazaFereastra(String tablou) {
-        JTextArea zonaTablou = new JTextArea(tablou, 4, 80);
-        zonaTablou.setEditable(false);
-        zonaTablou.setLineWrap(true);
-        zonaTablou.setWrapStyleWord(true);
-        zonaTablou.setFont(MONO);
-        zonaTablou.setBorder(BorderFactory.createTitledBorder("Tabloul mas (poziție:valoare, 100 de valori între 1 și 100)"));
-
-        panouFire = new JPanel(new GridLayout(2, 2, 6, 6));
-
-        zonaText = new JTextArea(5, 80);
+        zonaText = new JTextArea();
         zonaText.setEditable(false);
-        zonaText.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 14));
-        zonaText.setBorder(BorderFactory.createTitledBorder("Textele firelor (ordinea Th2, Th4, Th1, Th3), câte o literă la 100 ms"));
+        zonaText.setLineWrap(true);
+        zonaText.setFont(MONO);
+        zonaText.setText("Tabloul mas (poziție:valoare, 100 de valori între 1 și 100):\n" + tablou + "\n\n");
+        ((DefaultCaret) zonaText.getCaret()).setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE); // derulare automată în jos
 
         JFrame fereastra = new JFrame("PCD - Lucrarea de laborator nr. 3 - Varianta 4 - Cornos Ilie, Spranceana Marius");
         fereastra.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        fereastra.setLayout(new BorderLayout(6, 6));
-        fereastra.add(new JScrollPane(zonaTablou), BorderLayout.NORTH);
-        fereastra.add(panouFire, BorderLayout.CENTER);
-        fereastra.add(zonaText, BorderLayout.SOUTH);
-        fereastra.setSize(1100, 780);
+        fereastra.add(new JScrollPane(zonaText));
+        fereastra.setSize(1000, 780);
         fereastra.setLocationRelativeTo(null);
         fereastra.setVisible(true);
     }
