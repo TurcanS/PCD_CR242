@@ -22,7 +22,7 @@ public class Veniamin_Priority extends Thread {
     }
     @Override
     public String toString() {
-        return "Thread[" + getName() + "," + getPriority() + "," + getThreadGroup().getName() + ",daemon=" + isDaemon() + "]";
+        return "Thread[#" + getId() + "," + getName() + "," + getPriority() + "," + getThreadGroup().getName() + ",daemon=" + isDaemon() + "]";
     }
 
     public static void main(String[] args) {
