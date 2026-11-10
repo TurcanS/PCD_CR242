@@ -20,6 +20,7 @@ public class Veniamin_Priority extends Thread {
             }
         }
     }
+
     @Override
     public String toString() {
         return "Thread[#" + getId() + "," + getName() + "," + getPriority() + "," + getThreadGroup().getName() + ",daemon=" + isDaemon() + "]";
@@ -66,8 +67,7 @@ public class Veniamin_Priority extends Thread {
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         PrintStream consola = System.out;
         System.setOut(new PrintStream(buffer, true, StandardCharsets.UTF_8));
-        System.out.println("main:");
-        main.list();
+        Thread.currentThread().getThreadGroup().list();
         System.out.flush();
         System.setOut(consola);
         String rezultat = buffer.toString(StandardCharsets.UTF_8);
@@ -78,7 +78,7 @@ public class Veniamin_Priority extends Thread {
             ta.setEditable(false);
             ta.setFont(new Font("Monospaced", Font.PLAIN, 14));
             frame.add(new JScrollPane(ta));
-            frame.setSize(600, 400);
+            frame.setSize(700, 600);
             frame.setLocationRelativeTo(null);
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setVisible(true);

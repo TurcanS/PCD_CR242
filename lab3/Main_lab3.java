@@ -97,7 +97,6 @@ class Fir1 extends Thread {
                         + " valori: " + t[poz1] + " * " + t[poz2] + " = " + produs + "\n");
             }
         }
-        Main_lab3.scrie(ta, "\n" + nume +  "\n");
 
         try {
             precedent.join();
@@ -139,7 +138,6 @@ class Fir2 extends Thread {
                         + " valori: " + t[poz1] + " * " + t[poz2] + " = " + produs + "\n");
             }
         }
-        Main_lab3.scrie(ta, "\n" + nume + "\n");
 
         try {
             Main_lab3.scrieLitere(ta, "Nume: Spînu și Demenco");
@@ -218,7 +216,7 @@ class Fir4 extends Thread {
                     Main_lab3.scrie(ta, rand + "\n");
                     rand.setLength(0);
                 }
-                Thread.sleep(1);
+                Thread.sleep(100);
             }
             if (rand.length() > 0) {
                 Main_lab3.scrie(ta, rand + "\n");
