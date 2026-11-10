@@ -27,9 +27,9 @@ import java.util.Random;
 public class Main2 {
 
     // ===== DATELE STUDENTILOR (de completat) =====
-    static final String NUME       = "Numele";
-    static final String PRENUME    = "Prenumele";
-    static final String GRUPA      = "Grupa";
+    static final String NUME       = "Vedes, Neagu";
+    static final String PRENUME    = "Vlad, Adrian";
+    static final String GRUPA      = "CR-242";
     static final String DISCIPLINA = "Programarea concurenta si distribuita";
 
     /** Intervalul dintre litere la afisarea textului (ms) - cerinta lucrarii. */
