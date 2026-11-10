@@ -46,11 +46,17 @@ public class Thread2 extends Thread {
         }
         linii.accept("Sarcina 2 este gata. Aștept semnalul de la Th1...");
 
-        // 2. Aștept semnalul lui Thread1: sleep() se oprește cu InterruptedException când Th1 apelează interrupt().
-        //    Dacă Th1 a trimis semnalul mai devreme, indicatorul de întrerupere e deja setat și sleep() iese imediat.
+        // ==================================================================
+        // SINCRONIZARE (sleep + interrupt): AȘTEPT SEMNALUL de la Th1.
+        // Th1 apelează thread2.interrupt() (în Thread1.java), iar aici sleep()
+        // se oprește cu InterruptedException = „Th1 a terminat sarcina 1”.
+        // Dacă Th1 a trimis semnalul mai devreme, indicatorul de întrerupere e deja
+        // setat și sleep() iese imediat, deci semnalul nu se pierde.
+        // ==================================================================
         try {
-            Thread.sleep(Long.MAX_VALUE);
+            Thread.sleep(Long.MAX_VALUE);   // <<< AICI: dorm „la nesfârșit”, până mă trezește Th1
         } catch (InterruptedException e) {
+            // <<< AICI am ajuns = am primit semnalul de la Th1
             linii.accept("Am primit semnalul: sarcina 1 este gata.");
         }
 
@@ -74,7 +80,9 @@ public class Thread2 extends Thread {
         try {
             Thread.sleep(20);
         } catch (InterruptedException e) {
-            interrupt();
+            // Excepția a șters indicatorul de întrerupere. Îl pun la loc (interrupt() pe mine însumi),
+            // ca semnalul lui Th1 să nu se piardă: sleep(Long.MAX_VALUE) de mai sus se va opri imediat.
+            interrupt();   // <<< AICI: păstrez semnalul primit în timpul pauzei
         }
     }
 }

@@ -50,12 +50,20 @@ public class Thread1 extends Thread {
         }
         linii.accept("Sarcina 1 este gata.");
 
-        // 2. Îi spun lui Thread2 că sarcina 1 s-a terminat
-        thread2.interrupt();
+        // ==================================================================
+        // SINCRONIZARE 1 (interrupt): TRIMIT SEMNALUL către Th2.
+        // Sarcina 1 e gata, deci îi spun lui Th2 „poți afișa numele”.
+        // Th2 doarme în sleep() și se trezește când primește interrupt().
+        // ==================================================================
+        thread2.interrupt();   // <<< AICI: Th1 îl trezește pe Th2
 
-        // 3. Aștept până când Thread4 se termină (el a afișat deja grupa)
+        // ==================================================================
+        // SINCRONIZARE 2 (join): AȘTEPT să se termine Th4.
+        // Th4 a afișat deja grupa; abia după el afișez eu prenumele.
+        // ==================================================================
         try {
-            thread4.join();
+            // <<< AICI: Th1 stă blocat până când Th4 se termină
+            thread4.join();       // <<< AICI: așteptarea (join)
         } catch (InterruptedException e) {
             return; // nu ar trebui să se întâmple: nimeni nu îl întrerupe pe Thread1
         }

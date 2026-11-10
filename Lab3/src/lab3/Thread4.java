@@ -44,10 +44,14 @@ public class Thread4 extends Thread {
         }
         linii.accept("Sarcina 4 este gata. Aștept terminarea lui Th2...");
 
-        // 2. Cât timp Thread2 este încă activ, verific din nou peste 100 ms
-        while (thread2.isAlive()) {
+        // ==================================================================
+        // SINCRONIZARE (isAlive + sleep): AȘTEPT să se termine Th2.
+        // Th2 afișează numele; abia după el afișez eu grupa.
+        // isAlive() întreabă „mai rulează Th2?”, iar sleep(100) evită întrebarea non-stop.
+        // ==================================================================
+        while (thread2.isAlive()) {   // <<< AICI: cât timp Th2 mai rulează...
             try {
-                Thread.sleep(100);
+                Thread.sleep(100);   // <<< ...mai verific peste 100 ms
             } catch (InterruptedException e) {
                 return; // nu ar trebui să se întâmple: nimeni nu îl întrerupe pe Thread4
             }

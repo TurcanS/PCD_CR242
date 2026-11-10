@@ -47,11 +47,14 @@ public class Thread3 extends Thread {
         }
         linii.accept("Sarcina 3 este gata. Aștept terminarea firelor Th1, Th2 și Th4...");
 
-        // 2. Aștept terminarea tuturor celorlalte trei fire
+        // ==================================================================
+        // SINCRONIZARE (join): AȘTEPT să se termine Th1, Th2 și Th4.
+        // Abia după ce s-au terminat toate trei afișez disciplina (ultima).
+        // ==================================================================
         try {
-            thread1.join();
-            thread2.join();
-            thread4.join();
+            thread1.join();   // <<< AICI: aștept Th1
+            thread2.join();   // <<< AICI: aștept Th2
+            thread4.join();   // <<< AICI: aștept Th4
         } catch (InterruptedException e) {
             return; // nu ar trebui să se întâmple: nimeni nu îl întrerupe pe Thread3
         }
