@@ -4,21 +4,7 @@ import java.util.List;
 /**
  * Lucrare de laborator nr. 2 - Gruparea firelor de executie. Modificarea prioritatii.
  * Varianta 2. Metoda run() din clasa Thread NU este suprascrisa; firele sunt daemon.
- *
- * VARIANTA 2 (Tabelul 1):
- *   Main{ G2{ G4{ G1{Tha(1), Thb(3), Thc(8), Thd(3)} }, ThA(1) },
- *         G3{ Th1(4), Th2(3), Th3(5) },
- *         Th1(3), Th2(6) }
- *
- *   Arborele:
- *   Main
- *   |-- G2
- *   |   |-- G4
- *   |   |   `-- G1: Tha(1), Thb(3), Thc(8), Thd(3)
- *   |   `-- ThA(1)
- *   |-- G3: Th1(4), Th2(3), Th3(5)
- *   |-- Th1(3)
- *   `-- Th2(6)
+ * Structura este afisata cu metoda list() a clasei ThreadGroup.
  */
 public class Lab2Anatol {
 
@@ -62,28 +48,6 @@ public class Lab2Anatol {
         return main;
     }
 
-    // Enumerare recursiva: firele grupului, apoi subgrupele
-    static void afiseazaArbore(ThreadGroup g, int nivel) {
-        String indent = "    ".repeat(nivel);
-        System.out.println(indent + "[Grup] " + g.getName());
-
-        Thread[] fireGrup = new Thread[g.activeCount() + 10];
-        int nrFire = g.enumerate(fireGrup, false);
-        for (int i = 0; i < nrFire; i++) {
-            Thread t = fireGrup[i];
-            System.out.println(indent + "    - " + t.getName()
-                    + " | grup: " + t.getThreadGroup().getName()
-                    + " | prioritate: " + t.getPriority()
-                    + " | daemon: " + t.isDaemon());
-        }
-
-        ThreadGroup[] subgrupe = new ThreadGroup[g.activeGroupCount() + 10];
-        int nrSub = g.enumerate(subgrupe, false);
-        for (int i = 0; i < nrSub; i++) {
-            afiseazaArbore(subgrupe[i], nivel + 1);
-        }
-    }
-
     // Verifica numarul de fire si prioritatile
     static boolean verifica(ThreadGroup main, List<Thread> fire) {
         boolean ok = true;
@@ -111,11 +75,11 @@ public class Lab2Anatol {
         ThreadGroup main = construiesteStructura(fire);
 
         for (Thread t : fire) {
-            t.start();   // doar firele pornite sunt vazute de enumerate()
+            t.start();   // doar firele pornite apar in list()
         }
 
-        System.out.println("\n -- Structura enumerata din grupa Main --");
-        afiseazaArbore(main, 0);
+        System.out.println("\n-- Structura afisata cu list() --");
+         Thread.currentThread().getThreadGroup().list();
         System.out.println("Total fire active: " + main.activeCount());
 
         System.out.println("\n-- Verificare --");
