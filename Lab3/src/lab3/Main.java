@@ -80,6 +80,7 @@ public class Main {
         zonaText = new JTextArea();
         zonaText.setEditable(false);
         zonaText.setLineWrap(true);
+        zonaText.setWrapStyleWord(true); // rândul se rupe între cuvinte, nu în mijlocul unui număr
         zonaText.setFont(MONO);
         zonaText.setText("Tabloul mas (poziție:valoare, 100 de valori între 1 și 100):\n" + tablou + "\n\n");
         ((DefaultCaret) zonaText.getCaret()).setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE); // derulare automată în jos
