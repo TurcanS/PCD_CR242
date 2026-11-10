@@ -16,7 +16,7 @@ public class Main {
 
     JTextArea area = new JTextArea();
     area.setEditable(false);
-    JFrame frame = new JFrame("Turcan Stanislav");
+    JFrame frame = new JFrame("LAB 3 GRUP 1");
     frame.add(new JScrollPane(area));
     frame.setSize(900, 600);
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -130,7 +130,7 @@ class ThreadS1_S2 extends Thread {
         Thread.yield();
       }
     } else {
-      while (true) {
+      while (!Thread.currentThread().isInterrupted()) {
         try {
           Thread.sleep(100);
         } catch (Exception e) {
