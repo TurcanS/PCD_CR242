@@ -19,6 +19,7 @@ public class Main {
       Consumator p = new Consumator(depozit);
       String nume = "ConsumatorThread " + i;
       p.setName(nume);
+      p.start();
     }
 
   }
