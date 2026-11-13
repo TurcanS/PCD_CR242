@@ -17,7 +17,7 @@ public class Main {
 
     for (int i = 0; i < Y; i++){
       Consumator p = new Consumator(depozit);
-      String nume = "ConsumatorThread " + i;
+      String nume = "ConsumatorThread-" + i;
       p.setName(nume);
       p.start();
     }
@@ -46,8 +46,12 @@ class Depozit {
   }
 
   public synchronized int get() throws InterruptedException {
-    int val = (int)Math.random();
-    return val;
+    while (true){
+      int val = (0 + (int)(Math.random() * ((999 - 0) + 1)));
+      if (val % 2 == 0) {
+      return val;
+      }
+    }
   }
 }
 
@@ -63,13 +67,14 @@ class Consumator extends Thread {
   int val = 0;
   @Override
   public void run(){
-    try {
-    val = dep.get();
-    } catch (InterruptedException e){
-      System.out.println(e);
-    }
     for (int i = 0; i <= 11; i++){
-      System.out.println("Consumatorul " + getName() + " a consumat " + val);
+      try {
+        val = dep.get();
+        sleep(50);
+      } catch (InterruptedException e){
+        System.out.println(e);
+      }
+      System.out.println("Consumatorul " + getName() + " a consumat " + val + " ("+i+"/11)");
     }
   }
 }
