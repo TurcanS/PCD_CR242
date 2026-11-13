@@ -18,21 +18,28 @@ public class Main {
 class Depozit {
   ArrayList<Integer> list = new ArrayList<>();
 
-  public synchronized void put(int value) throws InterruptedException {
+  public synchronized void put(int value, int value2) throws InterruptedException {
     while (list.size() == 8) {
       wait();
     }
 
     list.add(value);
-    System.out.println("");
+    if (list.size() < 8){
+      list.add(value2);
+      System.out.println("Producatorul " + Thread.currentThread.getName() + " a produs valorile: " + value + " " + value2);
+    }
+    else{
+      System.out.println("Producatorul " + Thread.currentThread.getName() + " a produs valoarea: " + value);
+    }
+
     notifyAll();
   }
 
   public synchronized ArrayList<Integer> get() throws InterruptedException {
   }
 
-  class Producator extends Thread {
-  }
+class Producator extends Thread {
+}
 
 class Consumator extends Thread {
 
