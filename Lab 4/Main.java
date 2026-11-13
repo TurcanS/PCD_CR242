@@ -19,7 +19,7 @@ class Depozit {
   ArrayList<Integer> list = new ArrayList<>();
 
   public synchronized void put(int value) throws InterruptedException {
-    while (list.size() == 8){
+    while (list.size() == 8) {
       wait();
     }
 
@@ -29,25 +29,10 @@ class Depozit {
   }
 
   public synchronized ArrayList<Integer> get() throws InterruptedException {
-    while (list.isEmpty()) {
-      wait();
-    }
-
-    int ultimul = list.removeLast();
-    int penultimul = list.removeLast();
-
-    ArrayList<Integer> value = new ArrayList<>();
-    value.add(penultimul);
-    value.add(ultimul);
-
-    System.out.println("Consumatorul " + Thread.currentThread().getName() + " a luat din lista valoarea " + value);
-    notifyAll();
-    return value;
   }
-}
 
-class Producator extends Thread {
-}
+  class Producator extends Thread {
+  }
 
 class Consumator extends Thread {
 
