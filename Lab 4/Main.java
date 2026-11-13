@@ -45,7 +45,7 @@ class Depozit {
   }
 
   public synchronized int get() throws InterruptedException {
-    int val = (int)(Math.random());
+    int val = (int)Math.random();
     return val;
   }
 }
@@ -59,10 +59,14 @@ class Consumator extends Thread {
   public Consumator (Depozit dep){
     this.dep = dep;
   }
-
+  int val = 0;
   @Override
   public void run(){
-    int val = dep.get();
+    try {
+    val = dep.get();
+    } catch (InterruptedException e){
+      System.out.println(e);
+    }
     for (int i = 0; i <= 11; i++){
       System.out.println("Consumatorul " + getName() + " a consumat " + val);
     }
