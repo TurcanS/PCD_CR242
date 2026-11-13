@@ -11,7 +11,16 @@ public class Main {
   public static final int F = 2; // generează aleatoriu F obiecte
 
   public static void main(String[] args) {
-    System.out.println("Queue");
+    System.out.println("Array");
+
+    Depozit depozit = new Depozit();
+
+    for (int i = 0; i < Y; i++){
+      Consumator p = new Consumator(depozit);
+      String nume = "ConsumatorThread " + i;
+      p.setName(nume);
+    }
+
   }
 }
 
@@ -36,7 +45,8 @@ class Depozit {
   }
 
   public synchronized int get() throws InterruptedException {
-    return 0;
+    int val = (int)(Math.random());
+    return val;
   }
 }
 
@@ -44,4 +54,17 @@ class Producator extends Thread {
 }
 
 class Consumator extends Thread {
+  Depozit dep;
+
+  public Consumator (Depozit dep){
+    this.dep = dep;
+  }
+
+  @Override
+  public void run(){
+    int val = dep.get();
+    for (int i = 0; i <= 11; i++){
+      System.out.println("Consumatorul " + getName() + " a consumat " + val);
+    }
+  }
 }
