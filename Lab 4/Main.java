@@ -24,23 +24,24 @@ class Depozit {
     }
 
     list.add(value);
-    if (list.size() < 8){
+    if (list.size() < 8) {
       list.add(value2);
-      System.out.println("Producatorul " + Thread.currentThread.getName() + " a produs valorile: " + value + " " + value2);
-    }
-    else{
-      System.out.println("Producatorul " + Thread.currentThread.getName() + " a produs valoarea: " + value);
+      System.out
+          .println("Producatorul " + Thread.currentThread().getName() + " a produs valorile: " + value + " " + value2);
+    } else {
+      System.out.println("Producatorul " + Thread.currentThread().getName() + " a produs valoarea: " + value);
     }
 
     notifyAll();
   }
 
-  public synchronized ArrayList<Integer> get() throws InterruptedException {
+  public synchronized int get() throws InterruptedException {
+    return 0;
   }
+}
 
 class Producator extends Thread {
 }
 
 class Consumator extends Thread {
-
 }
