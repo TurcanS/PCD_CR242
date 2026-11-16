@@ -99,20 +99,19 @@ class Producator extends Thread {
 
 class Consumator extends Thread {
   Depozit dep;
+  int val = 0;
 
   public Consumator(Depozit dep, String name) {
     super(name);
     this.dep = dep;
   }
 
-  int val = 0;
-
   @Override
   public void run() {
     for (int i = 1; i <= Main.Z; i++) {
       try {
         val = dep.get(i);
-        sleep(150);
+        sleep((int)(Math.random() * 300)); //sleep [0-300]ms
       } catch (InterruptedException e) {
         return;
       }
