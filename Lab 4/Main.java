@@ -83,15 +83,15 @@ class Producator extends Thread {
 
   @Override
   public void run() {
-    for (int i = 0; i < Main.Z; i++) {
+    while (!Thread.currentThread().isInterrupted()) {
       int value = (int) (Math.random() * 500) * 2;
       int value2 = (int) (Math.random() * 500) * 2;
 
       try {
         dep.put(value, value2);
-        sleep(250);
+        sleep((int) (Math.random() * 600));
       } catch (InterruptedException e) {
-        return;
+        break;
       }
     }
   }
@@ -111,7 +111,7 @@ class Consumator extends Thread {
     for (int i = 1; i <= Main.Z; i++) {
       try {
         val = dep.get(i);
-        sleep((int)(Math.random() * 300)); //sleep [0-300]ms
+        sleep((int) (Math.random() * 300)); // sleep [0-300]ms
       } catch (InterruptedException e) {
         return;
       }
