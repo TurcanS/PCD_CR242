@@ -50,12 +50,13 @@ class Depozit {
   }
 
   public synchronized int get() throws InterruptedException {
-    while (true) {
-      int val = (0 + (int) (Math.random() * ((999 - 0) + 1)));
-      if (val % 2 == 0) {
-        return val;
-      }
+    while (list.isEmpty()) {
+      wait();
     }
+
+    int val = list.remove(0);
+    notifyAll();
+    return val;
   }
 }
 
@@ -95,7 +96,7 @@ class Consumator extends Thread {
 
   @Override
   public void run() {
-    for (int i = 0; i <= 11; i++) {
+    for (int i = 1; i <= Main.Z; i++) {
       try {
         val = dep.get();
         sleep(50);
