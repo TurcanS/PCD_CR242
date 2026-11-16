@@ -15,19 +15,30 @@ public class Main {
 
     Depozit depozit = new Depozit();
 
-    for (int i = 0; i < X; i++) {
-      Producator p = new Producator(depozit);
-      p.setName("ProducatorThread-" + i);
-      p.start();
+    Producator p1 = new Producator(depozit, "P1");
+    Producator p2 = new Producator(depozit, "P2");
+    p1.start();
+    p2.start();
+
+    Consumator c1 = new Consumator(depozit, "C1");
+    Consumator c2 = new Consumator(depozit, "C2");
+    Consumator c3 = new Consumator(depozit, "C3");
+    c1.start();
+    c2.start();
+    c3.start();
+
+    try {
+      c1.join();
+      c2.join();
+      c3.join();
+
+      p1.interrupt();
+      p2.interrupt();
+    } catch (InterruptedException e) {
+      System.out.println("A aparut o eroare!!!!");
     }
 
-    for (int i = 0; i < Y; i++) {
-      Consumator p = new Consumator(depozit);
-      String nume = "ConsumatorThread-" + i;
-      p.setName(nume);
-      p.start();
-    }
-
+    System.out.println("PROGRAMUL SA FINALIZAT");
   }
 }
 
@@ -42,19 +53,21 @@ class Depozit {
     list.add(value);
     list.add(value2);
 
-    System.out.println(
-        "Producatorul " + Thread.currentThread().getName()
-            + " a produs valorile: " + value + " " + value2);
+    System.out.println("Producatorul " + Thread.currentThread().getName() + " a produs valorile: " + value + " "
+        + value2 + " {" + list.size() + "/8}");
 
     notifyAll();
   }
 
-  public synchronized int get() throws InterruptedException {
+  public synchronized int get(int i) throws InterruptedException {
     while (list.isEmpty()) {
       wait();
     }
 
     int val = list.remove(0);
+
+    System.out.println("Consumatorul " + Thread.currentThread().getName() + " a consumat " + val + " (" + i + "/11)");
+
     notifyAll();
     return val;
   }
@@ -63,22 +76,21 @@ class Depozit {
 class Producator extends Thread {
   Depozit dep;
 
-  public Producator(Depozit dep) {
+  public Producator(Depozit dep, String name) {
+    super(name);
     this.dep = dep;
   }
 
   @Override
   public void run() {
     for (int i = 0; i < Main.Z; i++) {
-      int value = (int) (Math.random() * 1000);
-      int value2 = (int) (Math.random() * 1000);
+      int value = (int) (Math.random() * 500) * 2;
+      int value2 = (int) (Math.random() * 500) * 2;
 
       try {
         dep.put(value, value2);
-        sleep(50);
-
+        sleep(250);
       } catch (InterruptedException e) {
-        System.out.println(e);
         return;
       }
     }
@@ -88,7 +100,8 @@ class Producator extends Thread {
 class Consumator extends Thread {
   Depozit dep;
 
-  public Consumator(Depozit dep) {
+  public Consumator(Depozit dep, String name) {
+    super(name);
     this.dep = dep;
   }
 
@@ -98,12 +111,11 @@ class Consumator extends Thread {
   public void run() {
     for (int i = 1; i <= Main.Z; i++) {
       try {
-        val = dep.get();
-        sleep(50);
+        val = dep.get(i);
+        sleep(150);
       } catch (InterruptedException e) {
-        System.out.println(e);
+        return;
       }
-      System.out.println("Consumatorul " + getName() + " a consumat " + val + " (" + i + "/11)");
     }
   }
 }
