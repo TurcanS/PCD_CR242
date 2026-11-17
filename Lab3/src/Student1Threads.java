@@ -1,6 +1,6 @@
 import java.util.function.Consumer;
 
-/** Membru 1: Andrei Toma. Th1 si Th2, sincronizare prin join() si sleep(). */
+/** Membru 1: Andrei Toma. Th1 si Th2, asteptare join() si trimitere de semnale. */
 public class Student1Threads implements Runnable {
     private final int[] mas;
     private final boolean invers;
@@ -33,14 +33,16 @@ public class Student1Threads implements Runnable {
                     nume, i, mas[i], j, mas[j], produs, suma));
         }
         jurnal.append(nume + ": perechi=" + perechi + "; suma finala=" + suma + "\n");
+        output.accept(jurnal.toString());
+        Main.calculTerminat(invers ? 1 : 0);
+        Main.asteaptaToateCalculele();
         try {
-            // Th1 asteapta Th4: numele, grupa, prenumele, apoi disciplina.
-            if (!invers) fire[3].join();
-            output.accept(jurnal.toString());
+            // Th1 afiseaza prenumele dupa terminarea lui Th3 (indicii 1, 3, 2, 0).
+            if (!invers) fire[2].join();
             output.accept(nume + (invers ? " | Numele: " : " | Prenumele: "));
-            Main.scrieLent(invers ? "Toma" : "Andrei", output);
-            // Th2 da randul lui Th4; Th1 da randul lui Th3.
-            fire[invers ? 3 : 2].interrupt();
+            Main.scrieLent(invers ? "Toma si Ganenco" : "Andrei si Bogdan", output);
+            // Dupa numele de familie, Th2 permite afisarea grupei in Th4.
+            if (invers) fire[3].interrupt();
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }

@@ -29,17 +29,20 @@ public class Student2Threads implements Runnable {
         }
         if (total % 15 != 0) jurnal.append('\n');
         jurnal.append(nume + ": elemente=" + total + "; suma control=" + suma + "\n");
+        output.accept(jurnal.toString());
+        Main.calculTerminat(invers ? 3 : 2);
+        Main.asteaptaToateCalculele();
         try {
-            // Th4 primeste semnal de la Th2; Th3 primeste semnal de la Th1.
+            // Th4 primeste semnal de la Th2; Th3 primeste semnal de la Th4.
             // Daca semnalul a venit deja, sleep() arunca imediat exceptia.
             try {
                 while (true) Thread.sleep(Long.MAX_VALUE);
             } catch (InterruptedException semnal) {
                 // Semnalul inseamna ca predecesorul a terminat afisarea textului.
             }
-            output.accept(jurnal.toString());
             output.accept(nume + (invers ? " | Grupa: " : " | Disciplina: "));
             Main.scrieLent(invers ? "CR-242" : "Programarea concurenta si distribuita", output);
+            if (invers) fire[2].interrupt();
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }

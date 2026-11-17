@@ -20,14 +20,12 @@ Rularea dureaza aproximativ 6-9 secunde, deoarece literele apar la 100 ms.
 
 - `Main.java`: tablou comun de 100 de valori, creeaza/porneste/asteapta cele 4 fire.
 - `Student1Threads.java`: Andrei, Th1 si Th2; produse pe perechi si suma cumulativa.
-  Metode pentru partea sa: `join()` si `sleep()`.
+  Th1 asteapta Th3 prin `join()`; Th2 trimite semnal lui Th4 prin `interrupt()`.
 - `Student2Threads.java`: Bogdan, Th3 si Th4; intervale, numar de elemente si suma de control.
   Asteptare cu `sleep()`, eliberata prin semnalul `interrupt()` de la predecesor.
 - `LabWindow.java`: interfata comuna Swing, cu jurnalul celor patru fire.
 
-Contributia lui Andrei si fisierele comune sunt incarcate primele pe `Grup-6`.
-Bogdan adauga `Lab3/src/Student2Threads.java` din pachetul primit, de pe contul sau.
-Pana atunci copia GitHub nu este completa; copia locala si arhiva completa contin ambele parti.
+Ambele contributii sunt in acelasi proiect pe ramura `Grup-6`.
 
 ## Varianta 6
 
@@ -43,25 +41,36 @@ Limitele sunt incluse. Seed-ul 6 permite repetarea aceleiasi verificari.
 
 ## Sincronizare
 
-Calculele se fac concurent, in variabile locale. Jurnalul fiecarui fir este
-retinut local si afisat numai cand ii vine randul, ca literele sa nu se amestece.
-Ordinea afisarii este Th2 -> Th4 -> Th1 -> Th3:
-Toma -> CR-242 -> Andrei -> Programarea concurenta si distribuita.
+Calculele se fac concurent, in variabile locale. Fiecare fir afiseaza intai
+jurnalul numeric complet si apoi anunta terminarea acestei etape.
+Patru indicatori `volatile` din Main fac vizibila terminarea tuturor calculelor.
+Niciun text final nu incepe pana cand toti cei patru indicatori sunt true.
+Aceasta bariera foloseste indicatori volatile si pauze scurte, nu reprezinta
+patru metode distincte de sincronizare.
 
-Th1 asteapta terminarea lui Th4 prin `join()`.
+Ordinea indicilor ceruta explicit este 1, 3, 2, 0, adica Th2, Th4, Th3, Th1:
+Th2: Toma si Ganenco (numele de familie ale ambilor membri).
+Th4: CR-242.
+Th3: Programarea concurenta si distribuita.
+Th1: Andrei si Bogdan (prenumele ambilor membri).
+Aceasta ordine explicita difera de enumerarea Th2, Th4, Th1, Th3 din PDF.
+
+Th1 asteapta terminarea lui Th3 prin `join()`.
 Th4 asteapta intr-un `sleep()` pana cand Th2 termina afisarea numelui
-si ii trimite `interrupt()`. Th3 asteapta la fel semnalul trimis de Th1,
-dupa afisarea prenumelui. `InterruptedException` incheie asteptarea,
+si ii trimite `interrupt()`. Th3 asteapta la fel semnalul trimis de Th4,
+dupa afisarea grupei. `InterruptedException` incheie asteptarea,
 iar firul continua cu afisarea sa. Nu se verifica periodic starea altui fir.
 Semnalul este trimis numai dupa textul complet, inclusiv ultima pauza de 100 ms.
 Daca semnalul ajunge inainte de `sleep()`, indicatorul de intrerupere ramane
 setat, iar `sleep()` arunca imediat exceptia. In acest protocol, intreruperea
 este rezervata semnalului de continuare, nu anularii lucrarii.
-Main porneste firele in ordinea Th3, Th4, Th1, Th2, ca receptorii sa fie porniti
-inainte de trimiterea semnalelor. Ordinea pornirii difera de ordinea afisarii.
+Main porneste firele in ordinea Th2, Th4, Th3, Th1. Bariera asigura ca toate
+firele sunt pornite si au afisat rezultatele numerice inainte de primul text.
 `sleep()` singur nu garanteaza ordinea. Pentru Bogdan, ordinea este data de
 semnalul `interrupt()` si de tratarea lui; pentru Andrei, asteptarea este `join()`.
 `sleep(100)` este folosit si in functia comuna pentru afisarea literelor.
+Acest protocol nu este prezentat ca patru metode distincte de sincronizare;
+lista celor patru metode acceptate de profesoara ramane de clarificat.
 
 Nu sunt folosite `synchronized`, `wait/notify`, semafoare sau latch-uri pentru
 sincronizarea celor patru fire. Actualizarea Swing se trimite pe firul grafic.
