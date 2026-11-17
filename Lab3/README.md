@@ -22,7 +22,7 @@ Rularea dureaza aproximativ 6-9 secunde, deoarece literele apar la 100 ms.
 - `Student1Threads.java`: Andrei, Th1 si Th2; produse pe perechi si suma cumulativa.
   Metode pentru partea sa: `join()` si `sleep()`.
 - `Student2Threads.java`: Bogdan, Th3 si Th4; intervale, numar de elemente si suma de control.
-  Metode pentru partea sa: `isAlive()` si `interrupt()`.
+  Asteptare cu `sleep()`, eliberata prin semnalul `interrupt()` de la predecesor.
 - `LabWindow.java`: interfata comuna Swing, cu jurnalul celor patru fire.
 
 Contributia lui Andrei si fisierele comune sunt incarcate primele pe `Grup-6`.
@@ -48,13 +48,20 @@ retinut local si afisat numai cand ii vine randul, ca literele sa nu se amestece
 Ordinea afisarii este Th2 -> Th4 -> Th1 -> Th3:
 Toma -> CR-242 -> Andrei -> Programarea concurenta si distribuita.
 
-Th1 asteapta Th4 prin `join()`. Th4 verifica Th2 cu `isAlive()`.
-Th3 verifica Th1 cu `isAlive()`, dormind intre verificari; Th4 il trezeste
-prin `interrupt()`. Semnalul nu opreste fortat firul. Dupa trezire se verifica
-din nou `isAlive()`, fiindca trezirea nu garanteaza ca Th1 a terminat deja.
-`sleep()` este folosit si in functia comuna care afiseaza literele la 100 ms.
-Main porneste firele in ordinea Th2, Th4, Th1, Th3, astfel incat un fir
-sa nu confunde un predecesor nepornit cu unul terminat.
+Th1 asteapta terminarea lui Th4 prin `join()`.
+Th4 asteapta intr-un `sleep()` pana cand Th2 termina afisarea numelui
+si ii trimite `interrupt()`. Th3 asteapta la fel semnalul trimis de Th1,
+dupa afisarea prenumelui. `InterruptedException` incheie asteptarea,
+iar firul continua cu afisarea sa. Nu se verifica periodic starea altui fir.
+Semnalul este trimis numai dupa textul complet, inclusiv ultima pauza de 100 ms.
+Daca semnalul ajunge inainte de `sleep()`, indicatorul de intrerupere ramane
+setat, iar `sleep()` arunca imediat exceptia. In acest protocol, intreruperea
+este rezervata semnalului de continuare, nu anularii lucrarii.
+Main porneste firele in ordinea Th3, Th4, Th1, Th2, ca receptorii sa fie porniti
+inainte de trimiterea semnalelor. Ordinea pornirii difera de ordinea afisarii.
+`sleep()` singur nu garanteaza ordinea. Pentru Bogdan, ordinea este data de
+semnalul `interrupt()` si de tratarea lui; pentru Andrei, asteptarea este `join()`.
+`sleep(100)` este folosit si in functia comuna pentru afisarea literelor.
 
 Nu sunt folosite `synchronized`, `wait/notify`, semafoare sau latch-uri pentru
 sincronizarea celor patru fire. Actualizarea Swing se trimite pe firul grafic.

@@ -1,6 +1,6 @@
 import java.util.function.Consumer;
 
-/** Membru 2: Ganenco Bogdan. Th3 si Th4, isAlive() si interrupt(). */
+/** Membru 2: Ganenco Bogdan. Th3 si Th4, asteptare sleep() si semnal interrupt(). */
 public class Student2Threads implements Runnable {
     private final boolean invers;
     private final Thread[] fire;
@@ -30,20 +30,16 @@ public class Student2Threads implements Runnable {
         if (total % 15 != 0) jurnal.append('\n');
         jurnal.append(nume + ": elemente=" + total + "; suma control=" + suma + "\n");
         try {
-            Thread asteptat = fire[invers ? 1 : 0];
-            // Th4 asteapta Th2; Th3 asteapta Th1. Pauza evita asteptarea activa.
-            while (asteptat.isAlive()) {
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    // Th4 trezeste Th3 dupa grupa; Th3 verifica apoi terminarea lui Th1.
-                }
+            // Th4 primeste semnal de la Th2; Th3 primeste semnal de la Th1.
+            // Daca semnalul a venit deja, sleep() arunca imediat exceptia.
+            try {
+                while (true) Thread.sleep(Long.MAX_VALUE);
+            } catch (InterruptedException semnal) {
+                // Semnalul inseamna ca predecesorul a terminat afisarea textului.
             }
-            Thread.interrupted();
             output.accept(jurnal.toString());
             output.accept(nume + (invers ? " | Grupa: " : " | Disciplina: "));
             Main.scrieLent(invers ? "CR-242" : "Programarea concurenta si distribuita", output);
-            if (invers) fire[2].interrupt();
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }

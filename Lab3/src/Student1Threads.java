@@ -39,6 +39,8 @@ public class Student1Threads implements Runnable {
             output.accept(jurnal.toString());
             output.accept(nume + (invers ? " | Numele: " : " | Prenumele: "));
             Main.scrieLent(invers ? "Toma" : "Andrei", output);
+            // Th2 da randul lui Th4; Th1 da randul lui Th3.
+            fire[invers ? 3 : 2].interrupt();
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
