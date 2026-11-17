@@ -8,6 +8,7 @@ import java.awt.*;
  * Varianta 2
  *
  * MAIN - partea comună: datele, interfața grafică și pornirea firelor.
+ * Se poate rula: Main (toate firele), Anatol (doar Th1, Th3) sau Catalin (doar Th2, Th4).
  *   Anatol.java  -> Th1, Th3 (sincronizare: isAlive(), join())
  *   Catalin.java -> Th2, Th4 (sincronizare: sleep(), interrupt())
  *
@@ -19,9 +20,16 @@ public class Main {
     // ===================== Date pentru mesajele finale =====================
     // Completați cu datele voastre reale
     static final String PRENUME    = "Anatol, Catalin";
-    static final String NUME       = "NumeAnatol, NumeCatalin";
-    static final String GRUPA      = "XX-000";
+    static final String NUME       = "Anatol, Catalin";
+    static final String GRUPA      = "CR-242";
     static final String DISCIPLINA = "Programarea concurentă și distribuită";
+
+    // ===================== Modul de rulare =====================
+    // Ce fire pornesc la apăsarea butonului:
+    static final int TOATE = 0;          // pornit din Main.java
+    static final int DOAR_ANATOL = 1;    // pornit din Anatol.java  (Th1, Th3)
+    static final int DOAR_CATALIN = 2;   // pornit din Catalin.java (Th2, Th4)
+    static int mod = TOATE;
 
     // ===================== Datele de intrare =====================
     static final int DIM = 40;
@@ -49,20 +57,31 @@ public class Main {
         zonaTh4.setText("");
         zonaFinal.setText("");
 
-        // Se creează toate firele înainte de pornire,
-        // ca fiecare să aibă deja referință la celelalte.
+        // Se creează toate cele 4 obiecte, ca fiecare fir să aibă referință la celelalte.
+        // Un fir creat, dar nepornit, are isAlive() == false, deci nu blochează pe nimeni.
         th1 = new Anatol.Th1();
         th2 = new Catalin.Th2();
         th3 = new Anatol.Th3();
         th4 = new Catalin.Th4();
 
-        th1.start();
-        th2.start();
-        th3.start();
-        th4.start();
+        if (mod == TOATE || mod == DOAR_ANATOL) {
+            th1.start();
+            th3.start();
+        } else {
+            zonaTh1.setText("Th1 nu rulează (s-a pornit doar partea lui Catalin).");
+            zonaTh3.setText("Th3 nu rulează (s-a pornit doar partea lui Catalin).");
+        }
+
+        if (mod == TOATE || mod == DOAR_CATALIN) {
+            th2.start();
+            th4.start();
+        } else {
+            zonaTh2.setText("Th2 nu rulează (s-a pornit doar partea lui Anatol).");
+            zonaTh4.setText("Th4 nu rulează (s-a pornit doar partea lui Anatol).");
+        }
     }
 
-    /** Apelată de ultimul fir (Th3) - programul poate fi rulat din nou. */
+    /** Apelată de ultimul fir care se termină - programul poate fi rulat din nou. */
     static void toateFireleAuTerminat() {
         afiseaza(zonaFinal, "\nToate firele și-au terminat execuția.\n");
         SwingUtilities.invokeLater(() -> {
@@ -129,7 +148,11 @@ public class Main {
     }
 
     static void creeazaFereastra() {
-        JFrame fereastra = new JFrame("Laborator 3 PCD - Varianta 2 - Sincronizarea firelor prin metodele clasei Thread");
+        String parte = "toate firele";
+        if (mod == DOAR_ANATOL) parte = "doar partea lui Anatol (Th1, Th3)";
+        if (mod == DOAR_CATALIN) parte = "doar partea lui Catalin (Th2, Th4)";
+
+        JFrame fereastra = new JFrame("Laborator 3 PCD - Varianta 2 - " + parte);
         fereastra.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         fereastra.setLayout(new BorderLayout(5, 5));
 
@@ -177,7 +200,9 @@ public class Main {
         fereastra.setVisible(true);
     }
 
+    /** Pornire comună: Anatol + Catalin împreună. */
     public static void main(String[] args) {
+        mod = TOATE;
         SwingUtilities.invokeLater(() -> creeazaFereastra());
     }
 }

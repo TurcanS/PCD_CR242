@@ -15,6 +15,12 @@
  */
 public class Anatol {
 
+    /** Pornește DOAR partea lui Anatol (Th1 și Th3). */
+    public static void main(String[] args) {
+        Main.mod = Main.DOAR_ANATOL;
+        javax.swing.SwingUtilities.invokeLater(() -> Main.creeazaFereastra());
+    }
+
     static final int TH3_DE = 120;
     static final int TH3_PANA = 690;
 

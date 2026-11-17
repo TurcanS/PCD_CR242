@@ -15,6 +15,12 @@
  */
 public class Catalin {
 
+    /** Pornește DOAR partea lui Catalin (Th2 și Th4). */
+    public static void main(String[] args) {
+        Main.mod = Main.DOAR_CATALIN;
+        javax.swing.SwingUtilities.invokeLater(() -> Main.creeazaFereastra());
+    }
+
     static final int TH4_DE = 1567;
     static final int TH4_PANA = 1000;
 
@@ -91,6 +97,11 @@ public class Catalin {
             asteaptaSemnal();
 
             Main.afiseazaLiteraCuLitera(getName() + " - Grupa: ", Main.GRUPA);
+
+            // Când rulează doar partea lui Catalin, Th4 este ultimul fir
+            if (Main.mod == Main.DOAR_CATALIN) {
+                Main.toateFireleAuTerminat();
+            }
         }
 
         /** Parcurge intervalul [1000, 1567] de la sfârșit (descrescător), câte 10 numere pe rând. */
