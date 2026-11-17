@@ -24,7 +24,7 @@ public class Main {
       }
     }, true));
 
-    System.out.println("START PROGRAMUL");
+    System.out.print("START PROGRAMUL");
 
     Depozit depozit = new Depozit();
 
