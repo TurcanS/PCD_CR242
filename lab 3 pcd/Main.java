@@ -9,8 +9,8 @@ import java.awt.*;
  *
  * MAIN - partea comună: datele, interfața grafică și pornirea firelor.
  * Programul se pornește DOAR din Main; firele sunt definite în clase separate:
- *   Anatol.java  -> Th1, Th3 (sincronizare: yield(), join())
- *   Catalin.java -> Th2, Th4 (sincronizare: sleep(), interrupt())
+ *   Anatol.java  -> Th1, Th2
+ *   Catalin.java -> Th3, Th4
  *
  * Ordinea mesajelor finale (literă cu literă, la 100 ms):
  *     Th2 (Numele) -> Th4 (Grupa) -> Th1 (Prenumele) -> Th3 (Disciplina)
@@ -30,8 +30,8 @@ public class Main {
 
     // ===================== Firele de execuție =====================
     static Anatol.Th1 th1;
-    static Catalin.Th2 th2;
-    static Anatol.Th3 th3;
+    static Anatol.Th2 th2;
+    static Catalin.Th3 th3;
     static Catalin.Th4 th4;
 
     // Devine true când Th4 a terminat tot (inclusiv afișarea grupei).
@@ -55,8 +55,8 @@ public class Main {
         // Se creează toate cele 4 obiecte înainte de pornire,
         // ca fiecare fir să aibă referință la celelalte.
         th1 = new Anatol.Th1();
-        th2 = new Catalin.Th2();
-        th3 = new Anatol.Th3();
+        th2 = new Anatol.Th2();
+        th3 = new Catalin.Th3();
         th4 = new Catalin.Th4();
 
         th1.start();
@@ -160,7 +160,7 @@ public class Main {
         zonaFire = creeazaZona(20);
         String titluFire = "Firele de execuție:  "
                 + "Th1, Th2 - suma pozițiilor pare (de la primul / de la ultimul element);  "
-                + "Th3 - [" + Anatol.TH3_DE + ", " + Anatol.TH3_PANA + "] de la început;  "
+                + "Th3 - [" + Catalin.TH3_DE + ", " + Catalin.TH3_PANA + "] de la început;  "
                 + "Th4 - [" + Catalin.TH4_PANA + ", " + Catalin.TH4_DE + "] de la sfârșit";
 
         // Jos: mesajele finale

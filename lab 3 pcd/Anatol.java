@@ -1,24 +1,23 @@
 /**
- * PARTEA LUI ANATOL - firele Th1 și Th3
+ * PARTEA LUI ANATOL - firele Th1 și Th2
  *
  * Th1 - Suma pozițiilor numerelor pare două câte două,
  *       căutarea și sumarea începând de la primul element.
  *       La final afișează PRENUMELE.
- * Th3 - Parcurgerea de la început a intervalului [120, 690].
- *       La final afișează DISCIPLINA.
+ * Th2 - Suma pozițiilor numerelor pare două câte două,
+ *       căutarea și sumarea începând de la ultimul element.
+ *       La final afișează NUMELE.
  *
- * Metode de sincronizare folosite: yield() și join()
+ * Metode de sincronizare folosite:
  *   - Th1 cedează procesorul cu yield() cât timp Th4 nu a terminat
  *     de afișat grupa, abia apoi afișează prenumele.
- *   - Th3 așteaptă cu join() terminarea completă a lui Th1,
- *     abia apoi afișează disciplina.
+ *   - Th2 "doarme" cu sleep() până când Th4 își termină sarcina
+ *     și îl trezește cu interrupt(); după ce afișează numele,
+ *     îl trezește pe Th4 cu interrupt().
  *
  * Firele sunt pornite din Main.
  */
 public class Anatol {
-
-    static final int TH3_DE = 120;
-    static final int TH3_PANA = 690;
 
     // ==========================================================================
     //  Firul 1
@@ -72,47 +71,58 @@ public class Anatol {
     }
 
     // ==========================================================================
-    //  Firul 3
+    //  Firul 2
     // ==========================================================================
-    static class Th3 extends Thread {
-        Th3() { super("Th3"); }
+    static class Th2 extends Thread {
+        Th2() { super("Th2"); }
 
         @Override
         public void run() {
             Main.afiseazaFir(getName(), "Pornește");
-            parcurgeIntervalDeLaInceput();
-            Main.afiseazaFir(getName(), "A terminat sarcina. Aștept terminarea lui Th1 (join)...");
+            sumaPozitiilorPareDeLaSfarsit();
+            Main.afiseazaFir(getName(), "A terminat sarcina. Aștept semnal de la Th4 (sleep)...");
 
-            // SINCRONIZARE - join():
-            // Th3 așteaptă până când Th1 se termină complet
+            // SINCRONIZARE - sleep():
+            // Th2 doarme "la nesfârșit" până când Th4 îl trezește cu interrupt()
             try {
-                Main.th1.join();
+                Thread.sleep(Long.MAX_VALUE);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                // Th4 a apelat interrupt() -> Th2 se trezește și continuă
             }
-            Main.afiseazaLiteraCuLitera(getName() + " - Disciplina: ", Main.DISCIPLINA);
+            Main.afiseazaFir(getName(), "A primit semnalul de la Th4 (interrupt), afișez numele.");
 
-            // Th3 este ultimul fir care se termină
-            Main.toateFireleAuTerminat();
+            Main.afiseazaLiteraCuLitera(getName() + " - Numele: ", Main.NUME);
+
+            // SINCRONIZARE - interrupt():
+            // Th2 îl trezește pe Th4 ca să afișeze grupa
+            Main.th4.interrupt();
         }
 
-        /** Parcurge intervalul [120, 690] crescător, câte 10 numere pe rând. */
-        void parcurgeIntervalDeLaInceput() {
-            int numarate = 0;
-            StringBuilder rand = new StringBuilder();
-            for (int x = TH3_DE; x <= TH3_PANA; x++) {
-                rand.append(x).append(" ");
-                numarate++;
-                if (numarate % 10 == 0) {
-                    Main.afiseazaFir(getName(), rand.toString());
-                    rand.setLength(0);
+        /** Caută numerele pare de la ultimul element și adună pozițiile lor două câte două. */
+        void sumaPozitiilorPareDeLaSfarsit() {
+            int[] a = Main.tablou;
+            int pozInAsteptare = -1;   // poziția numărului par care încă nu are pereche
+            int nrSuma = 0;
+
+            for (int i = a.length - 1; i >= 0; i--) {
+                if (a[i] % 2 == 0) {
+                    if (pozInAsteptare == -1) {
+                        pozInAsteptare = i;            // primul număr din pereche
+                    } else {
+                        nrSuma++;                      // al doilea număr din pereche
+                        int suma = pozInAsteptare + i;
+                        Main.afiseazaFir(getName(), "Suma " + nrSuma + ":  poz " + pozInAsteptare
+                                + " (" + a[pozInAsteptare] + ")  +  poz " + i
+                                + " (" + a[i] + ")  =  " + suma);
+                        pozInAsteptare = -1;
+                    }
                 }
-                Main.pauza(5);   // ca să se vadă că firele lucrează în paralel
             }
-            if (rand.length() > 0) {
-                Main.afiseazaFir(getName(), rand.toString());
+
+            if (pozInAsteptare != -1) {
+                Main.afiseazaFir(getName(), "Poziția " + pozInAsteptare + " ("
+                        + a[pozInAsteptare] + ") a rămas fără pereche.");
             }
-            Main.afiseazaFir(getName(), "Total numere parcurse: " + numarate);
         }
     }
 }
