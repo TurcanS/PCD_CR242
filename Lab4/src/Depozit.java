@@ -42,6 +42,42 @@ public class Depozit {
         return numar;
     }
 
+    // ---------- Sincronizarea producatorilor (Andrei Toma) ----------
+
+    /**
+     * Producatorul pune 2 numere. Daca este un singur loc liber, pune primul,
+     * iar al doilea se pierde. Daca depozitul e plin, asteapta.
+     * Intoarce cate numere a pus (1 sau 2), sau 0 daca productia s-a terminat
+     * si producatorul trebuie sa se opreasca.
+     */
+    public synchronized int pune(String nume, int a, int b) throws InterruptedException {
+        if (produse < totalNecesar && stoc.size() == capacitate) {
+            output.accept(nume + " asteapta: depozitul este plin\n");
+        }
+        while (produse < totalNecesar && stoc.size() == capacitate) {
+            wait(); // asteapta pana un consumator elibereaza un loc
+        }
+        if (produse >= totalNecesar) {
+            notifyAll(); // trezim si celalalt producator, ca sa se opreasca si el
+            return 0;
+        }
+        stoc.add(a);
+        produse++;
+        int puse = 1;
+        if (stoc.size() < capacitate) {
+            stoc.add(b);
+            produse++;
+            puse = 2;
+            output.accept(String.format("%s a pus %d si %d | %s%n", nume, a, b, stare()));
+        } else {
+            output.accept(String.format("%s a pus %d; %d s-a pierdut (era un singur loc liber) | %s%n",
+                    nume, a, b, stare()));
+        }
+        if (stoc.size() == capacitate) output.accept("  >> Depozitul este plin\n");
+        notifyAll(); // consumatorii afla ca au aparut numere noi
+        return puse;
+    }
+
     // ---------- Partea comuna ----------
 
     public synchronized void scrie(String text) {
