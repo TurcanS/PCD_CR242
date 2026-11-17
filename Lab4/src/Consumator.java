@@ -1,9 +1,9 @@
 import java.util.Random;
 
-/** Membru 2: Ganenco Bogdan. Consumatorii, sincronizati prin synchronized, wait() si notifyAll(). */
+/** Membru 2: Ganenco Bogdan. Consumatorul ia cate 1 numar pana are Z numere. */
 public class Consumator extends Thread {
     private final Depozit depozit;
-    private final int necesar; // Z: cate numere trebuie sa primeasca
+    private final int necesar; // Z
     private final Random random;
     private int primite = 0;
 
@@ -16,27 +16,12 @@ public class Consumator extends Thread {
 
     @Override
     public void run() {
+        // Aici nu exista sincronizare: asteptarea se face in depozit.ia().
         try {
             while (primite < necesar) {
-                // Sectiunea critica: blocam monitorul depozitului comun.
-                synchronized (depozit) {
-                    if (depozit.esteGol()) {
-                        depozit.scrie(getName() + " asteapta: depozitul este gol\n");
-                    }
-                    // while, nu if: dupa trezire verificam din nou conditia.
-                    while (depozit.esteGol()) {
-                        depozit.wait(); // elibereaza monitorul pana la notifyAll()
-                    }
-                    int numar = depozit.scoate();
-                    primite++;
-                    depozit.scrie(String.format("%s a luat %d (%d/%d) | %s%n",
-                            getName(), numar, primite, necesar, depozit.stare()));
-                    if (depozit.esteGol()) depozit.scrie("  >> Depozitul este gol\n");
-                    // Anuntam producatorii ca s-a eliberat un loc.
-                    depozit.notifyAll();
-                }
-                // "Consumul" se face in afara blocului, ca ceilalti sa poata lucra.
-                Thread.sleep(50 + random.nextInt(151));
+                depozit.ia(getName(), primite + 1, necesar);
+                primite++;
+                Thread.sleep(50 + random.nextInt(151)); // timpul de "consum"
             }
             depozit.scrie(getName() + " este indestulat cu " + necesar
                     + " numere. Thread-ul a finalizat.\n");
