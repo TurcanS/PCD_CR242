@@ -39,19 +39,16 @@ public class Main_lab3 {
         sb.append("\n");
         scrie(ta, sb.toString());
 
-        Fir1 fir1 = new Fir1(t, ta);
         Fir2 fir2 = new Fir2(t, ta);
-        Fir3 fir3 = new Fir3(ta);
-        Fir4 fir4 = new Fir4(ta);
+        Fir4 fir4 = new Fir4(fir2, ta);   // fir4 asteapta fir2
+        Fir1 fir1 = new Fir1(t, ta);
+        fir1.setPrecedent(fir4);          // fir1 asteapta fir4 (ca la voi)
+        Fir3 fir3 = new Fir3(fir1, ta);   // fir3 asteapta fir1
 
         fir1.setName("fir1");
         fir2.setName("fir2");
         fir3.setName("fir3");
         fir4.setName("fir4");
-
-        fir4.setPrecedent(fir2);
-        fir1.setPrecedent(fir4);
-        fir3.setPrecedent(fir1);
 
         fir1.start();
         fir2.start();
@@ -148,85 +145,71 @@ class Fir2 extends Thread {
 }
 
 class Fir3 extends Thread {
-    private JTextArea ta;
-    private Thread precedent;
+    private Fir1 firAnterior;
+    private JTextArea zona;
 
-    Fir3(JTextArea ta) {
-        this.ta = ta;
-    }
-
-    void setPrecedent(Thread precedent) {
-        this.precedent = precedent;
+    public Fir3(Fir1 firAnterior, JTextArea zona) {
+        this.firAnterior = firAnterior;
+        this.zona = zona;
     }
 
     @Override
     public void run() {
-        String nume = getName();
-        Main_lab3.scrie(ta, "\n" + nume + " parcurge [567, 1002] de la inceput:\n");
-
-        StringBuilder rand = new StringBuilder();
-        int numarate = 0;
+        Main_lab3.scrie(zona, "Pornire fir3 (interval crescator 567-1002):\n");
         for (int i = 567; i <= 1002; i++) {
-            rand.append(i).append(" ");
-            numarate++;
-            if (numarate % 10 == 0) {
-                Main_lab3.scrie(ta, rand + "\n");
-                rand.setLength(0);
-            }
+            Main_lab3.scrie(zona, i + " ");
+        }
+        Main_lab3.scrie(zona, "\nfir3 a terminat intervalul.\n");
+
+        while (firAnterior.isAlive()) {
             Thread.yield();
         }
-        if (rand.length() > 0) {
-            Main_lab3.scrie(ta, rand + "\n");
-        }
-        Main_lab3.scrie(ta, "\n" + nume + " a terminat parcurgerea\n");
 
-        try {
-            precedent.join();
-            Main_lab3.scrieLitere(ta, "Disciplina: Programarea concurentă și distribuită");
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        String text = "Disciplina: Programarea concurentă și distribuită";
+        for (char c : text.toCharArray()) {
+            Main_lab3.scrie(zona, c + "");
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
+        Main_lab3.scrie(zona, "\n");
     }
 }
 
 class Fir4 extends Thread {
-    private JTextArea ta;
-    private Thread precedent;
+    private Fir2 firAnterior;
+    private JTextArea zona;
 
-    Fir4(JTextArea ta) {
-        this.ta = ta;
-    }
-
-    void setPrecedent(Thread precedent) {
-        this.precedent = precedent;
+    public Fir4(Fir2 firAnterior, JTextArea zona) {
+        this.firAnterior = firAnterior;
+        this.zona = zona;
     }
 
     @Override
     public void run() {
-        String nume = getName();
-        Main_lab3.scrie(ta, "\n" + nume + " parcurge [567, 1100] de la sfarsit:\n");
+        Main_lab3.scrie(zona, "Pornire fir4 (interval descrescator 1100-567):\n");
+        for (int i = 1100; i >= 567; i--) {
+            Main_lab3.scrie(zona, i + " ");
+        }
+        Main_lab3.scrie(zona, "\nfir4 a terminat intervalul.\n");
 
         try {
-            StringBuilder rand = new StringBuilder();
-            int numarate = 0;
-            for (int i = 1100; i >= 567; i--) {
-                rand.append(i).append(" ");
-                numarate++;
-                if (numarate % 10 == 0) {
-                    Main_lab3.scrie(ta, rand + "\n");
-                    rand.setLength(0);
-                }
-                Thread.sleep(100);
-            }
-            if (rand.length() > 0) {
-                Main_lab3.scrie(ta, rand + "\n");
-            }
-            Main_lab3.scrie(ta, "\n" + nume + " a terminat parcurgerea\n");
-
-            precedent.join();
-            Main_lab3.scrieLitere(ta, "Grupa: CR-242");
+            firAnterior.join();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+
+        String text = "Grupa: CR-242";
+        for (char c : text.toCharArray()) {
+            Main_lab3.scrie(zona, c + "");
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        Main_lab3.scrie(zona, "\n");
     }
 }
