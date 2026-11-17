@@ -8,17 +8,25 @@ import java.util.Random;
  *
  * PARTEA COMUNA (Main2):
  *   - datele studentilor si intervalele din Tabelul 3 (varianta 7);
- *   - interfata grafica Swing (4 panouri - cate unul pentru fiecare fir + rezultatul final);
- *   - referintele statice catre cele 4 fire (folosite de ambele parti pentru join/interrupt);
+ *   - interfata grafica Swing (activitatea celor 4 fire + rezultatul final);
+ *   - referintele statice catre firele de sarcina (th1..th4) si de afisare (p1..p4);
  *   - metodele log() si printSlow() prin care firele scriu in interfata;
- *   - startRun() - creeaza si porneste firele (in ordinea corecta).
+ *   - startRun() - porneste cele doua faze.
+ *
+ * In Main2 se folosesc DOAR metode ale clasei Thread: start(), join(), sleep().
+ *
+ * FAZA 1 - SARCINILE: Thread1..Thread4 (th1..th4) isi fac sarcina in paralel si se TERMINA.
+ *          Firul "coordinator" le asteapta pe toate cu join().
+ * FAZA 2 - AFISAREA: abia dupa ce toate sarcinile s-au terminat, coordinatorul porneste firele
+ *          de afisare Print1..Print4 (p1..p4), care isi sincronizeaza ordinea intre ele
+ *          prin metodele din Vlad3.java si Adrian3.java.
  *
  * Fisiere:
  *   Main2.java   - partea comuna
- *   Vlad3.java   - Thread3 si Thread4
- *   Adrian3.java - Thread1 si Thread2
+ *   Vlad3.java   - Thread3, Thread4 (sarcini) + Print3, Print4 (afisare)
+ *   Adrian3.java - Thread1, Thread2 (sarcini) + Print1, Print2 (afisare)
  *
- * Ordinea afisarii textelor (dupa terminarea sarcinilor):
+ * Ordinea afisarii textelor:
  *   Th2 (Numele) -> Th4 (Grupa) -> Th1 (Prenumele) -> Th3 (Disciplina)
  *
  * Compilare:  javac Main2.java Vlad3.java Adrian3.java
@@ -27,9 +35,9 @@ import java.util.Random;
 public class Main2 {
 
     // ===== DATELE STUDENTILOR (de completat) =====
-    static final String NUME       = "Verdes, Neagu";
-    static final String PRENUME    = "Vlad, Adrian";
-    static final String GRUPA      = "CR-242";
+    static final String NUME       = "Numele";
+    static final String PRENUME    = "Prenumele";
+    static final String GRUPA      = "Grupa";
     static final String DISCIPLINA = "Programarea concurenta si distribuita";
 
     /** Intervalul dintre litere la afisarea textului (ms) - cerinta lucrarii. */
@@ -48,17 +56,17 @@ public class Main2 {
     /** Dimensiunea tabloului pentru Sarcinile 1 si 2 (numere aleatoare din [15, 115]). */
     static final int ARRAY_SIZE = 100;
 
-    // ===== FIRELE (statice, ca sa poata fi referite din orice parte) =====
+    // ===== FIRELE DE SARCINA (faza 1) =====
     static volatile Thread1 th1;
     static volatile Thread2 th2;
     static volatile Thread3 th3;
     static volatile Thread4 th4;
 
-    /**
-     * Firul-bariera "gate": se termina abia cand toate cele 4 fire si-au terminat sarcina
-     * si asteapta la gate.join(). Pana atunci nimeni nu are voie sa afiseze textele.
-     */
-    static volatile Thread gate;
+    // ===== FIRELE DE AFISARE (faza 2) - statice, ca sa poata fi referite din orice parte =====
+    static volatile Print1 p1;
+    static volatile Print2 p2;
+    static volatile Print3 p3;
+    static volatile Print4 p4;
 
     /**
      * Tabloul generat (numere aleatoare din [15, 115]) - il folosesc Th1 si Th2.
@@ -67,21 +75,18 @@ public class Main2 {
     static volatile int[] numbers = new int[0];
 
     // ===== COMPONENTELE INTERFETEI =====
-    static final JTextArea[] areas = new JTextArea[4];   // Th1..Th4
-    static final JTextArea arrayArea  = new JTextArea(3, 60);
-    static final JTextArea resultArea = new JTextArea(4, 60);
-    static final JButton startButton  = new JButton("Start");
-    static final JLabel statusLabel   = new JLabel("Apasa Start pentru a porni cele 4 fire.");
+    static final JTextArea arrayArea    = new JTextArea(3, 60);
+    static final JTextArea activityArea = new JTextArea();
+    static final JTextArea resultArea   = new JTextArea(4, 60);
+    static final JButton startButton    = new JButton("Start");
+    static final JLabel statusLabel     = new JLabel("Apasa Start pentru a porni cele 4 fire.");
 
     static {
-        for (int i = 0; i < areas.length; i++) {
-            areas[i] = new JTextArea();
-            areas[i].setEditable(false);
-            areas[i].setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
-        }
         arrayArea.setEditable(false);
         arrayArea.setLineWrap(true);
         arrayArea.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
+        activityArea.setEditable(false);
+        activityArea.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
         resultArea.setEditable(false);
         resultArea.setFont(new Font(Font.MONOSPACED, Font.BOLD, 16));
     }
@@ -98,50 +103,22 @@ public class Main2 {
         });
     }
 
-    /** Scrie o linie in panoul firului n (1..4). */
+    /** Scrie o linie (prefixata cu firul n = 1..4) in panoul comun "Activitate fire". */
     static void log(int n, String line) {
-        append(areas[n - 1], line + "\n");
+        append(activityArea, "[Th" + n + "] " + line + "\n");
     }
 
     /** Afiseaza textul litera cu litera (100 ms intre litere) in zona "Rezultat final". */
     static void printSlow(String text) {
         for (int i = 0; i < text.length(); i++) {
-            boolean interrupted = false;
             try {
                 Thread.sleep(LETTER_DELAY_MS);
             } catch (InterruptedException e) {
-                interrupted = true;
+                // nu ne asteptam la intreruperi aici; continuam afisarea
             }
             append(resultArea, String.valueOf(text.charAt(i)));
-            if (interrupted) {
-                Thread.currentThread().interrupt(); // pastram semnalul de intrerupere
-            }
         }
         append(resultArea, "\n");
-    }
-
-    /**
-     * BARIERA: fiecare fir o apeleaza dupa ce si-a terminat sarcina si INAINTE de a afisa
-     * orice text. Firul ramane blocat in gate.join() pana cand toate cele 4 fire au ajuns aici.
-     * Returneaza true daca firul a fost intrerupt cu interrupt() in timpul asteptarii.
-     */
-    static boolean awaitAllTasks() {
-        try {
-            gate.join();
-            return false;
-        } catch (InterruptedException e) {
-            return true;
-        }
-    }
-
-    /** true daca toate firele din vector sunt in starea WAITING (adica stau in gate.join()). */
-    private static boolean allWaiting(Thread[] workers) {
-        for (Thread t : workers) {
-            if (t.getState() != Thread.State.WAITING) {
-                return false;
-            }
-        }
-        return true;
     }
 
     // ===================== PORNIREA FIRELOR =====================
@@ -166,83 +143,82 @@ public class Main2 {
         });
     }
 
+    private static void setStatus(final String text, final boolean startEnabled) {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                statusLabel.setText(text);
+                startButton.setEnabled(startEnabled);
+            }
+        });
+    }
+
     /** Creeaza firele noi si le porneste. Se poate apela de mai multe ori (buton Start). */
     static void startRun() {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                for (JTextArea a : areas) {
-                    a.setText("");
-                }
+                activityArea.setText("");
                 resultArea.setText("");
                 startButton.setEnabled(false);
-                statusLabel.setText("Firele ruleaza...");
+                statusLabel.setText("Faza 1: firele isi fac sarcinile...");
             }
         });
 
         generateData();
 
+        // Firele de sarcina (faza 1)
         th1 = new Thread1();
         th2 = new Thread2();
         th3 = new Thread3();
         th4 = new Thread4();
+        // Firele de afisare (faza 2) - create acum, pornite abia dupa faza 1
+        p1 = new Print1();
+        p2 = new Print2();
+        p3 = new Print3();
+        p4 = new Print4();
 
-        final Thread[] all = { th1, th2, th3, th4 };
+        final Thread[] tasks  = { th1, th2, th3, th4 };
+        final Thread[] prints = { p1, p2, p3, p4 };
 
-        // Firul-bariera: se termina cand toate cele 4 fire si-au terminat sarcina
-        // si asteapta in gate.join() (starea WAITING). Se porneste PRIMUL.
-        gate = new Thread(new Runnable() {
+        // Firul coordonator: doar start() si join()
+        Thread coordinator = new Thread(new Runnable() {
             @Override
             public void run() {
-                while (!allWaiting(all)) {
-                    try {
-                        Thread.sleep(20);
-                    } catch (InterruptedException e) {
-                        // continuam sa asteptam
-                    }
+                // ----- FAZA 1: pornim sarcinile si le asteptam pe toate cu join() -----
+                for (Thread t : tasks) {
+                    t.start();
                 }
-                SwingUtilities.invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        statusLabel.setText("Toate firele si-au terminat sarcinile - se afiseaza textele...");
-                    }
-                });
-            }
-        }, "gate");
-        gate.setDaemon(true);
-        gate.start();
-
-        // ORDINEA DE PORNIRE CONTEAZA: join() pe un fir care inca nu a pornit
-        // (isAlive() == false) se intoarce imediat si sincronizarea nu functioneaza.
-        // Lantul de join-uri: Th4 -> Th2, Th1 -> Th4, Th3 -> Th1
-        // => pornim in ordinea: Th2, Th4, Th1, Th3
-        th2.start();
-        th4.start();
-        th1.start();
-        th3.start();
-
-        // Fir "paznic": asteapta (join) terminarea tuturor firelor si reactiveaza butonul
-        Thread watcher = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                for (Thread t : all) {
+                for (Thread t : tasks) {
                     try {
                         t.join();
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
                 }
-                SwingUtilities.invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        startButton.setEnabled(true);
-                        statusLabel.setText("Toate firele s-au terminat. Poti apasa Start din nou.");
+                setStatus("Toate sarcinile s-au terminat. Faza 2: se afiseaza textele...", false);
+
+                // ----- FAZA 2: pornim firele de afisare -----
+                // ORDINEA DE PORNIRE CONTEAZA: join()/isAlive()/interrupt() pe un fir nepornit
+                // nu functioneaza (join se intoarce imediat, isAlive = false, interrupt se pierde).
+                // Lantul: p4 -> join(p2); p1 -> join(p2) + isAlive(p4); p4 -> interrupt(p3); p3 -> join(p1)
+                // => pornim in ordinea: p2, p4, p3, p1
+                p2.start();
+                p4.start();
+                p3.start();
+                p1.start();
+
+                for (Thread t : prints) {
+                    try {
+                        t.join();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
                     }
-                });
+                }
+                setStatus("Toate firele s-au terminat. Poti apasa Start din nou.", true);
             }
-        }, "watcher");
-        watcher.setDaemon(true);
-        watcher.start();
+        }, "coordinator");
+        coordinator.start();
     }
 
     // ===================== INTERFATA GRAFICA =====================
@@ -257,10 +233,10 @@ public class Main2 {
         JFrame frame = new JFrame("Lab 3 PCD - Sincronizarea firelor (Thread) - Varianta 7");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        // Sus: titlu + tabloul generat + buton
+        // Sus: titlu + tabloul generat + buton Start
         JPanel top = new JPanel(new BorderLayout(8, 4));
         top.setBorder(BorderFactory.createEmptyBorder(8, 8, 4, 8));
-        JLabel title = new JLabel("Varianta 7 - sincronizare prin metodele clasei Thread (join, interrupt, isAlive, getState)");
+        JLabel title = new JLabel("Varianta 7 - sincronizare prin metodele clasei Thread (join, interrupt, isAlive)");
         title.setFont(title.getFont().deriveFont(Font.BOLD, 14f));
         top.add(title, BorderLayout.NORTH);
         top.add(new JScrollPane(arrayArea), BorderLayout.CENTER);
@@ -272,13 +248,10 @@ public class Main2 {
         });
         top.add(startButton, BorderLayout.EAST);
 
-        // Centru: 4 panouri (2x2)
-        JPanel grid = new JPanel(new GridLayout(2, 2, 6, 6));
-        grid.setBorder(BorderFactory.createEmptyBorder(4, 8, 4, 8));
-        grid.add(panel("Th1 - Sarcina 1: sumele produselor numerelor pare, 2 cate 2, de la primul element", areas[0]));
-        grid.add(panel("Th2 - Sarcina 2: sumele produselor numerelor pare, 2 cate 2, de la ultimul element", areas[1]));
-        grid.add(panel("Th3 - Sarcina 3: de la inceput intervalul [" + T3_FROM + ", " + T3_TO + "]", areas[2]));
-        grid.add(panel("Th4 - Sarcina 4: de la sfarsit intervalul [" + T4_TO + " -> " + T4_FROM + "]", areas[3]));
+        // Centru: activitatea tuturor firelor intr-un singur panou
+        JPanel center = new JPanel(new BorderLayout());
+        center.setBorder(BorderFactory.createEmptyBorder(4, 8, 4, 8));
+        center.add(panel("Activitate fire (Th1 + Th2 + Th3 + Th4)", activityArea), BorderLayout.CENTER);
 
         // Jos: rezultatul final + status
         JPanel bottom = new JPanel(new BorderLayout(4, 4));
@@ -289,7 +262,7 @@ public class Main2 {
 
         frame.setLayout(new BorderLayout());
         frame.add(top, BorderLayout.NORTH);
-        frame.add(grid, BorderLayout.CENTER);
+        frame.add(center, BorderLayout.CENTER);
         frame.add(bottom, BorderLayout.SOUTH);
         frame.setSize(1150, 800);
         frame.setLocationRelativeTo(null);
