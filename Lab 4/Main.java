@@ -1,4 +1,5 @@
 import javax.swing.*;
+import java.awt.Font;
 import java.io.*;
 import java.util.*;
 
@@ -12,6 +13,7 @@ public class Main {
   public static void main(String[] args) {
     JTextArea area = new JTextArea();
     area.setEditable(false);
+    area.setFont(new Font("Hack Nerd Font Mono", Font.PLAIN, 16));
     JFrame frame = new JFrame("LAB 4 GRUP 1");
     frame.add(new JScrollPane(area));
     frame.setSize(600, 1030);
