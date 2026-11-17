@@ -38,6 +38,20 @@ public class Main {
         output.accept("\nFINAL: toate cele 4 fire s-au terminat.\n");
     }
 
+    public static void asteaptaRandCalcul(int index) {
+        boolean semnalPrimit = false;
+        // Jurnalele apar in ordinea Th2, Th4, Th3, Th1, indiferent cine calculeaza primul.
+        while ((index == 3 && !calculTh2) || (index == 2 && !calculTh4)
+                || (index == 0 && !calculTh3)) {
+            try {
+                Thread.sleep(1);
+            } catch (InterruptedException e) {
+                semnalPrimit = true;
+            }
+        }
+        if (semnalPrimit) Thread.currentThread().interrupt();
+    }
+
     public static void calculTerminat(int index) {
         switch (index) {
             case 0: calculTh1 = true; break;

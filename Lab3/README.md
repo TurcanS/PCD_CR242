@@ -41,8 +41,10 @@ Limitele sunt incluse. Seed-ul 6 permite repetarea aceleiasi verificari.
 
 ## Sincronizare
 
-Calculele se fac concurent, in variabile locale. Fiecare fir afiseaza intai
-jurnalul numeric complet si apoi anunta terminarea acestei etape.
+Calculele se fac concurent, in variabile locale. Afisarea jurnalelor numerice
+este ordonata explicit: Th2, Th4, Th3, Th1 (indicii 1, 3, 2, 0).
+Fiecare fir asteapta afisarea jurnalului predecesorului, afiseaza propriul
+jurnal complet si apoi anunta terminarea acestei etape.
 Patru indicatori `volatile` din Main fac vizibila terminarea tuturor calculelor.
 Niciun text final nu incepe pana cand toti cei patru indicatori sunt true.
 Aceasta bariera foloseste indicatori volatile si pauze scurte, nu reprezinta

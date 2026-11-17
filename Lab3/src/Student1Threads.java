@@ -33,6 +33,7 @@ public class Student1Threads implements Runnable {
                     nume, i, mas[i], j, mas[j], produs, suma));
         }
         jurnal.append(nume + ": perechi=" + perechi + "; suma finala=" + suma + "\n");
+        Main.asteaptaRandCalcul(invers ? 1 : 0);
         output.accept(jurnal.toString());
         Main.calculTerminat(invers ? 1 : 0);
         Main.asteaptaToateCalculele();

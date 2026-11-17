@@ -29,6 +29,7 @@ public class Student2Threads implements Runnable {
         }
         if (total % 15 != 0) jurnal.append('\n');
         jurnal.append(nume + ": elemente=" + total + "; suma control=" + suma + "\n");
+        Main.asteaptaRandCalcul(invers ? 3 : 2);
         output.accept(jurnal.toString());
         Main.calculTerminat(invers ? 3 : 2);
         Main.asteaptaToateCalculele();
