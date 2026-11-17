@@ -33,8 +33,12 @@ public class Catalin {
             Main.afiseazaFir(getName(), "A terminat sarcina. Aștept semnal de la Th4 (sleep)...");
 
             // SINCRONIZARE - sleep():
-            // Th2 doarme până când Th4 îl trezește
-            asteaptaSemnal();
+            // Th2 doarme "la nesfârșit" până când Th4 îl trezește cu interrupt()
+            try {
+                Thread.sleep(Long.MAX_VALUE);
+            } catch (InterruptedException e) {
+                // Th4 a apelat interrupt() -> Th2 se trezește și continuă
+            }
             Main.afiseazaFir(getName(), "A primit semnalul de la Th4 (interrupt), afișez numele.");
 
             Main.afiseazaLiteraCuLitera(getName() + " - Numele: ", Main.NUME);
@@ -89,10 +93,18 @@ public class Catalin {
             Main.th2.interrupt();
 
             // SINCRONIZARE - sleep():
-            // Th4 doarme până când Th2 termină de afișat numele și îl trezește
-            asteaptaSemnal();
+            // Th4 doarme "la nesfârșit" până când Th2 termină de afișat numele
+            // și îl trezește cu interrupt()
+            try {
+                Thread.sleep(Long.MAX_VALUE);
+            } catch (InterruptedException e) {
+                // Th2 a apelat interrupt() -> Th4 se trezește și continuă
+            }
 
             Main.afiseazaLiteraCuLitera(getName() + " - Grupa: ", Main.GRUPA);
+
+            // Th4 marchează că a terminat -> Th1 (Anatol) poate afișa prenumele
+            Main.th4Terminat = true;
         }
 
         /** Parcurge intervalul [1000, 1567] de la sfârșit (descrescător), câte 10 numere pe rând. */
@@ -112,19 +124,6 @@ public class Catalin {
                 Main.afiseazaFir(getName(), rand.toString());
             }
             Main.afiseazaFir(getName(), "Total numere parcurse: " + numarate);
-        }
-    }
-
-    // ==========================================================================
-    //  Metoda de așteptare folosită de Th2 și Th4
-    // ==========================================================================
-
-    /** Firul curent doarme până când un alt fir îi apelează interrupt(). */
-    static void asteaptaSemnal() {
-        try {
-            Thread.sleep(Long.MAX_VALUE);   // doarme "la nesfârșit"...
-        } catch (InterruptedException e) {
-            // ...până când celălalt fir apelează interrupt() -> poate continua
         }
     }
 }

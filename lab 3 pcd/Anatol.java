@@ -7,9 +7,9 @@
  * Th3 - Parcurgerea de la început a intervalului [120, 690].
  *       La final afișează DISCIPLINA.
  *
- * Metode de sincronizare folosite: isAlive() și join()
- *   - Th1 verifică periodic cu isAlive() dacă Th4 s-a terminat,
- *     abia apoi afișează prenumele.
+ * Metode de sincronizare folosite: yield() și join()
+ *   - Th1 cedează procesorul cu yield() cât timp Th4 nu a terminat
+ *     de afișat grupa, abia apoi afișează prenumele.
  *   - Th3 așteaptă cu join() terminarea completă a lui Th1,
  *     abia apoi afișează disciplina.
  *
@@ -30,14 +30,16 @@ public class Anatol {
         public void run() {
             Main.afiseazaFir(getName(), "Pornește");
             sumaPozitiilorPareDeLaInceput();
-            Main.afiseazaFir(getName(), "A terminat sarcina. Aștept terminarea lui Th4 (isAlive)...");
+            Main.afiseazaFir(getName(), "A terminat sarcina.");
 
-            // SINCRONIZARE - isAlive():
-            // cât timp Th4 încă lucrează, Th1 așteaptă
-            while (Main.th4.isAlive()) {
-                Main.pauza(50);
+            Main.afiseazaFir(getName(), "Aștept ca Th4 să termine (yield)...");
+
+            // SINCRONIZARE - yield():
+            // cât timp Th4 nu a terminat, Th1 cedează procesorul altor fire
+            while (!Main.th4Terminat) {
+                Thread.yield();
             }
-            Main.afiseazaFir(getName(), "Th4 s-a terminat, afișez prenumele.");
+            Main.afiseazaFir(getName(), "Th4 a terminat, afișez prenumele.");
             Main.afiseazaLiteraCuLitera(getName() + " - Prenumele: ", Main.PRENUME);
         }
 
