@@ -12,14 +12,10 @@
  *     abia apoi afișează prenumele.
  *   - Th3 așteaptă cu join() terminarea completă a lui Th1,
  *     abia apoi afișează disciplina.
+ *
+ * Firele sunt pornite din Main.
  */
 public class Anatol {
-
-    /** Pornește DOAR partea lui Anatol (Th1 și Th3). */
-    public static void main(String[] args) {
-        Main.mod = Main.DOAR_ANATOL;
-        javax.swing.SwingUtilities.invokeLater(() -> Main.creeazaFereastra());
-    }
 
     static final int TH3_DE = 120;
     static final int TH3_PANA = 690;
@@ -32,15 +28,16 @@ public class Anatol {
 
         @Override
         public void run() {
-            Main.afiseaza(Main.zonaTh1, "Pornește " + getName() + "\n");
+            Main.afiseazaFir(getName(), "Pornește");
             sumaPozitiilorPareDeLaInceput();
-            Main.afiseaza(Main.zonaTh1, getName() + " a terminat sarcina.\n");
+            Main.afiseazaFir(getName(), "A terminat sarcina. Aștept terminarea lui Th4 (isAlive)...");
 
             // SINCRONIZARE - isAlive():
             // cât timp Th4 încă lucrează, Th1 așteaptă
             while (Main.th4.isAlive()) {
                 Main.pauza(50);
             }
+            Main.afiseazaFir(getName(), "Th4 s-a terminat, afișez prenumele.");
             Main.afiseazaLiteraCuLitera(getName() + " - Prenumele: ", Main.PRENUME);
         }
 
@@ -57,17 +54,17 @@ public class Anatol {
                     } else {
                         nrSuma++;                      // al doilea număr din pereche
                         int suma = pozInAsteptare + i;
-                        Main.afiseaza(Main.zonaTh1, "Suma " + nrSuma + ":  poz " + pozInAsteptare
+                        Main.afiseazaFir(getName(), "Suma " + nrSuma + ":  poz " + pozInAsteptare
                                 + " (" + a[pozInAsteptare] + ")  +  poz " + i
-                                + " (" + a[i] + ")  =  " + suma + "\n");
+                                + " (" + a[i] + ")  =  " + suma);
                         pozInAsteptare = -1;
                     }
                 }
             }
 
             if (pozInAsteptare != -1) {
-                Main.afiseaza(Main.zonaTh1, "Poziția " + pozInAsteptare + " ("
-                        + a[pozInAsteptare] + ") a rămas fără pereche.\n");
+                Main.afiseazaFir(getName(), "Poziția " + pozInAsteptare + " ("
+                        + a[pozInAsteptare] + ") a rămas fără pereche.");
             }
         }
     }
@@ -80,9 +77,9 @@ public class Anatol {
 
         @Override
         public void run() {
-            Main.afiseaza(Main.zonaTh3, "Pornește " + getName() + "\n");
+            Main.afiseazaFir(getName(), "Pornește");
             parcurgeIntervalDeLaInceput();
-            Main.afiseaza(Main.zonaTh3, getName() + " a terminat sarcina.\n");
+            Main.afiseazaFir(getName(), "A terminat sarcina. Aștept terminarea lui Th1 (join)...");
 
             // SINCRONIZARE - join():
             // Th3 așteaptă până când Th1 se termină complet
@@ -93,21 +90,27 @@ public class Anatol {
             }
             Main.afiseazaLiteraCuLitera(getName() + " - Disciplina: ", Main.DISCIPLINA);
 
+            // Th3 este ultimul fir care se termină
             Main.toateFireleAuTerminat();
         }
 
         /** Parcurge intervalul [120, 690] crescător, câte 10 numere pe rând. */
         void parcurgeIntervalDeLaInceput() {
             int numarate = 0;
+            StringBuilder rand = new StringBuilder();
             for (int x = TH3_DE; x <= TH3_PANA; x++) {
-                Main.afiseaza(Main.zonaTh3, x + " ");
+                rand.append(x).append(" ");
                 numarate++;
                 if (numarate % 10 == 0) {
-                    Main.afiseaza(Main.zonaTh3, "\n");
+                    Main.afiseazaFir(getName(), rand.toString());
+                    rand.setLength(0);
                 }
                 Main.pauza(5);   // ca să se vadă că firele lucrează în paralel
             }
-            Main.afiseaza(Main.zonaTh3, "\nTotal numere parcurse: " + numarate + "\n");
+            if (rand.length() > 0) {
+                Main.afiseazaFir(getName(), rand.toString());
+            }
+            Main.afiseazaFir(getName(), "Total numere parcurse: " + numarate);
         }
     }
 }

@@ -12,14 +12,10 @@
  *     și îl trezește cu interrupt();
  *   - Th4 "doarme" cu sleep() până când Th2 termină de afișat numele
  *     și îl trezește cu interrupt().
+ *
+ * Firele sunt pornite din Main.
  */
 public class Catalin {
-
-    /** Pornește DOAR partea lui Catalin (Th2 și Th4). */
-    public static void main(String[] args) {
-        Main.mod = Main.DOAR_CATALIN;
-        javax.swing.SwingUtilities.invokeLater(() -> Main.creeazaFereastra());
-    }
 
     static final int TH4_DE = 1567;
     static final int TH4_PANA = 1000;
@@ -32,14 +28,14 @@ public class Catalin {
 
         @Override
         public void run() {
-            Main.afiseaza(Main.zonaTh2, "Pornește " + getName() + "\n");
+            Main.afiseazaFir(getName(), "Pornește");
             sumaPozitiilorPareDeLaSfarsit();
-            Main.afiseaza(Main.zonaTh2, getName() + " a terminat sarcina. Aștept semnal de la Th4...\n");
+            Main.afiseazaFir(getName(), "A terminat sarcina. Aștept semnal de la Th4 (sleep)...");
 
             // SINCRONIZARE - sleep():
             // Th2 doarme până când Th4 îl trezește
             asteaptaSemnal();
-            Main.afiseaza(Main.zonaTh2, getName() + " a primit semnalul de la Th4.\n");
+            Main.afiseazaFir(getName(), "A primit semnalul de la Th4 (interrupt), afișez numele.");
 
             Main.afiseazaLiteraCuLitera(getName() + " - Numele: ", Main.NUME);
 
@@ -61,17 +57,17 @@ public class Catalin {
                     } else {
                         nrSuma++;                      // al doilea număr din pereche
                         int suma = pozInAsteptare + i;
-                        Main.afiseaza(Main.zonaTh2, "Suma " + nrSuma + ":  poz " + pozInAsteptare
+                        Main.afiseazaFir(getName(), "Suma " + nrSuma + ":  poz " + pozInAsteptare
                                 + " (" + a[pozInAsteptare] + ")  +  poz " + i
-                                + " (" + a[i] + ")  =  " + suma + "\n");
+                                + " (" + a[i] + ")  =  " + suma);
                         pozInAsteptare = -1;
                     }
                 }
             }
 
             if (pozInAsteptare != -1) {
-                Main.afiseaza(Main.zonaTh2, "Poziția " + pozInAsteptare + " ("
-                        + a[pozInAsteptare] + ") a rămas fără pereche.\n");
+                Main.afiseazaFir(getName(), "Poziția " + pozInAsteptare + " ("
+                        + a[pozInAsteptare] + ") a rămas fără pereche.");
             }
         }
     }
@@ -84,9 +80,9 @@ public class Catalin {
 
         @Override
         public void run() {
-            Main.afiseaza(Main.zonaTh4, "Pornește " + getName() + "\n");
+            Main.afiseazaFir(getName(), "Pornește");
             parcurgeIntervalDeLaSfarsit();
-            Main.afiseaza(Main.zonaTh4, getName() + " a terminat sarcina.\n");
+            Main.afiseazaFir(getName(), "A terminat sarcina. Trezesc Th2 (interrupt) și aștept (sleep)...");
 
             // SINCRONIZARE - interrupt():
             // Th4 îl anunță pe Th2 că poate afișa numele
@@ -97,25 +93,25 @@ public class Catalin {
             asteaptaSemnal();
 
             Main.afiseazaLiteraCuLitera(getName() + " - Grupa: ", Main.GRUPA);
-
-            // Când rulează doar partea lui Catalin, Th4 este ultimul fir
-            if (Main.mod == Main.DOAR_CATALIN) {
-                Main.toateFireleAuTerminat();
-            }
         }
 
         /** Parcurge intervalul [1000, 1567] de la sfârșit (descrescător), câte 10 numere pe rând. */
         void parcurgeIntervalDeLaSfarsit() {
             int numarate = 0;
+            StringBuilder rand = new StringBuilder();
             for (int x = TH4_DE; x >= TH4_PANA; x--) {
-                Main.afiseaza(Main.zonaTh4, x + " ");
+                rand.append(x).append(" ");
                 numarate++;
                 if (numarate % 10 == 0) {
-                    Main.afiseaza(Main.zonaTh4, "\n");
+                    Main.afiseazaFir(getName(), rand.toString());
+                    rand.setLength(0);
                 }
                 Main.pauza(5);   // ca să se vadă că firele lucrează în paralel
             }
-            Main.afiseaza(Main.zonaTh4, "\nTotal numere parcurse: " + numarate + "\n");
+            if (rand.length() > 0) {
+                Main.afiseazaFir(getName(), rand.toString());
+            }
+            Main.afiseazaFir(getName(), "Total numere parcurse: " + numarate);
         }
     }
 
