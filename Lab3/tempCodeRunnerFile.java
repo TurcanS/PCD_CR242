@@ -1,1 +1,0 @@
-javac Main2.java Vlad3.java Adrian3.java
