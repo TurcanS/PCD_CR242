@@ -8,12 +8,11 @@
  *       căutarea și sumarea începând de la ultimul element.
  *       La final afișează NUMELE.
  *
- * Metode de sincronizare folosite:
- *   - Th1 cedează procesorul cu yield() cât timp Th4 nu a terminat
- *     de afișat grupa, abia apoi afișează prenumele.
- *   - Th2 "doarme" cu sleep() până când Th4 își termină sarcina
- *     și îl trezește cu interrupt(); după ce afișează numele,
- *     îl trezește pe Th4 cu interrupt().
+ * Metode de sincronizare folosite: yield() și join()
+ *   - Th2 cedează procesorul cu yield() cât timp Th3 și Th4 nu și-au
+ *     terminat sarcinile, apoi afișează primul mesaj final (numele).
+ *   - Th1 așteaptă cu join() terminarea completă a lui Th4
+ *     (care afișează grupa), abia apoi afișează prenumele.
  *
  * Firele sunt pornite din Main.
  */
@@ -31,14 +30,16 @@ public class Anatol {
             sumaPozitiilorPareDeLaInceput();
             Main.afiseazaFir(getName(), "A terminat sarcina.");
 
-            Main.afiseazaFir(getName(), "Aștept ca Th4 să termine (yield)...");
+            Main.afiseazaFir(getName(), "Aștept terminarea lui Th4 (join)...");
 
-            // SINCRONIZARE - yield():
-            // cât timp Th4 nu a terminat, Th1 cedează procesorul altor fire
-            while (!Main.th4Terminat) {
-                Thread.yield();
+            // SINCRONIZARE - join():
+            // Th1 așteaptă până când Th4 se termină complet (după afișarea grupei)
+            try {
+                Main.th4.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
-            Main.afiseazaFir(getName(), "Th4 a terminat, afișez prenumele.");
+            Main.afiseazaFir(getName(), "Th4 s-a terminat, afișez prenumele.");
             Main.afiseazaLiteraCuLitera(getName() + " - Prenumele: ", Main.PRENUME);
         }
 
@@ -80,22 +81,17 @@ public class Anatol {
         public void run() {
             Main.afiseazaFir(getName(), "Pornește");
             sumaPozitiilorPareDeLaSfarsit();
-            Main.afiseazaFir(getName(), "A terminat sarcina. Aștept semnal de la Th4 (sleep)...");
+            Main.afiseazaFir(getName(), "A terminat sarcina. Aștept ca Th3 și Th4 să-și termine sarcinile (yield)...");
 
-            // SINCRONIZARE - sleep():
-            // Th2 doarme "la nesfârșit" până când Th4 îl trezește cu interrupt()
-            try {
-                Thread.sleep(Long.MAX_VALUE);
-            } catch (InterruptedException e) {
-                // Th4 a apelat interrupt() -> Th2 se trezește și continuă
+            // SINCRONIZARE - yield():
+            // cât timp Th3 și Th4 mai lucrează, Th2 cedează procesorul altor fire
+            while (!Main.th3SarcinaGata || !Main.th4SarcinaGata) {
+                Thread.yield();
             }
-            Main.afiseazaFir(getName(), "A primit semnalul de la Th4 (interrupt), afișez numele.");
+            Main.afiseazaFir(getName(), "Th3 și Th4 au terminat sarcinile, afișez numele.");
 
             Main.afiseazaLiteraCuLitera(getName() + " - Numele: ", Main.NUME);
-
-            // SINCRONIZARE - interrupt():
-            // Th2 îl trezește pe Th4 ca să afișeze grupa
-            Main.th4.interrupt();
+            // Th2 se termină -> Th3 (Catalin) observă asta și îl trezește pe Th4
         }
 
         /** Caută numerele pare de la ultimul element și adună pozițiile lor două câte două. */

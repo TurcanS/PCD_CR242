@@ -9,8 +9,8 @@ import java.awt.*;
  *
  * MAIN - partea comună: datele, interfața grafică și pornirea firelor.
  * Programul se pornește DOAR din Main; firele sunt definite în clase separate:
- *   Anatol.java  -> Th1, Th2
- *   Catalin.java -> Th3, Th4
+ *   Anatol.java  -> Th1, Th2 (sincronizare: yield(), join())
+ *   Catalin.java -> Th3, Th4 (sincronizare: sleep(), interrupt())
  *
  * Ordinea mesajelor finale (literă cu literă, la 100 ms):
  *     Th2 (Numele) -> Th4 (Grupa) -> Th1 (Prenumele) -> Th3 (Disciplina)
@@ -34,9 +34,10 @@ public class Main {
     static Catalin.Th3 th3;
     static Catalin.Th4 th4;
 
-    // Devine true când Th4 a terminat tot (inclusiv afișarea grupei).
-    // volatile -> modificarea făcută de Th4 este văzută imediat de Th1.
-    static volatile boolean th4Terminat = false;
+    // Devin true când Th3 / Th4 și-au terminat sarcina (parcurgerea intervalului).
+    // volatile -> modificarea făcută de un fir este văzută imediat de celelalte.
+    static volatile boolean th3SarcinaGata = false;
+    static volatile boolean th4SarcinaGata = false;
 
     // ===================== Interfața grafică =====================
     static JTextArea zonaTablou, zonaFire, zonaFinal;
@@ -50,7 +51,8 @@ public class Main {
         butonTablouNou.setEnabled(false);
         zonaFire.setText("");
         zonaFinal.setText("");
-        th4Terminat = false;
+        th3SarcinaGata = false;
+        th4SarcinaGata = false;
 
         // Se creează toate cele 4 obiecte înainte de pornire,
         // ca fiecare fir să aibă referință la celelalte.

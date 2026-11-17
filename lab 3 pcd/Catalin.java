@@ -6,12 +6,13 @@
  * Th4 - Parcurgerea de la sfârșit a intervalului [1000, 1567].
  *       La final afișează GRUPA.
  *
- * Metode de sincronizare folosite:
- *   - Th3 așteaptă cu join() terminarea completă a lui Th1,
- *     abia apoi afișează disciplina.
- *   - Th4 îl trezește pe Th2 cu interrupt() după ce își termină sarcina,
- *     apoi "doarme" cu sleep() până când Th2 termină de afișat numele
- *     și îl trezește cu interrupt().
+ * Metode de sincronizare folosite: sleep() și interrupt()
+ *   - Th4, după sarcină, "doarme" cu sleep() până când Th3 îl trezește
+ *     cu interrupt().
+ *   - Th3 verifică periodic (cu sleep()) când s-a terminat Th2,
+ *     apoi îl trezește pe Th4 cu interrupt() ca să afișeze grupa.
+ *     După aceea verifică periodic (cu sleep()) când s-a terminat Th1
+ *     și abia apoi afișează disciplina.
  *
  * Firele sunt pornite din Main.
  */
@@ -23,6 +24,9 @@ public class Catalin {
     static final int TH4_DE = 1567;
     static final int TH4_PANA = 1000;
 
+    /** Pauza dintre două verificări, în ms. */
+    static final int INTERVAL_VERIFICARE = 20;
+
     // ==========================================================================
     //  Firul 3
     // ==========================================================================
@@ -33,19 +37,48 @@ public class Catalin {
         public void run() {
             Main.afiseazaFir(getName(), "Pornește");
             parcurgeIntervalDeLaInceput();
-            Main.afiseazaFir(getName(), "A terminat sarcina. Aștept terminarea lui Th1 (join)...");
+            Main.th3SarcinaGata = true;
+            Main.afiseazaFir(getName(), "A terminat sarcina. Aștept terminarea lui Th2 (sleep)...");
 
-            // SINCRONIZARE - join():
-            // Th3 așteaptă până când Th1 se termină complet
-            try {
-                Main.th1.join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            // SINCRONIZARE - sleep():
+            // Th3 doarme câte puțin până când Th2 termină de afișat numele
+            dormiCatTimpTraieste(Main.th2);
+
+            // Th4 trebuie să fi ajuns la sleep(); altfel interrupt() ar fi
+            // „consumat" de pauzele din sarcina lui.
+            while (!Main.th4SarcinaGata) {
+                dormi(INTERVAL_VERIFICARE);
             }
+
+            // SINCRONIZARE - interrupt():
+            // Th3 îl trezește pe Th4 ca să afișeze grupa
+            Main.afiseazaFir(getName(), "Th2 s-a terminat, îl trezesc pe Th4 (interrupt).");
+            Main.th4.interrupt();
+
+            // SINCRONIZARE - sleep():
+            // Th3 doarme câte puțin până când Th1 termină de afișat prenumele
+            Main.afiseazaFir(getName(), "Aștept terminarea lui Th1 (sleep)...");
+            dormiCatTimpTraieste(Main.th1);
+
             Main.afiseazaLiteraCuLitera(getName() + " - Disciplina: ", Main.DISCIPLINA);
 
             // Th3 este ultimul fir care se termină
             Main.toateFireleAuTerminat();
+        }
+
+        /** Doarme câte INTERVAL_VERIFICARE ms cât timp firul dat încă rulează. */
+        void dormiCatTimpTraieste(Thread fir) {
+            while (fir.isAlive()) {
+                dormi(INTERVAL_VERIFICARE);
+            }
+        }
+
+        void dormi(int ms) {
+            try {
+                Thread.sleep(ms);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
 
         /** Parcurge intervalul [120, 690] crescător, câte 10 numere pe rând. */
@@ -78,25 +111,20 @@ public class Catalin {
         public void run() {
             Main.afiseazaFir(getName(), "Pornește");
             parcurgeIntervalDeLaSfarsit();
-            Main.afiseazaFir(getName(), "A terminat sarcina. Trezesc Th2 (interrupt) și aștept (sleep)...");
-
-            // SINCRONIZARE - interrupt():
-            // Th4 îl anunță pe Th2 că poate afișa numele
-            Main.th2.interrupt();
+            Main.th4SarcinaGata = true;
+            Main.afiseazaFir(getName(), "A terminat sarcina. Dorm (sleep) până mă trezește Th3 (interrupt)...");
 
             // SINCRONIZARE - sleep():
-            // Th4 doarme "la nesfârșit" până când Th2 termină de afișat numele
-            // și îl trezește cu interrupt()
+            // Th4 doarme "la nesfârșit" până când Th3 îl trezește cu interrupt()
             try {
                 Thread.sleep(Long.MAX_VALUE);
             } catch (InterruptedException e) {
-                // Th2 a apelat interrupt() -> Th4 se trezește și continuă
+                // Th3 a apelat interrupt() -> Th4 se trezește și continuă
             }
+            Main.afiseazaFir(getName(), "Am fost trezit de Th3 (interrupt), afișez grupa.");
 
             Main.afiseazaLiteraCuLitera(getName() + " - Grupa: ", Main.GRUPA);
-
-            // Th4 marchează că a terminat -> Th1 poate afișa prenumele
-            Main.th4Terminat = true;
+            // Th4 se termină -> Th1 (Anatol), care face join() pe Th4, poate continua
         }
 
         /** Parcurge intervalul [1000, 1567] de la sfârșit (descrescător), câte 10 numere pe rând. */
