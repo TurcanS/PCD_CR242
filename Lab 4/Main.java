@@ -26,7 +26,7 @@ public class Main {
       }
     }, true));
 
-    System.out.print("START PROGRAMUL");
+    System.out.println("START PROGRAMUL");
 
     Depozit depozit = new Depozit();
 
@@ -53,7 +53,7 @@ public class Main {
       System.out.println("A aparut o eroare!!!!");
     }
 
-    System.out.println("PROGRAMUL SA FINALIZAT");
+    System.out.print("PROGRAMUL SA FINALIZAT");
   }
 }
 
