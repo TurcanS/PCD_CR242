@@ -3,7 +3,6 @@ import java.io.*;
 import java.util.*;
 
 public class Main {
-
   public static final int X = 2; // X producători
   public static final int Y = 3; // sunt consumate de Y consumator
   public static final int Z = 11; // este îndestulat cu Z obiecte
@@ -11,6 +10,20 @@ public class Main {
   public static final int F = 2; // generează aleatoriu F obiecte
 
   public static void main(String[] args) {
+    JTextArea area = new JTextArea();
+    area.setEditable(false);
+    JFrame frame = new JFrame("LAB 4 GRUP 1");
+    frame.add(new JScrollPane(area));
+    frame.setSize(900, 600);
+    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    frame.setVisible(true);
+
+    System.setOut(new PrintStream(new OutputStream() {
+      public void write(int b) {
+        area.append(String.valueOf((char) b));
+      }
+    }, true));
+
     System.out.println("START PROGRAMUL");
 
     Depozit depozit = new Depozit();
