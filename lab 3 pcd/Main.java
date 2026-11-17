@@ -20,7 +20,7 @@ public class Main {
     // ===================== Date pentru mesajele finale =====================
     // Completați cu datele voastre reale
     static final String PRENUME    = "Anatol, Catalin";
-    static final String NUME       = "Anatol, Catalin";
+    static final String NUME       = "Diacov, Borodachi";
     static final String GRUPA      = "CR-242";
     static final String DISCIPLINA = "Programarea concurentă și distribuită";
 
