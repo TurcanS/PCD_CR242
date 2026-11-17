@@ -2,7 +2,6 @@ import javax.swing.*;
 import java.awt.*;
 
 public class Main_lab3 {
-
     static void scrie(JTextArea ta, String text) {
         SwingUtilities.invokeLater(() -> {
             ta.append(text);
@@ -40,10 +39,9 @@ public class Main_lab3 {
         scrie(ta, sb.toString());
 
         Fir2 fir2 = new Fir2(t, ta);
-        Fir4 fir4 = new Fir4(fir2, ta);   // fir4 asteapta fir2
-        Fir1 fir1 = new Fir1(t, ta);
-        fir1.setPrecedent(fir4);          // fir1 asteapta fir4
-        Fir3 fir3 = new Fir3(fir1, ta);   // fir3 asteapta fir1
+        Fir4 fir4 = new Fir4(fir2, ta);
+        Fir1 fir1 = new Fir1(t, fir4, ta);
+        Fir3 fir3 = new Fir3(fir1, ta);
 
         fir1.setName("fir1");
         fir2.setName("fir2");
@@ -60,22 +58,19 @@ public class Main_lab3 {
 class Fir1 extends Thread {
     private int[] t;
     private JTextArea ta;
-    private Thread precedent;
+    private Fir4 precedent;
 
-    Fir1(int[] t, JTextArea ta) {
+    Fir1(int[] t, Fir4 precedent, JTextArea ta) {
         this.t = t;
-        this.ta = ta;
-    }
-
-    void setPrecedent(Thread precedent) {
         this.precedent = precedent;
+        this.ta = ta;
     }
 
     @Override
     public void run() {
         String nume = getName();
         int start = 0, end = 99, pas = 1;
-        Main_lab3.scrie(ta, "\n" + nume + " crescator:\n");
+        Main_lab3.scrie(ta, "\n" + nume + " creat:\n");
 
         int rest = (pas > 0) ? 0 : 2;
         int min = Math.min(start, end);
@@ -117,7 +112,7 @@ class Fir2 extends Thread {
     public void run() {
         String nume = getName();
         int start = 99, end = 0, pas = -1;
-        Main_lab3.scrie(ta, "\n" + nume + " descrescator:\n");
+        Main_lab3.scrie(ta, "\n" + nume + " creat:\n");
 
         int rest = (pas > 0) ? 0 : 2;
         int min = Math.min(start, end);
@@ -137,8 +132,8 @@ class Fir2 extends Thread {
         }
 
         try {
-            Thread.sleep(2000);   // sincronizare prin sleep: Fir2 asteapta 2 secunde
-            Main_lab3.scrieLitere(ta, " Nume: Spînu și Demenco");
+            Thread.sleep(2000);
+            Main_lab3.scrieLitere(ta, "Nume: Spînu și Demenco");
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
