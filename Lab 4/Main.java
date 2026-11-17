@@ -14,7 +14,7 @@ public class Main {
     area.setEditable(false);
     JFrame frame = new JFrame("LAB 4 GRUP 1");
     frame.add(new JScrollPane(area));
-    frame.setSize(900, 600);
+    frame.setSize(600, 1030);
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     frame.setVisible(true);
 
