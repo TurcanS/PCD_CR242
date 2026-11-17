@@ -45,15 +45,15 @@ Limitele sunt incluse. Seed-ul 6 permite repetarea aceleiasi verificari.
 
 Calculele se fac concurent, in variabile locale. Jurnalul fiecarui fir este
 retinut local si afisat numai cand ii vine randul, ca literele sa nu se amestece.
-Ordinea aleasa a afisarii este Th2 -> Th1 -> Th4 -> Th3:
-Toma -> Andrei -> CR-242 -> Programarea concurenta si distribuita.
+Ordinea afisarii este Th2 -> Th4 -> Th1 -> Th3:
+Toma -> CR-242 -> Andrei -> Programarea concurenta si distribuita.
 
-Th1 asteapta Th2 prin `join()`. Th4 verifica Th1 cu `isAlive()`.
-Th3 verifica Th4 cu `isAlive()`, dormind intre verificari; Th4 il trezeste
+Th1 asteapta Th4 prin `join()`. Th4 verifica Th2 cu `isAlive()`.
+Th3 verifica Th1 cu `isAlive()`, dormind intre verificari; Th4 il trezeste
 prin `interrupt()`. Semnalul nu opreste fortat firul. Dupa trezire se verifica
-din nou `isAlive()`, fiindca trezirea nu garanteaza ca Th4 a terminat deja.
+din nou `isAlive()`, fiindca trezirea nu garanteaza ca Th1 a terminat deja.
 `sleep()` este folosit si in functia comuna care afiseaza literele la 100 ms.
-Main porneste Th2 inainte de Th1 si Th4 inainte de Th3, astfel incat un fir
+Main porneste firele in ordinea Th2, Th4, Th1, Th3, astfel incat un fir
 sa nu confunde un predecesor nepornit cu unul terminat.
 
 Nu sunt folosite `synchronized`, `wait/notify`, semafoare sau latch-uri pentru

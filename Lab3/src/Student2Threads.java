@@ -30,13 +30,13 @@ public class Student2Threads implements Runnable {
         if (total % 15 != 0) jurnal.append('\n');
         jurnal.append(nume + ": elemente=" + total + "; suma control=" + suma + "\n");
         try {
-            Thread asteptat = fire[invers ? 0 : 3];
-            // Th4 asteapta Th1; Th3 asteapta Th4. Pauza evita asteptarea activa.
+            Thread asteptat = fire[invers ? 1 : 0];
+            // Th4 asteapta Th2; Th3 asteapta Th1. Pauza evita asteptarea activa.
             while (asteptat.isAlive()) {
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
-                    // Th4 trezeste Th3; isAlive() verifica terminarea efectiva.
+                    // Th4 trezeste Th3 dupa grupa; Th3 verifica apoi terminarea lui Th1.
                 }
             }
             Thread.interrupted();

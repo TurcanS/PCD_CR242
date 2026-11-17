@@ -30,7 +30,7 @@ public class Main {
         fire[3] = new Thread(new Student2Threads(true, fire, output), "Th4");
 
         // Pornim intai firele asteptate, pentru ca isAlive() sa fie relevant.
-        for (int i : new int[] {1, 0, 3, 2}) fire[i].start();
+        for (int i : new int[] {1, 3, 0, 2}) fire[i].start();
         for (Thread fir : fire) fir.join();
         output.accept("\nFINAL: toate cele 4 fire s-au terminat.\n");
     }

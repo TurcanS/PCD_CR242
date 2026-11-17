@@ -34,8 +34,8 @@ public class Student1Threads implements Runnable {
         }
         jurnal.append(nume + ": perechi=" + perechi + "; suma finala=" + suma + "\n");
         try {
-            // Th1 asteapta terminarea lui Th2, inclusiv afisarea numelui de familie.
-            if (!invers) fire[1].join();
+            // Th1 asteapta Th4: numele, grupa, prenumele, apoi disciplina.
+            if (!invers) fire[3].join();
             output.accept(jurnal.toString());
             output.accept(nume + (invers ? " | Numele: " : " | Prenumele: "));
             Main.scrieLent(invers ? "Toma" : "Andrei", output);
