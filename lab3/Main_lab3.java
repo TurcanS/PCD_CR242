@@ -137,7 +137,7 @@ class Fir2 extends Thread {
         }
 
         try {
-            Main_lab3.scrieLitere(ta, "Nume: Spînu și Demenco");
+            Main_lab3.scrieLitere(ta, " Nume: Spînu și Demenco");
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
