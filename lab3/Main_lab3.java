@@ -2,6 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 
 public class Main_lab3 {
+
     static void scrie(JTextArea ta, String text) {
         SwingUtilities.invokeLater(() -> {
             ta.append(text);
@@ -38,16 +39,19 @@ public class Main_lab3 {
         sb.append("\n");
         scrie(ta, sb.toString());
 
-        Fir2 fir2 = new Fir2(t, ta);
-        Fir4 fir4 = new Fir4(fir2, ta);
         Fir1 fir1 = new Fir1(t, ta);
-        fir1.setPrecedent(fir4);
-        Fir3 fir3 = new Fir3(fir1, ta);
+        Fir2 fir2 = new Fir2(t, ta);
+        Fir3 fir3 = new Fir3(ta);
+        Fir4 fir4 = new Fir4(ta);
 
         fir1.setName("fir1");
         fir2.setName("fir2");
         fir3.setName("fir3");
         fir4.setName("fir4");
+
+        fir4.setPrecedent(fir2);
+        fir1.setPrecedent(fir4);
+        fir3.setPrecedent(fir1);
 
         fir1.start();
         fir2.start();
@@ -74,7 +78,7 @@ class Fir1 extends Thread {
     public void run() {
         String nume = getName();
         int start = 0, end = 99, pas = 1;
-        Main_lab3.scrie(ta, "\n" + nume + " creat:\n");
+        Main_lab3.scrie(ta, "\n" + nume + " crescator:\n");
 
         int rest = (pas > 0) ? 0 : 2;
         int min = Math.min(start, end);
@@ -116,7 +120,7 @@ class Fir2 extends Thread {
     public void run() {
         String nume = getName();
         int start = 99, end = 0, pas = -1;
-        Main_lab3.scrie(ta, "\n" + nume + " creat:\n");
+        Main_lab3.scrie(ta, "\n" + nume + " descrescator:\n");
 
         int rest = (pas > 0) ? 0 : 2;
         int min = Math.min(start, end);
@@ -136,7 +140,6 @@ class Fir2 extends Thread {
         }
 
         try {
-            Thread.sleep(1000);   // sincronizare prin sleep: Fir2 asteapta 2 secunde
             Main_lab3.scrieLitere(ta, "Nume: Spînu și Demenco");
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -145,71 +148,85 @@ class Fir2 extends Thread {
 }
 
 class Fir3 extends Thread {
-    private Fir1 firAnterior;
-    private JTextArea zona;
+    private JTextArea ta;
+    private Thread precedent;
 
-    public Fir3(Fir1 firAnterior, JTextArea zona) {
-        this.firAnterior = firAnterior;
-        this.zona = zona;
+    Fir3(JTextArea ta) {
+        this.ta = ta;
+    }
+
+    void setPrecedent(Thread precedent) {
+        this.precedent = precedent;
     }
 
     @Override
     public void run() {
-        Main_lab3.scrie(zona, "Pornire fir3 (interval crescator 567-1002):\n");
-        for (int i = 567; i <= 1002; i++) {
-            Main_lab3.scrie(zona, i + " ");
-        }
-        Main_lab3.scrie(zona, "\nfir3 a terminat intervalul.\n");
+        String nume = getName();
+        Main_lab3.scrie(ta, "\n" + nume + " parcurge [567, 1002] de la inceput:\n");
 
-        while (firAnterior.isAlive()) {
+        StringBuilder rand = new StringBuilder();
+        int numarate = 0;
+        for (int i = 567; i <= 1002; i++) {
+            rand.append(i).append(" ");
+            numarate++;
+            if (numarate % 10 == 0) {
+                Main_lab3.scrie(ta, rand + "\n");
+                rand.setLength(0);
+            }
             Thread.yield();
         }
-
-        String text = "Disciplina: Programarea Concurentă și Distribuită";
-        for (char c : text.toCharArray()) {
-            Main_lab3.scrie(zona, c + "");
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+        if (rand.length() > 0) {
+            Main_lab3.scrie(ta, rand + "\n");
         }
-        Main_lab3.scrie(zona, "\n");
+        Main_lab3.scrie(ta, "\n" + nume + " a terminat parcurgerea\n");
+
+        try {
+            precedent.join();
+            Main_lab3.scrieLitere(ta, "Disciplina: Programarea concurentă și distribuită");
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }
 
 class Fir4 extends Thread {
-    private Fir2 firAnterior;
-    private JTextArea zona;
+    private JTextArea ta;
+    private Thread precedent;
 
-    public Fir4(Fir2 firAnterior, JTextArea zona) {
-        this.firAnterior = firAnterior;
-        this.zona = zona;
+    Fir4(JTextArea ta) {
+        this.ta = ta;
+    }
+
+    void setPrecedent(Thread precedent) {
+        this.precedent = precedent;
     }
 
     @Override
     public void run() {
-        Main_lab3.scrie(zona, "Pornire fir4 (interval descrescator 1100-567):\n");
-        for (int i = 1100; i >= 567; i--) {
-            Main_lab3.scrie(zona, i + " ");
-        }
-        Main_lab3.scrie(zona, "\nfir4 a terminat intervalul.\n");
+        String nume = getName();
+        Main_lab3.scrie(ta, "\n" + nume + " parcurge [567, 1100] de la sfarsit:\n");
 
         try {
-            firAnterior.join();
+            StringBuilder rand = new StringBuilder();
+            int numarate = 0;
+            for (int i = 1100; i >= 567; i--) {
+                rand.append(i).append(" ");
+                numarate++;
+                if (numarate % 10 == 0) {
+                    Main_lab3.scrie(ta, rand + "\n");
+                    rand.setLength(0);
+                }
+                Thread.sleep(100);
+            }
+            if (rand.length() > 0) {
+                Main_lab3.scrie(ta, rand + "\n");
+            }
+            Main_lab3.scrie(ta, "\n" + nume + " a terminat parcurgerea\n");
+
+            precedent.join();
+            Main_lab3.scrieLitere(ta, "Grupa: CR-242");
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
-        String text = "Grupa: CR-242";
-        for (char c : text.toCharArray()) {
-            Main_lab3.scrie(zona, c + "");
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-        Main_lab3.scrie(zona, "\n");
     }
 }
