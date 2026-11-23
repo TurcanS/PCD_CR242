@@ -153,21 +153,21 @@ class Producer extends Thread {
 
 class Consumer extends Thread {
     private final Store store;
-    private final int need;
-    public Consumer(Store store, int need, String name) {
+    private final int luat;
+    public Consumer(Store store, int luat, String name) {
         super(name);
         this.store = store;
-        this.need = need;
+        this.luat = luat;
     }
 
     @Override
     public void run() {
-        int taken = 0;
+        int preluat = 0;
 
-        for (int i = 0; i < need; i++) {
+        for (int i = 0; i < luat; i++) {
             int value = store.get(getName());
             if (value == -1) return;
-            taken++;
+            preluat++;
             try {
                 Thread.sleep(80);
             } catch (InterruptedException e) {
@@ -175,6 +175,6 @@ class Consumer extends Thread {
                 return;
             }
         }
-        lab4.log(getName() + " a luat " + taken + " obiecte. Este indestulat.");
+        lab4.log(getName() + " a luat " + preluat + " obiecte. Este indestulat.");
     }
 }
