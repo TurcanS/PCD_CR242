@@ -38,7 +38,7 @@ public class Main {
             SwingUtilities.invokeAndWait(Main::creeazaFereastra);
         }
         Consumer<String> jurnal = Main::scrie;
-        Depozit depozit = new Depozit(D, jurnal, Main::arataDepozit);
+        Depozit depozit = new Depozit(D, Y * Z, jurnal, Main::arataDepozit);
 
         Consumator[] consumatori = new Consumator[Y];
         for (int i = 0; i < Y; i++) {
@@ -47,7 +47,7 @@ public class Main {
         }
         Producator[] producatori = new Producator[X];
         for (int i = 0; i < X; i++) {
-            producatori[i] = new Producator("Producător " + (i + 1), depozit);
+            producatori[i] = new Producator("Producător " + (i + 1), depozit, jurnal);
         }
 
         for (Consumator c : consumatori) {
@@ -57,17 +57,15 @@ public class Main {
             p.start();
         }
 
-        // operațiile continuă până când fiecare consumator este îndestulat
-        for (Consumator c : consumatori) {
-            c.join();
-        }
-        for (Producator p : producatori) {
-            p.interrupt();
-        }
+        // producătorii se opresc singuri când s-a produs destul (Y * Z obiecte),
+        // consumatorii se opresc când fiecare a luat Z obiecte; main doar îi așteaptă
         for (Producator p : producatori) {
             p.join();
         }
-        scrie("Toți consumatorii sunt îndestulați, producătorii au fost opriți (" + depozit.rezumat() + ")");
+        for (Consumator c : consumatori) {
+            c.join();
+        }
+        scrie("Toți consumatorii sunt îndestulați, toți producătorii s-au oprit (" + depozit.rezumat() + ")");
     }
 
     private static void scrie(String mesaj) {
