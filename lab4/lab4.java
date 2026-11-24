@@ -4,6 +4,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class lab4 {
     private static JTextArea textArea;
+
     public static void log(String msg) {
         SwingUtilities.invokeLater(() -> {
             if (textArea != null) {
@@ -18,20 +19,24 @@ public class lab4 {
             JFrame frame = new JFrame("Lab 4 - Producator / Consumator");
             frame.setSize(900, 650);
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
             textArea = new JTextArea();
             textArea.setEditable(false);
+
             frame.setContentPane(new JScrollPane(textArea));
             frame.setLocationRelativeTo(null);
             frame.setVisible(true);
 
-            new Thread(() -> {
+            Runnable sarcina = () -> {
                 try {
                     runSimulation();
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                     log("Simularea a fost intrerupta.");
                 }
-            }, "Controller").start();
+            };
+            Thread controller = new Thread(sarcina, "Controller");
+            controller.start();
         });
     }
 
@@ -61,6 +66,7 @@ public class lab4 {
         }
         log("\nToti consumatorii au fost indestulati cu " + Z + " obiecte.");
         store.finish();
+
         for (Producer p : producers) {
             p.join();
         }
@@ -81,13 +87,16 @@ class Store {
         finished = true;
         notifyAll();
     }
+
     public synchronized boolean isFinished() {
         return finished;
     }
 
     public synchronized int get(String name) {
         while (stockList.isEmpty()) {
-            if (finished) return -1;
+            if (finished) {
+                return -1;
+            }
             lab4.log(name + ": depozitul este gol, astept...");
             try {
                 wait();
@@ -96,8 +105,8 @@ class Store {
                 return -1;
             }
         }
-
         int value = stockList.remove(stockList.size() - 1);
+
         lab4.log(name + " a luat: " + value + " | depozit=" + snapshot());
         notifyAll();
         return value;
@@ -106,6 +115,7 @@ class Store {
     public synchronized boolean putTwo(String name, int v1, int v2) {
         while (!finished && stockList.size() > capacity - 2) {
             lab4.log(name + ": depozitul este plin, astept... | depozit=" + snapshot());
+
             try {
                 wait();
             } catch (InterruptedException e) {
@@ -114,13 +124,16 @@ class Store {
             }
         }
 
-        if (finished) return false;
+        if (finished) {
+            return false;
+        }
         stockList.add(v1);
         stockList.add(v2);
         lab4.log(name + " a pus 2 obiecte: [" + v1 + ", " + v2 + "] | depozit=" + snapshot());
         notifyAll();
         return true;
     }
+
     private String snapshot() {
         return stockList.size() + "/" + capacity + " " + stockList;
     }
@@ -128,6 +141,7 @@ class Store {
 
 class Producer extends Thread {
     private final Store store;
+
     public Producer(Store store, String name) {
         super(name);
         this.store = store;
@@ -139,7 +153,10 @@ class Producer extends Thread {
             int v1 = 2 * (1 + ThreadLocalRandom.current().nextInt(20));
             int v2 = 2 * (1 + ThreadLocalRandom.current().nextInt(20));
 
-            if (!store.putTwo(getName(), v1, v2)) break;
+            if (!store.putTwo(getName(), v1, v2)) {
+                break;
+            }
+
             try {
                 Thread.sleep(120);
             } catch (InterruptedException e) {
@@ -154,6 +171,7 @@ class Producer extends Thread {
 class Consumer extends Thread {
     private final Store store;
     private final int luat;
+
     public Consumer(Store store, int luat, String name) {
         super(name);
         this.store = store;
@@ -166,8 +184,11 @@ class Consumer extends Thread {
 
         for (int i = 0; i < luat; i++) {
             int value = store.get(getName());
-            if (value == -1) return;
+            if (value == -1) {
+                return;
+            }
             preluat++;
+
             try {
                 Thread.sleep(80);
             } catch (InterruptedException e) {
