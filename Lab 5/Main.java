@@ -2,6 +2,8 @@ import javax.swing.*;
 import java.awt.Font;
 import java.io.*;
 import java.util.*;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class Main {
   public static final int X = 2; // X producători
@@ -26,36 +28,44 @@ public class Main {
       }
     }, true));
 
+    // MAIN
     System.out.println("START PROGRAMUL");
 
     Depozit depozit = new Depozit();
-
 
     System.out.print("PROGRAMUL SA FINALIZAT");
   }
 }
 
 class Depozit {
+  BlockingQueue<Integer> queue = new LinkedBlockingQueue<>(Main.D);
+
 
 }
 
-class Producator extends Thread {
+class Producator implements Runnable {
   Depozit dep;
 
   public Producator(Depozit dep, String name) {
-    super(name);
     this.dep = dep;
   }
 
+  @Override
+  public void run() {
+
+  }
 }
 
-class Consumator extends Thread {
+class Consumator implements Runnable  {
   Depozit dep;
   int val = 0;
 
   public Consumator(Depozit dep, String name) {
-    super(name);
     this.dep = dep;
   }
 
+  @Override
+  public void run() {
+
+  }
 }
